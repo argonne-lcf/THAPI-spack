@@ -1,0 +1,12 @@
+diff --git a/src/lib/trace-ir/field.c b/src/lib/trace-ir/field.c
+index cbba4a5..9d4d133 100644
+--- a/src/lib/trace-ir/field.c
++++ b/src/lib/trace-ir/field.c
+@@ -856,6 +856,7 @@
+ 
+ 	BT_ASSERT_DBG(field);
+ 	string_field->length = 0;
++	g_array_index(string_field->buf, char, 0) = '\0';
+ 	bt_field_set_single(field, true);
+ }
+ 
