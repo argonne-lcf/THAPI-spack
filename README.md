@@ -9,7 +9,7 @@ git clone --depth 1 --branch fix-ruby https://github.com/Kerilk/spack.git
 source spack/share/spack/setup-env.sh
 ```
 
-Then one can use the package of this repo to build thapi:
+Then one can use this repo packages to build THAPI:
 ```
 git clone https://github.com/argonne-lcf/THAPI-spack
 spack repo add ./THAPI-spack/
