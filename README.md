@@ -1,7 +1,7 @@
 # THAPI-spack
 This is a spack environement for THAPI.
 
-## How to use to install THAPI
+## How to install THAPI
 
 Due to a current limitation on the ruby support of spack, one need to use our patched spack version (https://github.com/spack/spack/pull/26729) 
 ```
