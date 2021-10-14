@@ -10,9 +10,6 @@ git clone https://github.com/argonne-lcf/THAPI-spack
 . spack/share/spack/setup-env.sh
 spack repo add ./THAPI-spack/
 
-spack install gcc
-spack load gcc
-
 spack install thapi
 spack load thapi
 ```
