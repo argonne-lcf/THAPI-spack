@@ -3,16 +3,15 @@ This is a spack environement for THAPI.
 
 ## How to install THAPI
 
-Due to a current limitation on the ruby support of spack, one need to use our patched spack version (https://github.com/spack/spack/pull/26729) 
-```
-git clone --depth 1 --branch fix-ruby https://github.com/Kerilk/spack.git
-source spack/share/spack/setup-env.sh
-```
+This assume that you have a valid `spack` in your path
 
-Then one can use this repo packages to build THAPI:
 ```
 git clone https://github.com/argonne-lcf/THAPI-spack
 spack repo add ./THAPI-spack/
 spack install thapi
+```
+
+Then you can simply load  thapi it via 
+```
 spack load thapi
 ```
