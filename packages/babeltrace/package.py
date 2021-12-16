@@ -25,6 +25,7 @@ class Babeltrace(AutotoolsPackage):
     depends_on('elfutils', when='@1.4.0:')
     depends_on('python', when='+python')
     depends_on('swig', when='+python')
+    depends_on('pkg-config')
 
     parallel = False
 

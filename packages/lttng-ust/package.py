@@ -20,3 +20,4 @@ class LttngUst(AutotoolsPackage):
 
     depends_on('userspace-rcu@0.11:')
     depends_on('numactl')
+    depends_on('pkg-config')

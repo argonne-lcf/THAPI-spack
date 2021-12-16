@@ -26,3 +26,4 @@ class LttngTools(AutotoolsPackage):
     depends_on('popt@1.13:')
     depends_on('userspace-rcu@0.9.0:')
     depends_on('libxml2@2.7.6:')
+    depends_on('pkg-config')

@@ -38,6 +38,7 @@ class Babeltrace2(AutotoolsPackage):
     depends_on('doxygen@1.8.6:', when='+api-doc')
     depends_on('asciidoc@8.6.8:', when='+man-pages')
     depends_on('xmlto@0.0.25:', when='+man-pages')
+    depends_on('pkg-config')
 
     patch('d2d2e6cc.patch')
     patch('0db1832.patch')
