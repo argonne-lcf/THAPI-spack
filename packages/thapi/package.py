@@ -10,7 +10,7 @@ class Thapi(AutotoolsPackage):
     homepage = "https://github.com/argonne-lcf/THAPI"
     git      = "https://github.com/argonne-lcf/THAPI.git"
 
-    version('modularize_merge', branch='modularize_merge')
+    version('master', branch='master')
 
     depends_on('automake', type=('build'))
     depends_on('autoconf', type=('build'))
