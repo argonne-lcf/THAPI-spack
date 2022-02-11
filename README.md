@@ -15,3 +15,12 @@ Then you can simply load  thapi it via
 ```
 spack load thapi
 ```
+
+### How to install spack
+
+```
+git clone -c feature.manyFiles=true https://github.com/spack/spack.git
+cd spack/
+git checkout releases/v0.17.1
+. share/spack/setup-env.sh
+```
