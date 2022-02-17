@@ -21,6 +21,6 @@ spack load thapi
 ```
 git clone -c feature.manyFiles=true https://github.com/spack/spack.git
 cd spack/
-git checkout releases/v0.17.1
+git checkout releases/v0.17
 . share/spack/setup-env.sh
 ```
