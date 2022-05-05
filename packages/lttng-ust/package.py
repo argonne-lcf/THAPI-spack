@@ -21,6 +21,6 @@ class LttngUst(AutotoolsPackage):
     version('2.10.7', sha256='a9c651eea8a33f50c07a6e69e3e4094e4897340c97eb0166e6dde0e80668742b')
 
     depends_on('userspace-rcu@0.12:', when='@2.13:')
-    depends_on('userspace-rcu@0.11:', when=':@2.12.999')
+    depends_on('userspace-rcu@0.11:', when='@:2.12.999')
     depends_on('numactl')
     depends_on('pkg-config')
