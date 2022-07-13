@@ -18,6 +18,7 @@ class Thapi(AutotoolsPackage):
     depends_on('libtool', type=('build'))
     #depends_on('babeltrace@1.5.8:', type=('build', 'link', 'run'))
     depends_on('babeltrace2', type=('build', 'link', 'run'))
+    depends_on('protobuf@3.0.0:', type=('build', 'link', 'run'))
     depends_on('lttng-ust', type=('build', 'link', 'run'))
     depends_on('lttng-tools', type=('build', 'link', 'run'))
     depends_on('ruby@2.3.0:', type=('build', 'run'))
