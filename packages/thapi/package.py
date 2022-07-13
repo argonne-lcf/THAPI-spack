@@ -11,7 +11,6 @@ class Thapi(AutotoolsPackage):
     git      = "https://github.com/argonne-lcf/THAPI.git"
 
     version('master', branch='master', preferred=True)
-    version('omp', branch='openmp')
 
     depends_on('automake', type=('build'))
     depends_on('autoconf', type=('build'))
