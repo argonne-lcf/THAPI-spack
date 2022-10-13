@@ -58,7 +58,7 @@ diff --git a/src/plugins/utils/muxer/muxer.c b/src/plugins/utils/muxer/muxer.c
 index f340f38d2..fa049cf0d 100644
 --- a/src/plugins/utils/muxer/muxer.c
 +++ b/src/plugins/utils/muxer/muxer.c
-@@ -43,7 +43,10 @@ struct muxer_upstream_msg_iter {
+@@ -59,7 +59,10 @@ struct muxer_upstream_msg_iter {
  	bt_message_iterator *msg_iter;
  
  	/* Contains `const bt_message *`, owned by this */
@@ -70,7 +70,7 @@ index f340f38d2..fa049cf0d 100644
  };
  
  enum muxer_msg_iter_clock_class_expectation {
-@@ -104,11 +107,7 @@ struct muxer_msg_iter {
+@@ -120,11 +123,7 @@ struct muxer_msg_iter {
  static
  void empty_message_queue(struct muxer_upstream_msg_iter *upstream_msg_iter)
  {
@@ -83,7 +83,7 @@ index f340f38d2..fa049cf0d 100644
  }
  
  static
-@@ -123,16 +122,17 @@ void destroy_muxer_upstream_msg_iter(
+@@ -139,16 +138,17 @@ void destroy_muxer_upstream_msg_iter(
  
  	muxer_comp = muxer_upstream_msg_iter->muxer_comp;
  	BT_COMP_LOGD("Destroying muxer's upstream message iterator wrapper: "
@@ -105,7 +105,7 @@ index f340f38d2..fa049cf0d 100644
  	}
  
  	g_free(muxer_upstream_msg_iter);
-@@ -156,10 +156,11 @@ int muxer_msg_iter_add_upstream_msg_iter(struct muxer_msg_iter *muxer_msg_iter,
+@@ -171,9 +171,10 @@ int muxer_msg_iter_add_upstream_msg_iter
  	muxer_upstream_msg_iter->muxer_comp = muxer_comp;
  	muxer_upstream_msg_iter->msg_iter = self_msg_iter;
  	bt_message_iterator_get_ref(muxer_upstream_msg_iter->msg_iter);
@@ -113,13 +113,12 @@ index f340f38d2..fa049cf0d 100644
 +	muxer_upstream_msg_iter->msgs =
 +		g_ptr_array_new_with_free_func((GDestroyNotify) bt_message_put_ref);
  	if (!muxer_upstream_msg_iter->msgs) {
- 		BT_COMP_LOGE_APPEND_CAUSE(muxer_comp->self_comp,
--			"Failed to allocate a GQueue.");
-+			"Failed to allocate a GPtrArray.");
+-		BT_COMP_LOGE_STR("Failed to allocate a GQueue.");
++		BT_COMP_LOGE_STR("Failed to allocate a GPtrArray.");
  		goto error;
  	}
  
-@@ -411,6 +412,9 @@ bt_message_iterator_class_next_method_status muxer_upstream_msg_iter_next(
+@@ -417,6 +418,9 @@ bt_message_iterator_class_next_method_st
  		BT_COMP_LOGD_STR("Validated upstream message iterator wrapper.");
  		BT_ASSERT_DBG(count > 0);
  
@@ -129,7 +128,7 @@ index f340f38d2..fa049cf0d 100644
  		/* Move messages to our queue */
  		for (i = 0; i < count; i++) {
  			/*
-@@ -418,8 +422,8 @@ bt_message_iterator_class_next_method_status muxer_upstream_msg_iter_next(
+@@ -424,8 +428,8 @@ bt_message_iterator_class_next_method_st
  			 * (muxer_msg_iter_do_next_one()) consumes
  			 * from the head first.
  			 */
@@ -140,7 +139,7 @@ index f340f38d2..fa049cf0d 100644
  		}
  		status = BT_MESSAGE_ITERATOR_CLASS_NEXT_METHOD_STATUS_OK;
  		break;
-@@ -833,8 +837,10 @@ muxer_msg_iter_youngest_upstream_msg_iter(
+@@ -830,8 +834,10 @@ muxer_msg_iter_youngest_upstream_msg_ite
  			continue;
  		}
  
@@ -153,7 +152,7 @@ index f340f38d2..fa049cf0d 100644
  		BT_ASSERT_DBG(msg);
  
  		if (G_UNLIKELY(bt_message_get_type(msg) ==
-@@ -893,8 +899,11 @@ muxer_msg_iter_youngest_upstream_msg_iter(
+@@ -890,8 +896,11 @@ muxer_msg_iter_youngest_upstream_msg_ite
  			 * current candidate message. We must break the tie
  			 * in a predictable manner.
  			 */
@@ -167,7 +166,7 @@ index f340f38d2..fa049cf0d 100644
  			BT_COMP_LOGD_STR("Two of the next message candidates have the same timestamps, pick one deterministically.");
  
  			/*
-@@ -944,11 +953,12 @@ validate_muxer_upstream_msg_iter(
+@@ -941,11 +950,12 @@ validate_muxer_upstream_msg_iter(
  		"muxer-upstream-msg-iter-wrap-addr=%p",
  		muxer_upstream_msg_iter);
  
@@ -183,7 +182,7 @@ index f340f38d2..fa049cf0d 100644
  			muxer_upstream_msg_iter->msg_iter);
  		status = BT_MESSAGE_ITERATOR_CLASS_NEXT_METHOD_STATUS_OK;
  		goto end;
-@@ -1099,7 +1109,11 @@ bt_message_iterator_class_next_method_status muxer_msg_iter_do_next_one(
+@@ -1096,7 +1106,11 @@ bt_message_iterator_class_next_method_st
  	 * Consume from the queue's head: other side
  	 * (muxer_upstream_msg_iter_next()) writes to the tail.
  	 */
