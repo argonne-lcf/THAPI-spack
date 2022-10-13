@@ -42,6 +42,7 @@ class Babeltrace2(AutotoolsPackage):
 
     patch('d2d2e6cc.patch')
     patch('0db1832.patch')
+    patch('3079913.patch')
 
     def configure_args(self):
         args = []
