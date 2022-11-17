@@ -15,4 +15,4 @@ class RubyOpencl(RubyPackage):
     depends_on('ruby', type=('build', 'run'))
     depends_on('ruby-narray-old', type=('build', 'run'))
     depends_on('ruby-ffi', type=('build', 'run'))
-    depends_on('ruby-narray-ffi')
+    depends_on('ruby-narray-ffi', type=('build', 'run'))
