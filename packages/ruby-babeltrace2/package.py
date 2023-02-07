@@ -10,6 +10,7 @@ class RubyBabeltrace2(RubyPackage):
     homepage = "https://github.com/argonne-lcf/babeltrace2-ruby"
     url      = "https://rubygems.org/downloads/babeltrace2-0.1.1.gem"
 
+    version('0.1.4', sha256='7d45e79f18ec2c9e24fc303924d48bd375667f06748eec83d60f7cc3b4ca4db2', expand=False)
     version('0.1.3', sha256='549cbd03c6e4987cb935ee20ca69887f8fd6bd5d2e6d9fca0706b63d966fca5c', expand=False)
     version('0.1.2', sha256='a09696933a5d36b2833bd6e3bda5b3981d9719ee77c71a5542ccc127e02b27c3', expand=False)
     version('0.1.1', sha256='2a5c35a72ded62240230dd5b31eb7f2e6cdeabc5b29685a0b636c73c17a6c30c', expand=False)
