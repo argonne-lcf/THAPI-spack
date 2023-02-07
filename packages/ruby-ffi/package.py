@@ -16,4 +16,3 @@ class RubyFfi(RubyPackage):
 
     depends_on('ruby-rake@13.0.0:', type=('build'))
     depends_on('ruby@2.3.0:', type=('build', 'run'))
-    depends_on('libffi')
