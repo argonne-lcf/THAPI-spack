@@ -11,5 +11,5 @@ class RubyMetababel(RubyPackage):
     url      = "https://rubygems.org/downloads/metababel-0.0.0.gem"
 
     version('0.0.0', sha256='9af39e0af353d9ff9c74f301b0a8fea409b784ded622a9e30d387b1cb233d50a', expand=False)
-
+    version('0.0.1', sha256='3d7a515faea00d4e8b7fc6b01c57b6d8ef6b5135dfd7361f5717a19bc12e6475', expand=False)
     depends_on('ruby@2.7.0:', type=('build', 'run'))
