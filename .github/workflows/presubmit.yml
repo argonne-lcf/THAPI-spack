@@ -12,7 +12,7 @@ jobs:
       uses: actions/checkout@v3
       with:
         repository: spack/spack
-        ref: v0.19
+        ref: releases/v0.19
         path: external/spack
     - name: Activate, add, and install
       run: |
