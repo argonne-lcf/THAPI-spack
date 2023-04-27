@@ -1,0 +1,21 @@
+name: Presubmit
+on: [push, pull_request]
+
+jobs:
+  run_tests_gcc:
+    runs-on: ubuntu-latest
+    name: Test THAPI Spack install
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Checkout Spack
+      uses: actions/checkout@v3
+      with:
+        repository: spack/spack
+        ref: releases/latest
+        path: external/spack
+    - name: Activate, add, and install
+      run: |
+        . external/spack/share/spack/setup-env.sh
+        spack repo add ./
+        spack install thapi
