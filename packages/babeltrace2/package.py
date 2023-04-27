@@ -26,6 +26,7 @@ class Babeltrace2(AutotoolsPackage):
     variant('built-in-plugins', default=False, description='Statically-link in-tree plug-ins into the babeltrace2 executable')
     variant('built-in-python-plugin-support', default=False, description='Statically-link Python plugin support into the babeltrace library')
     variant('man-pages', default=False, description='Build man pages')
+    variant('Werror', default=False, description='Enable -Werror')
 
     depends_on('glib@2.28:', type=('build', 'link'))
     depends_on('elfutils@0.154:')
@@ -53,6 +54,7 @@ class Babeltrace2(AutotoolsPackage):
         args.extend(self.enable_or_disable('built-in-plugins'))
         args.extend(self.enable_or_disable('built-in-python-plugin-support'))
         args.extend(self.enable_or_disable('man-pages'))
+        args.extend(self.enable_or_disable('Werror'))
 
         if ('+python-bindings' in self.spec or
             '+python-plugins' in self.spec or
