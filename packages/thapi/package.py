@@ -30,6 +30,7 @@ class Thapi(AutotoolsPackage):
     depends_on('libiberty+pic')
     depends_on('libffi')
     depends_on('pkgconfig')
+    depends_on('python', type=('build'))
 
     variant('strict', default=False, description='Enable -Werror during the build')
     def configure_args(self):
