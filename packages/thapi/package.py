@@ -30,6 +30,9 @@ class Thapi(AutotoolsPackage):
     depends_on('libiberty+pic')
     depends_on('libffi')
     depends_on('pkgconfig')
+    # We add a Python dependency at buildtime, because `lttng-gen-tp` needs it.
+    # We don't add Python as a runtime dependency of lttng to avoid python propagated as a runtime dependency of thapi
+    depends_on('python', type=('build'))
 
     variant('strict', default=False, description='Enable -Werror during the build')
     def configure_args(self):
