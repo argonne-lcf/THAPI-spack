@@ -11,6 +11,7 @@ class Thapi(AutotoolsPackage):
     git      = "https://github.com/argonne-lcf/THAPI.git"
 
     version('master', branch='master', preferred=True)
+    version('0.0.10', tag='v0.0.10')
     version('0.0.9', tag='v0.0.9')
     version('0.0.8', tag='v0.0.8')
     version('0.0.7', tag='v0.0.7')
