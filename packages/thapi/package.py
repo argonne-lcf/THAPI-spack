@@ -30,7 +30,7 @@ class Thapi(AutotoolsPackage):
     depends_on('ruby-opencl', type=('build', 'run'))
     depends_on('ruby-nokogiri', type=('build'))
     depends_on('ruby-cast-to-yaml', type=('build'))
-    depends_on('ruby-metababel@0.0.1:', type=('build'))
+    depends_on('ruby-metababel@0.0.3:', type=('build'))
     depends_on('libiberty+pic')
     depends_on('libffi')
     depends_on('pkgconfig')
