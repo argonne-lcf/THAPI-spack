@@ -12,4 +12,6 @@ class RubyMetababel(RubyPackage):
 
     version('0.0.0', sha256='9af39e0af353d9ff9c74f301b0a8fea409b784ded622a9e30d387b1cb233d50a', expand=False)
     version('0.0.1', sha256='3d7a515faea00d4e8b7fc6b01c57b6d8ef6b5135dfd7361f5717a19bc12e6475', expand=False)
+    version('0.0.2', sha256='920d2157e8b5586455c211b88470441ac9a361fe84481abe184732e299a3c701', expand=False)
+    version('0.0.3', sha256='9f880cf6d463ced9d4c0966ae16bfa6eb330df373adc7b7e0dd182e8345befcd', expand=False)
     depends_on('ruby@2.7.0:', type=('build', 'run'))
