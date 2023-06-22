@@ -1,0 +1,24 @@
+From 1f41dc0a13626d4be21212eeb2c4f83cadc811a8 Mon Sep 17 00:00:00 2001
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Date: Wed, 21 Jun 2023 15:36:49 -0400
+Subject: [PATCH] Fix: tracepoint: Remove trailing \ at the end of macro
+
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Change-Id: Ia6dba969704d64d0e31f7d6b3667996101c50f70
+---
+ include/lttng/ust-tracepoint-event.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/lttng/ust-tracepoint-event.h b/include/lttng/ust-tracepoint-event.h
+index 81affd8c6..951c0f4ec 100644
+--- a/include/lttng/ust-tracepoint-event.h
++++ b/include/lttng/ust-tracepoint-event.h
+@@ -853,7 +853,7 @@ size_t lttng_ust__event_get_align__##_provider##___##_name(LTTNG_UST__TP_ARGS_PR
+ 	if (lttng_ust_string_encoding_##_encoding == lttng_ust_string_encoding_none) \
+ 		__chan->ops->event_write(&__ctx, _src, sizeof(_type) * (_length), lttng_ust_rb_alignof(_type)); \
+ 	else								\
+-		__chan->ops->event_pstrcpy_pad(&__ctx, (const char *) (_src), _length); \
++		__chan->ops->event_pstrcpy_pad(&__ctx, (const char *) (_src), _length);
+ 
+ #undef lttng_ust__field_sequence_encoded
+ #define lttng_ust__field_sequence_encoded(_type, _item, _src, _byte_order, _length_type, \
