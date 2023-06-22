@@ -1,0 +1,44 @@
+From 55cca6979cb5e0f7347364b8f84ccfee4aa672b9 Mon Sep 17 00:00:00 2001
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Date: Thu, 15 Jun 2023 13:31:04 -0400
+Subject: [PATCH] ANL: Custom work-around: Copy entire content of array/sequence of strings
+
+This is a custom work-around for ANL, which restores the behavior prior
+to https://review.lttng.org/c/lttng-ust/+/5109 for arrays and sequences
+of strings, which copies the entire input data into the destination
+buffers, including data beyond the input buffer's NULL terminator.
+
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Change-Id: I02d23c3cdaf14c1015061156a35433a0afce0b31
+---
+
+diff --git a/include/lttng/ust-tracepoint-event.h b/include/lttng/ust-tracepoint-event.h
+index 951c0f4..0bef1d9 100644
+--- a/include/lttng/ust-tracepoint-event.h
++++ b/include/lttng/ust-tracepoint-event.h
+@@ -850,10 +850,7 @@
+ #undef lttng_ust__field_array_encoded
+ #define lttng_ust__field_array_encoded(_type, _item, _src, _byte_order, _length,	\
+ 			_encoding, _nowrite, _elem_type_base)		\
+-	if (lttng_ust_string_encoding_##_encoding == lttng_ust_string_encoding_none) \
+-		__chan->ops->event_write(&__ctx, _src, sizeof(_type) * (_length), lttng_ust_rb_alignof(_type)); \
+-	else								\
+-		__chan->ops->event_pstrcpy_pad(&__ctx, (const char *) (_src), _length);
++	__chan->ops->event_write(&__ctx, _src, sizeof(_type) * (_length), lttng_ust_rb_alignof(_type));
+ 
+ #undef lttng_ust__field_sequence_encoded
+ #define lttng_ust__field_sequence_encoded(_type, _item, _src, _byte_order, _length_type, \
+@@ -862,11 +859,8 @@
+ 		_length_type __tmpl = __stackvar.__dynamic_len[__dynamic_len_idx]; \
+ 		__chan->ops->event_write(&__ctx, &__tmpl, sizeof(_length_type), lttng_ust_rb_alignof(_length_type));\
+ 	}								\
+-	if (lttng_ust_string_encoding_##_encoding == lttng_ust_string_encoding_none) \
+-		__chan->ops->event_write(&__ctx, _src,			\
+-			sizeof(_type) * lttng_ust__get_dynamic_len(dest), lttng_ust_rb_alignof(_type));	\
+-	else								\
+-		__chan->ops->event_pstrcpy_pad(&__ctx, (const char *) (_src), lttng_ust__get_dynamic_len(dest)); \
++	__chan->ops->event_write(&__ctx, _src,			\
++		sizeof(_type) * lttng_ust__get_dynamic_len(dest), lttng_ust_rb_alignof(_type));
+ 
+ #undef lttng_ust__field_string
+ #define lttng_ust__field_string(_item, _src, _nowrite)					\

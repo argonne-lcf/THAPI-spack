@@ -20,7 +20,7 @@ class LttngUst(AutotoolsPackage):
     version('2.11.2', sha256='6b481cec7fe748503c827319e3356137bceef4cce8adecbda3a94c6effcdd161')
     version('2.10.7', sha256='a9c651eea8a33f50c07a6e69e3e4094e4897340c97eb0166e6dde0e80668742b')
 
-    patch('6ed88b9.diff', when='@2.13:')
+    patch('55cca69.diff', when='@2.13:')
 
     depends_on('userspace-rcu@0.12:', when='@2.13:')
     depends_on('userspace-rcu@0.11:', when='@:2.12.999')
