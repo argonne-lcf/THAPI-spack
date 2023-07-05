@@ -14,7 +14,7 @@ class LttngTools(AutotoolsPackage):
 
     maintainers = ['Kerilk']
 
-    version('2.13.7',  sha256='d17a02e8f178a7cf3403e3c9edfb90ad3a1628e20aa0b5131408ae47f722f08d')
+    version('2.13.9',  sha256='8d94dc95b608cf70216b01203a3f8242b97a232db2e23421a2f43708da08f337')
     version('2.12.11', sha256='40a394400aa751231116602a0a53f6943237c56f25c53f422b5b4b38361b96b8')
     version('2.12.0',  sha256='405661d27617dc79a42712174a051a45c7ca12d167576c0d93f2de708ed29445')
     version('2.11.3',  sha256='d7e50f5fe3782e4d2d95ed7021c11a703ab8a3272d8473e0bdb4e37c1990a2c2')
