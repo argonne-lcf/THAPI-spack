@@ -21,7 +21,7 @@ class Thapi(AutotoolsPackage):
     depends_on('libtool', type=('build'))
     depends_on('pkgconfig')
     # 4.3+ for grouped target 
-    depends_on('gmake', type=('build'), when='@4.3:')
+    depends_on('gmake@4.3:', type=('build'))
     depends_on('babeltrace2', type=('build', 'link', 'run'))
     depends_on('protobuf@3.12.4:', type=('build', 'link', 'run'))
     depends_on('lttng-ust', type=('build', 'link', 'run'), when='@0.0.8:')
