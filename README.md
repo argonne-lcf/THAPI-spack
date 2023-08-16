@@ -24,3 +24,8 @@ cd spack/
 git checkout releases/latest
 . share/spack/setup-env.sh
 ```
+
+## Note regarding building THAPI from source
+
+You can use spack to install THAPI, then use `spack build-env thapi` to get the correct environment required to build THAPI for source. ( `spack build-env thapi bash` will spwan a new bash will all the ENV variable corretcly set) 
+
