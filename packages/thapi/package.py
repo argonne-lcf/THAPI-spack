@@ -33,7 +33,7 @@ class Thapi(AutotoolsPackage):
     depends_on('ruby-opencl', type=('build', 'run'))
     depends_on('ruby-nokogiri', type=('build'))
     depends_on('ruby-cast-to-yaml', type=('build'))
-    depends_on('ruby-metababel@0.0.5:', type=('build'))
+    depends_on('ruby-metababel@0.1.0:', type=('build'))
     depends_on('libiberty+pic')
     depends_on('libffi')
     # We add a Python dependency at buildtime, because `lttng-gen-tp` needs it.
