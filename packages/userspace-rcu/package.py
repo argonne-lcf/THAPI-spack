@@ -34,7 +34,7 @@ class UserspaceRcu(AutotoolsPackage):
     depends_on('libtool',  type='build')
 
     patch('examples.patch', sha256='49aa8fa99d3a1315c639d2a90014079c34a7d0a6dde110b6cbb7b02f87324742')
-        patch(
+    patch(
         '0001-fix-add-lurcu-common-to-pkg-config-libs-for-each-fla.patch',
         when='@0.11.0:0.11.2',
     )
