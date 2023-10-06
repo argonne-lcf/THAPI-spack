@@ -19,10 +19,8 @@ spack load thapi
 ### How to install spack
 
 ```
-git clone -c feature.manyFiles=true https://github.com/spack/spack.git
-cd spack/
-git checkout releases/latest
-. share/spack/setup-env.sh
+git clone -c feature.manyFiles=true -b releases/latest https://github.com/spack/spack.git
+. spack/share/spack/setup-env.sh
 ```
 
 ## Note regarding building THAPI from source
