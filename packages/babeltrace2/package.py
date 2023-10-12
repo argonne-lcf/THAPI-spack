@@ -15,6 +15,7 @@ class Babeltrace2(AutotoolsPackage):
 
     maintainers = ['Kerilk']
 
+    version('2.0.5',      sha256='7b8f9ef2a7ee7c9ec292d4568811cf6926089b25e49cdaab449e2cb724edf2b4')
     version('2.0.4',      sha256='774f116685dab5db9c51577dde43c8c1df482aae6bb78a089b1e9e7c8b489bca')
     version('2.0.3',      sha256='a53625152554102d868ba8395347d0daba0bec9c4b854c3e9bd97c77b0bf04a0')
     version('2.0.2',      sha256='30c684e8b948fb79b12ee6861957dc3b99f2aba33a11cfb7fbe598e8a4aae24a')
@@ -44,6 +45,7 @@ class Babeltrace2(AutotoolsPackage):
     patch('d2d2e6cc.patch')
     patch('0db1832.patch')
     patch('3079913.patch')
+    patch('0001-ctf-grow-stored_values-array-when-necessary.patch', when='@2.0.5:')
 
     def configure_args(self):
         args = []
