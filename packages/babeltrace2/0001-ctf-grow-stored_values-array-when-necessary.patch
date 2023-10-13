@@ -1,0 +1,79 @@
+From 795a60c9c7a228da03c2e9977d01d4b6f22e933a Mon Sep 17 00:00:00 2001
+From: Simon Marchi <simon.marchi@efficios.com>
+Date: Fri, 22 Sep 2023 15:36:20 -0400
+Subject: [PATCH] ctf: grow stored_values array when necessary
+​
+The CTF message iterator accesses the `stored_values` array out of
+bounds in the following situation:
+​
+ - In the context of a src.ctf.lttng-live source, a ctf_trace_class gets
+   created from some metadata.
+ - At this point, ctf_trace_class->stored_value_count indicates that a
+   certain number of stored values are necessary given the metadata
+   parsed up to now.
+ - The message iterators are created with `stored_values` arrays of that
+   size.
+ - The source receives more metadata, which requires more stored
+   values.
+ - The message iterator reads some event described by the new metadata,
+   that requires the use of a stored value.
+ - Since the stored value arrays have not been resized to reflect the
+   necessary number of stored value considering the new metadata, the
+   message iterator tries to store a value past the end of the array.
+​
+Fix this by ensuring the `stored_values` array is large enough before
+storing a value in it.
+​
+Change-Id: I78e3ca57ac6cae1959425df3c8ffdbfeb534f348
+Signed-off-by: Simon Marchi <simon.marchi@efficios.com>
+---
+ src/plugins/ctf/common/msg-iter/msg-iter.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+​
+diff --git a/src/plugins/ctf/common/msg-iter/msg-iter.c b/src/plugins/ctf/common/msg-iter/msg-iter.c
+index a49462b85977..24924f2b69b6 100644
+--- a/src/plugins/ctf/common/msg-iter/msg-iter.c
++++ b/src/plugins/ctf/common/msg-iter/msg-iter.c
+@@ -1933,6 +1933,22 @@ end:
+ 		"value=%" PRIu64, msg_it->default_clock_snapshot);
+ }
+ 
++/*
++ * Ensure the message iterator's `stored_values` array is large enough to
++ * accomodate `storing_index`.
++ *
++ * We may need more slots in the array than initially allocated if more
++ * metadata arrives along the way.
++ */
++static
++void ensure_stored_values_size(struct ctf_msg_iter *msg_it,
++		uint64_t storing_index)
++{
++	if (G_UNLIKELY(storing_index >= msg_it->stored_values->len)) {
++		g_array_set_size(msg_it->stored_values, msg_it->meta.tc->stored_value_count);
++	}
++}
++
+ static
+ enum bt_bfcr_status bfcr_unsigned_int_cb(uint64_t value,
+ 		struct ctf_field_class *fc, void *data)
+@@ -2001,6 +2017,7 @@ update_def_clock:
+ 	}
+ 
+ 	if (G_UNLIKELY(int_fc->storing_index >= 0)) {
++		ensure_stored_values_size(msg_it, int_fc->storing_index);  
+ 		g_array_index(msg_it->stored_values, uint64_t,
+ 			(uint64_t) int_fc->storing_index) = value;
+ 	}
+@@ -2090,6 +2107,7 @@ enum bt_bfcr_status bfcr_signed_int_cb(int64_t value,
+ 	BT_ASSERT_DBG(int_fc->meaning == CTF_FIELD_CLASS_MEANING_NONE);
+ 
+ 	if (G_UNLIKELY(int_fc->storing_index >= 0)) {
++		ensure_stored_values_size(msg_it, int_fc->storing_index);
+ 		g_array_index(msg_it->stored_values, uint64_t,
+ 			(uint64_t) int_fc->storing_index) = (uint64_t) value;
+ 	}
+​
+base-commit: 75daa1081c5cfee4197203dc826f30f58174fbac
+-- 
+2.42.0
