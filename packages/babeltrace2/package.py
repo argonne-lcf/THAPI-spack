@@ -42,7 +42,7 @@ class Babeltrace2(AutotoolsPackage):
     depends_on('xmlto@0.0.25:', when='+man-pages')
     depends_on('pkg-config')
 
-    patch('d2d2e6cc.patch', when='@:2.0.4')
+    patch('d2d2e6cc.patch')
     patch('0db1832.patch', when='@:2.0.4')
     patch('3079913.patch')
     patch('0001-ctf-grow-stored_values-array-when-necessary.patch')
