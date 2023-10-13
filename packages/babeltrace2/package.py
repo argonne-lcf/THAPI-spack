@@ -45,7 +45,7 @@ class Babeltrace2(AutotoolsPackage):
     patch('d2d2e6cc.patch', when='@:2.0.4')
     patch('0db1832.patch', when='@:2.0.4')
     patch('3079913.patch')
-    patch('0001-ctf-grow-stored_values-array-when-necessary.patch', when='@2.0.3:')
+    patch('0001-ctf-grow-stored_values-array-when-necessary.patch')
 
     def configure_args(self):
         args = []
