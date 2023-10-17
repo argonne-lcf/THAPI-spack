@@ -14,6 +14,9 @@ class UserspaceRcu(AutotoolsPackage):
     homepage = "https://liburcu.org/"
     url      = "https://github.com/urcu/userspace-rcu/archive/v0.11.1.tar.gz"
 
+    version('0.14.0', sha256='42fb5129a3fffe5a4b790dfe1ea3a734c69ee095fefbf649326269bba94c262d')
+    version('0.13.3', sha256='2752d58f05859e8d1c458c6d162f03625dcd51c28e65c54fb419f4074bb07a65')
+    version('0.13.2', sha256='312d95376e76068b8cc70347676f1570f4f20b3014862f729dc538a316593824')
     version('0.13.1', sha256='b810481f0c859a5859d82e23eddd2856b410802009f94663d64c330dc2f4403e')
     version('0.13.0', sha256='c457d17ec9dff7db0e90b103ef1a03737efdeaec13098af82f83a03091c835b5')
     version('0.12.3', sha256='a61b5aca001f70cb576505cc4869bd74a758484343466cc49cb1342c67028a54')
