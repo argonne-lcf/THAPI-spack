@@ -11,9 +11,11 @@ class LttngUst(AutotoolsPackage):
 
     homepage = "https://lttng.org"
     url      = "https://lttng.org/files/lttng-ust/lttng-ust-2.12.0.tar.bz2"
+    git      = "https://github.com/lttng/lttng-ust.git"
 
     maintainers = ['Kerilk']
 
+    version('master', branch='master')
     version('2.13.6', sha256='e7e04596dd73ac7aa99e27cd000f949dbb0fed51bd29099f9b08a25c1df0ced5')
     version('2.12.4', sha256='2124da2003a921f5da86c9aec00b897b5bbc006b0110a3ab29f1c1bc1c073f86')
     version('2.12.0', sha256='1983edb525f3f27e3494088d8d5389b4c71af66bbfe63c6f1df2ad95aa44a528')
@@ -23,6 +25,12 @@ class LttngUst(AutotoolsPackage):
     patch('1f41dc0.diff', when='@2.13.4:2.13.6')
     patch('55cca69.diff', when='@2.13.4:')
 
+    depends_on('asciidoc@8.6.8:', type='build')
+    depends_on('xmlto@0.0.25:', type='build')
+    depends_on('autoconf', type='build')
+    depends_on('automake', type='build')
+    depends_on('libtool', type='build')
+    depends_on('userspace-rcu@0.14.0:', when='@2.14:')
     depends_on('userspace-rcu@0.12:', when='@2.13:')
     depends_on('userspace-rcu@0.11:', when='@:2.12.999')
     depends_on('numactl')
