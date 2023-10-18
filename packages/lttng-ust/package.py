@@ -32,6 +32,9 @@ class LttngUst(AutotoolsPackage):
         depends_on('asciidoc@8.6.8:', type='build')
         depends_on('xmlto@0.0.25:', type='build')
 
+    with when("+api-doc"):
+        depends_on('asciidoc@8.6.8:', type='build')
+
     depends_on('autoconf', type='build')
     depends_on('automake', type='build')
     depends_on('libtool', type='build')
