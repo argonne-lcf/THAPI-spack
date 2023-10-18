@@ -25,6 +25,9 @@ class LttngUst(AutotoolsPackage):
     patch('1f41dc0.diff', when='@2.13.4:2.13.6')
     patch('55cca69.diff', when='@2.13.4:')
 
+    variant('api-doc', default=False, description='Build HTML API documentation')
+    variant('man-pages', default=False, description='Build man pages')
+
     with when("+man-pages"):
         depends_on('asciidoc@8.6.8:', type='build')
         depends_on('xmlto@0.0.25:', type='build')
