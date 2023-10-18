@@ -22,14 +22,19 @@ class LttngTools(AutotoolsPackage):
     version('2.11.3',  sha256='d7e50f5fe3782e4d2d95ed7021c11a703ab8a3272d8473e0bdb4e37c1990a2c2')
     version('2.10.11', sha256='3cb7341d2802ba154f6863c5c20368f8273173ab7080c3ae1ae7180ac7a6f8c5')
 
+    variant('api-doc', default=False, description='Build HTML API documentation')
+    variant('man-pages', default=False, description='Build man pages')
+
     depends_on('lttng-ust@master', when='@master')
     depends_on('lttng-ust@2.13.0:2.13.999', when='@2.13')
     depends_on('lttng-ust@2.12.0:2.12.999', when='@2.12')
     depends_on('lttng-ust@2.11.0:2.11.999', when='@2.11')
     depends_on('lttng-ust@2.10.0:2.10.999', when='@2.10')
 
-    depends_on('asciidoc@8.6.8:', type='build')
-    depends_on('xmlto@0.0.25:', type='build')
+    with when("+man-pages"):
+        depends_on('asciidoc@8.6.8:', type='build')
+        depends_on('xmlto@0.0.25:', type='build')
+
     depends_on('autoconf', type='build')
     depends_on('automake', type='build')
     depends_on('libtool', type='build')
@@ -42,3 +47,9 @@ class LttngTools(AutotoolsPackage):
     depends_on('pkg-config')
 
     patch('71540e4.diff', when='@2.14:')
+
+    def configure_args(self):
+        args = []
+        args.extend(self.enable_or_disable("api-doc"))
+        args.extend(self.enable_or_disable("man-pages"))
+        return args
