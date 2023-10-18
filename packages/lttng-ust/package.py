@@ -25,8 +25,10 @@ class LttngUst(AutotoolsPackage):
     patch('1f41dc0.diff', when='@2.13.4:2.13.6')
     patch('55cca69.diff', when='@2.13.4:')
 
-    depends_on('asciidoc@8.6.8:', type='build')
-    depends_on('xmlto@0.0.25:', type='build')
+    with when("+man-pages"):
+        depends_on('asciidoc@8.6.8:', type='build')
+        depends_on('xmlto@0.0.25:', type='build')
+
     depends_on('autoconf', type='build')
     depends_on('automake', type='build')
     depends_on('libtool', type='build')
@@ -35,3 +37,10 @@ class LttngUst(AutotoolsPackage):
     depends_on('userspace-rcu@0.11:', when='@:2.12.999')
     depends_on('numactl')
     depends_on('pkg-config')
+
+    def configure_args(self):
+        args = []
+        args.extend(self.enable_or_disable("api-doc"))
+        args.extend(self.enable_or_disable("man-pages"))
+        return args
+
