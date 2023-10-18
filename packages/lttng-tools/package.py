@@ -45,7 +45,7 @@ class LttngTools(AutotoolsPackage):
     depends_on('libxml2@2.7.6:')
     depends_on('pkg-config')
 
-    patch('71540e4.diff', when='@2.14:')
+    patch('71540e4.ring_buffer_lost.diff', when='@2.14:')
 
     def configure_args(self):
         args = []

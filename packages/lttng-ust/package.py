@@ -24,6 +24,7 @@ class LttngUst(AutotoolsPackage):
 
     patch('1f41dc0.diff', when='@2.13.4:2.13.6')
     patch('55cca69.diff', when='@2.13.4:')
+    patch('97932e2.ring_buffer_lost.patch', when='@2.14:')
 
     variant('api-doc', default=False, description='Build HTML API documentation')
     variant('man-pages', default=False, description='Build man pages')
