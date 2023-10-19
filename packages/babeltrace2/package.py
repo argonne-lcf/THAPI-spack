@@ -12,9 +12,11 @@ class Babeltrace2(AutotoolsPackage):
 
     homepage = "https://babeltrace.org/"
     url      = "https://www.efficios.com/files/babeltrace/babeltrace2-2.0.2.tar.bz2"
+    git      = "https://github.com/efficios/babeltrace.git"
 
     maintainers = ['Kerilk']
 
+    version('master', branch='master')
     version('2.0.5',      sha256='7b8f9ef2a7ee7c9ec292d4568811cf6926089b25e49cdaab449e2cb724edf2b4')
     version('2.0.4',      sha256='774f116685dab5db9c51577dde43c8c1df482aae6bb78a089b1e9e7c8b489bca')
     version('2.0.3',      sha256='a53625152554102d868ba8395347d0daba0bec9c4b854c3e9bd97c77b0bf04a0')
@@ -27,25 +29,46 @@ class Babeltrace2(AutotoolsPackage):
     variant('built-in-plugins', default=False, description='Statically-link in-tree plug-ins into the babeltrace2 executable')
     variant('built-in-python-plugin-support', default=False, description='Statically-link Python plugin support into the babeltrace library')
     variant('man-pages', default=False, description='Build man pages')
+    variant('asan', default=False, description='Build with AddressSanitizer', when='@2.1:')
+    variant('ubsan', default=False, description='Build with UndefinedBehaviorSanitizer', when='@2.1:')
     variant('Werror', default=False, description='Enable -Werror')
+
+    depends_on('autoconf', type='build')
+    depends_on('automake', type='build')
+    depends_on('libtool', type='build')
+    depends_on('pkg-config')
 
     depends_on('glib@2.28:', type=('build', 'link'))
     depends_on('elfutils@0.154:')
-    depends_on('python@3.4:', when='+python-bindings')
-    depends_on('python@3.4:', when='+python-plugins')
-    depends_on('python@3.4:', when='+built-in-python-plugin-support')
-    depends_on('swig@3.0:', when='+python-bindings')
-    depends_on('swig@3.0:', when='+python-plugins')
-    depends_on('swig@3.0:', when='+built-in-python-plugin-support')
-    depends_on('doxygen@1.8.6:', when='+api-doc')
-    depends_on('asciidoc@8.6.8:', when='+man-pages')
-    depends_on('xmlto@0.0.25:', when='+man-pages')
-    depends_on('pkg-config')
 
-    patch('d2d2e6cc.patch')
+    with when("+python-bindings"):
+        depends_on('python@3.4:')
+        depends_on('swig@3.0:')
+
+    with when('+python-plugins'):
+        depends_on('python@3.4:')
+        depends_on('swig@3.0:')
+
+    with when('+built-in-python-plugin-support'):
+        depends_on('python@3.4:')
+        depends_on('swig@3.0:')
+
+    with when('+api-doc'):
+        depends_on('asciidoc@8.6.8:')
+
+    with when('+man-pages'):
+        depends_on('asciidoc@8.6.8:')
+        depends_on('xmlto@0.0.25:')
+
+    # Add varient pour esam
+    patch('d2d2e6cc.patch', when='@:2.0.999')
+    patch('d2d2e6cc_cpp.patch', when='@2.1:')
+
     patch('0db1832.patch', when='@:2.0.4')
-    patch('3079913.patch')
-    patch('0001-ctf-grow-stored_values-array-when-necessary.patch', when='@:2.0.5')
+    patch('3079913.patch', when='@:2.0.999')
+    patch('0001-ctf-grow-stored_values-array-when-necessary.patch', when='@:2.0.999')
+
+    patch('git_shallow_version.patch', when='@master')
 
     def configure_args(self):
         args = []
@@ -56,6 +79,9 @@ class Babeltrace2(AutotoolsPackage):
         args.extend(self.enable_or_disable('built-in-plugins'))
         args.extend(self.enable_or_disable('built-in-python-plugin-support'))
         args.extend(self.enable_or_disable('man-pages'))
+        with when('@2.1:'):
+            args.extend(self.enable_or_disable('asan'))
+            args.extend(self.enable_or_disable('ubsan'))
         args.extend(self.enable_or_disable('Werror'))
 
         if ('+python-bindings' in self.spec or
