@@ -35,3 +35,7 @@ jobs:
       run: |
         . external/spack/share/spack/setup-env.sh
         spack install thapi@0.0.10
+    - name: Install thapi v0.0.11
+      run: |
+        . external/spack/share/spack/setup-env.sh
+        spack install thapi@0.0.10
