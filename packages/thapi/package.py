@@ -11,6 +11,7 @@ class Thapi(AutotoolsPackage):
     git      = "https://github.com/argonne-lcf/THAPI.git"
 
     version('master', branch='master', preferred=True)
+    version('0.0.11', tag='v0.0.11')
     version('0.0.10', tag='v0.0.10')
     version('0.0.9', tag='v0.0.9')
     version('0.0.8', tag='v0.0.8')
@@ -33,7 +34,11 @@ class Thapi(AutotoolsPackage):
     depends_on('ruby-opencl', type=('build', 'run'))
     depends_on('ruby-nokogiri', type=('build'))
     depends_on('ruby-cast-to-yaml', type=('build'))
-    depends_on('ruby-metababel@0.1.0:', type=('build'))
+    with when('@:0.0.10'):
+        depends_on('ruby-metababel@0.1.0:0.9', type=('build'))
+    with when ('@0.0.11:'):
+        depends_on('ruby-metababel@1.0.0:', type=('build'))
+
     depends_on('libiberty+pic')
     depends_on('libffi')
     # We add a Python dependency at buildtime, because `lttng-gen-tp` needs it.
