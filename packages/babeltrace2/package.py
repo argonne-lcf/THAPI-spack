@@ -68,8 +68,6 @@ class Babeltrace2(AutotoolsPackage):
     patch('3079913.patch', when='@:2.0.999')
     patch('0001-ctf-grow-stored_values-array-when-necessary.patch', when='@:2.0.999')
 
-    patch('git_shallow_version.patch', when='@master')
-
     def configure_args(self):
         args = []
         args.extend(self.enable_or_disable('python-bindings'))
