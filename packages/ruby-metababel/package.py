@@ -9,6 +9,8 @@ class RubyMetababel(RubyPackage):
 
     homepage = "https://github.com/TApplencourt/metababel"
     url      = "https://rubygems.org/downloads/metababel-0.0.0.gem"
+    list_url = "https://rubygems.org/gems/metababel/versions"
+    list_depth = 1
 
     version('0.0.0', sha256='9af39e0af353d9ff9c74f301b0a8fea409b784ded622a9e30d387b1cb233d50a', expand=False)
     version('0.0.1', sha256='3d7a515faea00d4e8b7fc6b01c57b6d8ef6b5135dfd7361f5717a19bc12e6475', expand=False)
@@ -18,5 +20,7 @@ class RubyMetababel(RubyPackage):
     version('0.0.5', sha256='2c1350e84abfdc750a101bfc41f60514c79f9f6455d99bca6f92c2ad39cac2ff', expand=False)
     version('0.1.0', sha256='aca619dd762ba84e7606e6a343ec4e989ba8bf08878c2261254bee52e3c81d18', expand=False)
     version('1.0.1', sha256='1b93282d32e81af2001b8a1079b144b6e95f11615cb4221d12da3545fbcf3fca', expand=False)
+    version('1.0.2', sha256='867c71708e74b400d53722b5477ec4d7e604aa850e0f45dc3b3a882e3e22d51a', expand=False)
+    version('1.0.3', sha256='b92fd5a9828d5367a5097e212dfa3b0a4567ed209f48dbc8330df81e8269f625', expand=False)
 
     depends_on('ruby@2.7.0:', type=('build', 'run'))
