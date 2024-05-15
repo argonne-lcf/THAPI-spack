@@ -36,7 +36,7 @@ class Thapi(AutotoolsPackage):
     depends_on('ruby-cast-to-yaml', type=('build'))
     depends_on('ruby-metababel@0.1.0:0.9', type=('build'), when='@:0.0.10')
     depends_on('ruby-metababel@1.0.0:', type=('build'), when='@0.0.11:')
-    depends_on('ruby-metababel@1.1.0:', type=('build'), when='@master')
+    depends_on('ruby-metababel@1.1.1:', type=('build'), when='@master')
 
     depends_on('libiberty+pic')
     depends_on('libffi')
