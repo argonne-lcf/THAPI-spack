@@ -21,7 +21,7 @@ class Thapi(AutotoolsPackage):
     depends_on('autoconf', type=('build'))
     depends_on('libtool', type=('build'))
     depends_on('pkgconfig')
-    # 4.3+ for grouped target 
+    # 4.3+ for grouped target
     depends_on('gmake@4.3:', type=('build'))
     depends_on('babeltrace2', type=('build', 'link', 'run'))
     depends_on('protobuf@3.12.4:', type=('build', 'link', 'run'))
@@ -45,6 +45,9 @@ class Thapi(AutotoolsPackage):
     depends_on('python', type=('build'))
 
     variant('strict', default=False, description='Enable -Werror during the build')
+    variant('mpi', default=False, description='Check if MPI can be used to generated Sync Daemon')
+    when("+mpi"):
+        depends_on('mpi', type='build','run')
     def configure_args(self):
         args = []
         args.extend(self.enable_or_disable('strict'))
