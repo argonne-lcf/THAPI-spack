@@ -46,7 +46,7 @@ class Thapi(AutotoolsPackage):
 
     variant('strict', default=False, description='Enable -Werror during the build')
     variant('mpi', default=False, description='Check if MPI can be used to generated Sync Daemon')
-    when("+mpi"):
+    with when("+mpi"):
         depends_on('mpi', type=('build','run'))
     def configure_args(self):
         args = []
