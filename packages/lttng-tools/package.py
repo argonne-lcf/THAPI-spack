@@ -16,6 +16,7 @@ class LttngTools(AutotoolsPackage):
     maintainers = ['Kerilk']
 
     version('master', branch='master')
+    version('2.13.13', sha256='ff5f4f00b081dac66092afe8e72b7c790670931cf1c1ee0deaa7f80fbc53883e')
     version('2.13.9',  sha256='8d94dc95b608cf70216b01203a3f8242b97a232db2e23421a2f43708da08f337')
     version('2.12.11', sha256='40a394400aa751231116602a0a53f6943237c56f25c53f422b5b4b38361b96b8')
     version('2.12.0',  sha256='405661d27617dc79a42712174a051a45c7ca12d167576c0d93f2de708ed29445')
@@ -25,7 +26,8 @@ class LttngTools(AutotoolsPackage):
     variant('man-pages', default=False, description='Build man pages')
 
     depends_on('lttng-ust@master', when='@master')
-    depends_on('lttng-ust@2.13.0:2.13.999', when='@2.13')
+    depends_on('lttng-ust@2.13.8:2.13.999', when='@2.13.13:2.13.999')
+    depends_on('lttng-ust@2.13.0:2.13.6', when='@2.13.0:2.13.9')
     depends_on('lttng-ust@2.12.0:2.12.999', when='@2.12')
     depends_on('lttng-ust@2.11.0:2.11.999', when='@2.11')
     depends_on('lttng-ust@2.10.0:2.10.999', when='@2.10')
