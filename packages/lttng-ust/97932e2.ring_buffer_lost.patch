@@ -218,7 +218,7 @@ index 5dcc0be..0d58d3b 100644
 +	 * that sub-buffer is postponed until the commit counter is
 +	 * incremented for the current space reservation.
  	 */
- 	*ts_end = ctx->priv->tsc;
+ 	*ts_end = ctx->priv->timestamp;
 +	cc_cold->records_lost_full = ctx->priv->records_lost_full;
 +	cc_cold->records_lost_wrap = ctx->priv->records_lost_wrap;
 +	cc_cold->records_lost_big = ctx->priv->records_lost_big;
@@ -252,7 +252,7 @@ index 5dcc0be..0d58d3b 100644
 +	 * that sub-buffer is postponed until the commit counter is
 +	 * incremented for the current space reservation.
  	 */
- 	*ts_end = ctx->priv->tsc;
+ 	*ts_end = ctx->priv->timestamp;
 +	cc_cold->records_lost_full = ctx->priv->records_lost_full;
 +	cc_cold->records_lost_wrap = ctx->priv->records_lost_wrap;
 +	cc_cold->records_lost_big = ctx->priv->records_lost_big;
