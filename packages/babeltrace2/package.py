@@ -17,6 +17,8 @@ class Babeltrace2(AutotoolsPackage):
     maintainers = ['Kerilk']
 
     version('master', branch='master')
+    version('archive', branch='src-ctf-lttng-archive')
+
     version('2.0.6',      sha256='a01c7e75e642de0b5b91f32cc706234c99eb556fcd52c9959045dc23a9ec52c9')
     version('2.0.5',      sha256='7b8f9ef2a7ee7c9ec292d4568811cf6926089b25e49cdaab449e2cb724edf2b4')
     version('2.0.4',      sha256='774f116685dab5db9c51577dde43c8c1df482aae6bb78a089b1e9e7c8b489bca')
@@ -41,6 +43,9 @@ class Babeltrace2(AutotoolsPackage):
 
     depends_on('glib@2.28:', type=('build', 'link'))
     depends_on('elfutils@0.154:')
+
+    with when('@archive'):
+        depends_on('lttng-tools', type=('build', 'link', 'run'))
 
     with when("+python-bindings"):
         depends_on('python@3.4:')
