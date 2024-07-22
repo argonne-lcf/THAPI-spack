@@ -44,6 +44,7 @@ class Thapi(AutotoolsPackage):
     # We don't add Python as a runtime dependency of lttng to avoid python propagated as a runtime dependency of thapi
     depends_on('python', type=('build'))
 
+    variant('archive', default=False, description='Support for live analysis of archive')
     with when("+archive"):
         depends_on('babeltrace2@archive', type=('build', 'run'))
 
