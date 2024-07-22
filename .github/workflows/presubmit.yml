@@ -43,3 +43,8 @@ jobs:
       run: |
         . external/spack/share/spack/setup-env.sh
         spack install thapi@master ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master
+
+    - name: Install thapi master archive
+      run: |
+        . external/spack/share/spack/setup-env.sh
+        spack install thapi@master+archive
