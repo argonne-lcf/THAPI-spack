@@ -18,28 +18,28 @@ jobs:
       run: |
         . external/spack/share/spack/setup-env.sh
         spack repo add ./
-        spack install thapi
+        spack install thapi ^ruby@3.1.0
     - name: Install thapi v0.0.7
       run: |
         . external/spack/share/spack/setup-env.sh
-        spack install thapi@0.0.7
+        spack install thapi@0.0.7 ^ruby@3.1.0
     - name: Install thapi v0.0.8
       run: |
         . external/spack/share/spack/setup-env.sh
-        spack install thapi@0.0.8
+        spack install thapi@0.0.8 ^ruby@3.1.0
     - name: Install thapi v0.0.9
       run: |
         . external/spack/share/spack/setup-env.sh
-        spack install thapi@0.0.9
+        spack install thapi@0.0.9 ^ruby@3.1.0
     - name: Install thapi v0.0.10
       run: |
         . external/spack/share/spack/setup-env.sh
-        spack install thapi@0.0.10
+        spack install thapi@0.0.10 ^ruby@3.1.0
     - name: Install thapi v0.0.11
       run: |
         . external/spack/share/spack/setup-env.sh
-        spack install thapi@0.0.11
+        spack install thapi@0.0.11 ^ruby@3.1.0
     - name: Install thapi master
       run: |
         . external/spack/share/spack/setup-env.sh
-        spack install thapi@master ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master
+        spack install thapi@master ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby@3.1.0
