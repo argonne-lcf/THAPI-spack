@@ -45,7 +45,8 @@ class Thapi(AutotoolsPackage):
     # We don't add Python as a runtime dependency of lttng to avoid python propagated as a runtime dependency of thapi
     depends_on('python', type=('build'))
 
-    variant('strict', default=False, description='Enable -Werror during the build')
+    variant('strict', default=False, description='Enable -Werror during the build')    
+    variant('mpi', default=False, description='Enable MPI support for the Sync Daemon')
     def configure_args(self):
         args = [] 
         args.extend(self.enable_or_disable('mpi'))
