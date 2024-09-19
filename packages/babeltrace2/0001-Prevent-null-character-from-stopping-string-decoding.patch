@@ -1,0 +1,61 @@
+From d16b0c927b33d9ff24889c9dbde00e9186a010d7 Mon Sep 17 00:00:00 2001
+From: Brice Videau <bvideau@Brices-MacBook-Pro.local>
+Date: Thu, 19 Sep 2024 15:48:08 -0500
+Subject: [PATCH] Prevent null character from stopping string decoding.
+
+---
+ src/plugins/ctf/common/src/msg-iter.cpp | 33 +++----------------------
+ 1 file changed, 3 insertions(+), 30 deletions(-)
+
+diff --git a/src/plugins/ctf/common/src/msg-iter.cpp b/src/plugins/ctf/common/src/msg-iter.cpp
+index 36e2088b8..fc4082998 100644
+--- a/src/plugins/ctf/common/src/msg-iter.cpp
++++ b/src/plugins/ctf/common/src/msg-iter.cpp
+@@ -748,41 +748,14 @@ void MsgIter::_handleBlobRawDataItem(const RawDataItem& item)
+ 
+ void MsgIter::_handleStrRawDataItem(const RawDataItem& item)
+ {
+-    if (_mHaveNullChar) {
+-        /* No more text data */
+-        return;
+-    }
+-
+     if (_mCurStrFieldEncoding == StrEncoding::Utf8) {
+-        /* Try to find the first U+0000 codepoint */
+-        const auto endIt = std::find(item.data().begin(), item.data().end(), 0);
+-        _mHaveNullChar = endIt != item.data().end();
+-
+         /* Append to current string field */
+         this->_stackTopCurSubField().asString().append(
+-            reinterpret_cast<const char *>(item.data().data()), endIt - item.data().begin());
++            reinterpret_cast<const char *>(item.data().data()),
++            item.data().end() - item.data().begin());
+     } else {
+-        /* Try to find the first U+0000 codepoint */
+-        auto endIt = item.data().end();
+-        const auto afterNullCpIt = bt2c::call([this, &item] {
+-            if (_mCurStrFieldEncoding == StrEncoding::Utf16Be ||
+-                _mCurStrFieldEncoding == StrEncoding::Utf16Le) {
+-                return _mUtf16NullCpFinder.findNullCp(item.data());
+-            } else {
+-                BT_ASSERT_DBG(_mCurStrFieldEncoding == StrEncoding::Utf32Be ||
+-                              _mCurStrFieldEncoding == StrEncoding::Utf32Le);
+-                return _mUtf32NullCpFinder.findNullCp(item.data());
+-            }
+-        });
+-
+-        if (afterNullCpIt) {
+-            /* Found U+0000 */
+-            endIt = *afterNullCpIt;
+-            _mHaveNullChar = true;
+-        }
+-
+         /* Append to current string buffer */
+-        _mStrBuf.insert(_mStrBuf.end(), item.data().begin(), endIt);
++        _mStrBuf.insert(_mStrBuf.end(), item.data().begin(), item.data().end());
+     }
+ }
+ 
+-- 
+2.39.3 (Apple Git-146)
+

@@ -63,7 +63,7 @@ class Babeltrace2(AutotoolsPackage):
 
     # Add varient pour esam
     patch('d2d2e6cc.patch', when='@:2.0.999')
-    patch('d2d2e6cc_cpp.patch', when='@2.1:')
+    patch('0001-Prevent-null-character-from-stopping-string-decoding.patch', when='@2.1:')
 
     patch('0db1832.patch', when='@:2.0.4')
     patch('3079913.patch', when='@:2.0.999')
