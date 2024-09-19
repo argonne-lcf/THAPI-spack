@@ -17,5 +17,5 @@ class RubyNokogiri(RubyPackage):
     version('1.12.5', sha256='2b20905942acc580697c8c496d0d1672ab617facb9d30d156b3c7676e67902ec', expand=False)
 
     depends_on('ruby@2.5.0:', type=('build', 'run'))
-    depends_on('ruby-rake@13.0.0:', type=('build'))
+    depends_on('ruby-racc@1.8.1:', type=('build','run'))
     depends_on('ruby-mini-portile2@2.6.1', type=('build', 'run'))
