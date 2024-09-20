@@ -14,5 +14,4 @@ class RubyFfi(RubyPackage):
 
     version('1.15.4', sha256='56cfca5261ead48688241236adfefb07a000a6d17184d7a4eed48d55b9675d6b', expand=False)
 
-    depends_on('ruby-rake@13.0.0:', type=('build'))
     depends_on('ruby@2.3.0:', type=('build', 'run'))
