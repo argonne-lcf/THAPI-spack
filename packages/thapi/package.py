@@ -29,7 +29,13 @@ class Thapi(AutotoolsPackage):
     depends_on('lttng-tools', type=('build', 'link', 'run'), when='@0.0.8:')
     depends_on('lttng-ust@:2.12.999', type=('build', 'link', 'run'), when='@:0.0.7')
     depends_on('lttng-tools@:2.12.999', type=('build', 'link', 'run'), when='@:0.0.7')
-    depends_on('ruby@2.7.0:', type=('build', 'run'))
+
+    # Restricting to ruby <= 3.1 when spack is less than 0.23
+    if spack.version.Version(spack.spack_version) < spack.version.Version("0.23"):
+        depends_on('ruby@2.7.0:3.1', type=('build', 'run'))
+    else:
+        depends_on('ruby@2.7.0:', type=('build', 'run'))
+
     depends_on('ruby-babeltrace2', type=('build', 'run'))
     depends_on('ruby-opencl', type=('build', 'run'))
     depends_on('ruby-nokogiri', type=('build'))
