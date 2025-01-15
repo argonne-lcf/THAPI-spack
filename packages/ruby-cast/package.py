@@ -7,9 +7,18 @@
 class RubyCast(RubyPackage):
     """C parser and AST constructor."""
 
-    homepage = "http://github.com/oggy/cast"
-    url      = "https://rubygems.org/downloads/cast-0.3.1.gem"
+    def build(pkg, spec, prefix):
+        pkg.module.rake("gem:build")
 
-    version('0.3.1', sha256='0dd28460a9f1b925be20236223e5289bc23341ee2a46394f276c0bc097dba06e', expand=False)
+    homepage = "http://github.com/oggy/cast"
+    git = "http://github.com/oggy/cast.git"
+
+    version('0.3.1', tag='v0.3.1')
 
     depends_on('ruby@2.3.0:', type=('build', 'run'))
+    depends_on('ruby-racc', type=('build', 'run'))
+    depends_on('ruby-ritual', type=('build'))
+    depends_on('ruby-rake', type=('build'))
+
+    patch('fix_import.patch')
+    patch('fix_race_condition.patch')
