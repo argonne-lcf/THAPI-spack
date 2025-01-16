@@ -13,12 +13,13 @@ class RubyCast(RubyPackage):
     homepage = "http://github.com/oggy/cast"
     git = "http://github.com/oggy/cast.git"
 
-    version('0.3.1', tag='v0.3.1')
+    version('0.3.1', tag='v0.3.1', get_full_repo=True)
 
     depends_on('ruby@2.3.0:', type=('build', 'run'))
     depends_on('ruby-racc', type=('build', 'run'))
     depends_on('ruby-ritual', type=('build'))
     depends_on('ruby-rake', type=('build'))
+    depends_on('re2c', type=('build'))
 
     patch('fix_import.patch')
     patch('fix_race_condition.patch')
