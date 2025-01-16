@@ -1,0 +1,47 @@
+From 7f9b0b466880e21528fb4aa93ada47fe651b95b0 Mon Sep 17 00:00:00 2001
+From: Brice Videau <bvideau@anl.gov>
+Date: Thu, 16 Jan 2025 20:53:17 +0000
+Subject: [PATCH] Ignore int conversions.
+
+---
+ cuda/Makefile.am | 2 +-
+ hip/Makefile.am  | 2 +-
+ ze/Makefile.am   | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/cuda/Makefile.am b/cuda/Makefile.am
+index dc2ffa1..1af725e 100644
+--- a/cuda/Makefile.am
++++ b/cuda/Makefile.am
+@@ -6,5 +6,5 @@ else
+   WERROR =
+ endif
+-LTTNG_FLAGS=-fPIC -Wall -Wextra -Wno-unused-parameter -Wno-type-limits -Wno-sign-compare $(WERROR) -I$(top_srcdir)/utils -I$(top_srcdir)/utils/include -I$(srcdir)/include -I../utils -I./
++LTTNG_FLAGS=-fPIC -Wall -Wextra -Wno-unused-parameter -Wno-type-limits -Wno-sign-compare -Wno-int-conversion $(WERROR) -I$(top_srcdir)/utils -I$(top_srcdir)/utils/include -I$(srcdir)/include -I../utils -I./
+ 
+ CUDA_HDR = \
+diff --git a/hip/Makefile.am b/hip/Makefile.am
+index cb70612..e804a12 100644
+--- a/hip/Makefile.am
++++ b/hip/Makefile.am
+@@ -6,5 +6,5 @@ else
+   WERROR =
+ endif
+-LTTNG_FLAGS=-fPIC -Wall -Wextra -Wno-unused-parameter -Wno-type-limits -Wno-sign-compare $(WERROR) -I$(top_srcdir)/utils -I$(top_srcdir)/utils/include -I$(srcdir)/include -I../utils -I./
++LTTNG_FLAGS=-fPIC -Wall -Wextra -Wno-unused-parameter -Wno-type-limits -Wno-sign-compare -Wno-int-conversion $(WERROR) -I$(top_srcdir)/utils -I$(top_srcdir)/utils/include -I$(srcdir)/include -I../utils -I./
+ 
+ HIP_HDR = \
+diff --git a/ze/Makefile.am b/ze/Makefile.am
+index 4150042..9cce559 100644
+--- a/ze/Makefile.am
++++ b/ze/Makefile.am
+@@ -6,5 +6,5 @@ else
+   WERROR =
+ endif
+-LTTNG_FLAGS=-fPIC -Wall -Wextra -Wno-unused-parameter -Wno-type-limits -Wno-sign-compare $(WERROR) -I$(top_srcdir)/utils -I$(top_srcdir)/utils/include -I$(srcdir)/include -I../utils -I./
++LTTNG_FLAGS=-fPIC -Wall -Wextra -Wno-unused-parameter -Wno-type-limits -Wno-sign-compare -Wno-int-conversion $(WERROR) -I$(top_srcdir)/utils -I$(top_srcdir)/utils/include -I$(srcdir)/include -I../utils -I./
+ 
+ ZE_NAMESPACES = ze zet zes zel
+-- 
+2.35.3
+
