@@ -5,7 +5,7 @@
 
 
 class RubyRitual(RubyPackage):
-    """Extract information fom a C ast"""
+    """Adds tasks and helpers to your Rakefile to manage releases in a lightweight manner."""
 
     homepage = "https://github.com/oggy/ritual"
     url      = "https://rubygems.org/downloads/ritual-0.5.1.gem"
