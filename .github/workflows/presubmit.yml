@@ -1,7 +1,7 @@
 name: Presubmit
 on: [push, pull_request]
 env:
-  SPACK_OPT: "--show-log-on-error --fail-fast --verbose"
+  SPACK_OPT: "--show-log-on-error --fail-fast"
 jobs:
   run_tests_gcc:
     runs-on: ubuntu-latest
