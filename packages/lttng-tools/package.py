@@ -41,7 +41,8 @@ class LttngTools(AutotoolsPackage):
     depends_on('autoconf', type='build')
     depends_on('automake', type='build')
     depends_on('libtool', type='build')
-    depends_on('libuuid')
+    # https://github.com/spack/spack/commit/e53bc780e4afdbec7263ef06c6266529abac4253
+    depends_on('uuid')
     depends_on('popt@1.13:')
     depends_on('userspace-rcu@0.14.1:', when='@2.14:')
     depends_on('userspace-rcu@0.11.0:', when='@2.11:')

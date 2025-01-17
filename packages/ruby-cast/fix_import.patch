@@ -1,0 +1,20 @@
+From 4de2ca1df7395fe40f4952c5242353902a5a0551 Mon Sep 17 00:00:00 2001
+From: tapplencourt <tapplencourt@anl.gov>
+Date: Wed, 15 Jan 2025 15:41:59 -0600
+Subject: [PATCH] fix import
+
+---
+ lib/cast.rb | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/lib/cast.rb b/lib/cast.rb
+index 577e6d8..b774300 100644
+--- a/lib/cast.rb
++++ b/lib/cast.rb
+@@ -1,3 +1,4 @@
++require "racc/parser"
+ require "cast/cast"
+ require "cast/tempfile"
+ require "cast/preprocessor"
+--
+2.24.3 (Apple Git-128)
