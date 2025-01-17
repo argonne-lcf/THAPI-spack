@@ -40,6 +40,10 @@ jobs:
       run: |
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT thapi@0.0.11 ^ruby
+    - name: Install thapi v0.0.12
+      run: |
+        . external/spack/share/spack/setup-env.sh
+        spack install $SPACK_OPT thapi@0.0.12 ^ruby
     - name: Install thapi master
       run: |
         . external/spack/share/spack/setup-env.sh

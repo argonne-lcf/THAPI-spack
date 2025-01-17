@@ -11,6 +11,7 @@ class Thapi(AutotoolsPackage):
     git      = "https://github.com/argonne-lcf/THAPI.git"
 
     version('master', branch='master', preferred=True)
+    version('0.0.12', tag='v0.0.12')
     version('0.0.11', tag='v0.0.11')
     version('0.0.10', tag='v0.0.10')
     version('0.0.9', tag='v0.0.9')
@@ -42,7 +43,7 @@ class Thapi(AutotoolsPackage):
     depends_on('ruby-cast-to-yaml', type=('build'))
     depends_on('ruby-metababel@0.1.0:0.9', type=('build'), when='@:0.0.10')
     depends_on('ruby-metababel@1.0.0:', type=('build'), when='@0.0.11')
-    depends_on('ruby-metababel@1.1.2:', type=('build'), when='@master')
+    depends_on('ruby-metababel@1.1.2:', type=('build'), when='@0.0.12:')
 
     depends_on('libiberty+pic')
     depends_on('libffi')
