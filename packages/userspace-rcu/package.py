@@ -3,9 +3,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack import *
 
-
+from spack.package import *
 class UserspaceRcu(AutotoolsPackage):
     """liburcu is a LGPLv2.1 userspace RCU (read-copy-update) library. This
     data synchronization library provides read-side access which scales

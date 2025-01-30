@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
+from spack.package import *
 class RubyCastToYaml(RubyPackage):
     """Extract information fom a C ast"""
 

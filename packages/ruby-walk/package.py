@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
+from spack.package import *
 class RubyWalk(RubyPackage):
     """Directory tree traversal tool inspired by python os.walk"""
 

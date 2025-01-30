@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
+from spack.package import *
 class Thapi(AutotoolsPackage):
     """A tracing infrastructure for heterogeneous computing applications."""
 

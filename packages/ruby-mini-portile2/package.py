@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
+from spack.package import *
 class RubyMiniPortile2(RubyPackage):
     """Simplistic port-like solution for developers. It provides a standard and
        simplified way to compile against dependency libraries without messing up
