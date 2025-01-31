@@ -6,6 +6,7 @@
 from spack import *
 
 
+from spack.package import *
 class LttngTools(AutotoolsPackage):
     """Linux Tracing Toolkit next generation tools (LTTng-tools)."""
 

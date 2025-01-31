@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
+from spack.package import *
 class RubyFfi(RubyPackage):
     """Ruby-FFI is a gem for programmatically loading dynamically-linked native
        libraries, binding functions within them, and calling those functions

@@ -3,9 +3,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack import *
-
-
+from spack.package import *
 class Babeltrace(AutotoolsPackage):
     """Babeltrace is a trace viewer and converter reading and writing the
     Common Trace Format (CTF). Its main use is to pretty-print CTF traces
