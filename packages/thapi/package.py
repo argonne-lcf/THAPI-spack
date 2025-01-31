@@ -5,6 +5,8 @@
 
 
 from spack.package import *
+import spack.version
+
 class Thapi(AutotoolsPackage):
     """A tracing infrastructure for heterogeneous computing applications."""
 
@@ -33,7 +35,7 @@ class Thapi(AutotoolsPackage):
     depends_on('lttng-tools@:2.12.999', type=('build', 'link', 'run'), when='@:0.0.7')
 
     # Restricting to ruby <= 3.1 when spack is less than 0.23
-    if spack.version.Version(spack.spack_version) < spack.version.Version("0.23"):
+    if Version(spack.spack_version) < Version("0.23"):
         depends_on('ruby@2.7.0:3.1', type=('build', 'run'))
     else:
         depends_on('ruby@2.7.0:', type=('build', 'run'))
