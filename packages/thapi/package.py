@@ -38,7 +38,7 @@ class Thapi(AutotoolsPackage):
     depends_on('lttng-ust@:2.12.999', type=('build', 'link', 'run'), when='@:0.0.7')
     depends_on('lttng-tools@:2.12.999', type=('build', 'link', 'run'), when='@:0.0.7')
 
-    # Check compilers and versions. Version hecks are mainly for magic_enum:
+    # Check compilers and versions. Version checks are mainly for magic_enum:
     # https://github.com/Neargye/magic_enum?tab=readme-ov-file#compiler-compatibility
     conflicts('%gcc@:8', msg='GCC version >= 9 required.')
     conflicts('%llvm@:4', msg='clang >= 5 required.')
