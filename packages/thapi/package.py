@@ -42,6 +42,7 @@ class Thapi(AutotoolsPackage):
     # https://github.com/Neargye/magic_enum?tab=readme-ov-file#compiler-compatibility
     conflicts('%gcc@:8', msg='GCC version >= 9 required.')
     conflicts('%llvm@:4', msg='clang >= 5 required.')
+    conflicts("%oneapi@:2023", msg="OneAPI >= 2024.0.0 is required.")
     conflicts('%msvc', msg='MSVC is not supported.')
 
     # Restricting to ruby <= 3.1 when spack is less than 0.23
