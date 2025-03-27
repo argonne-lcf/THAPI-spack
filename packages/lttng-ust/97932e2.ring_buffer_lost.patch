@@ -86,10 +86,10 @@ diff --git a/src/common/ringbuffer-clients/template.h b/src/common/ringbuffer-cl
 index fe8f8e0..990b5bf 100644
 --- a/src/common/ringbuffer-clients/template.h
 +++ b/src/common/ringbuffer-clients/template.h
-@@ -418,10 +418,9 @@
+@@ -424,10 +424,9 @@
  		(uint64_t) data_size * CHAR_BIT;		/* in bits */
  	header->ctx.packet_size =
- 		(uint64_t) LTTNG_UST_PAGE_ALIGN(data_size) * CHAR_BIT;	/* in bits */
+ 		(uint64_t) LTTNG_UST_ALIGN(data_size, page_size) * CHAR_BIT;	/* in bits */
 -
 -	records_lost += lib_ring_buffer_get_records_lost_full(&client_config, ctx);
 -	records_lost += lib_ring_buffer_get_records_lost_wrap(&client_config, ctx);
