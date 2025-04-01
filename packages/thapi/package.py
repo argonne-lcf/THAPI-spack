@@ -22,6 +22,8 @@ class Thapi(AutotoolsPackage):
     version('0.0.8', tag='v0.0.8')
     version('0.0.7', tag='v0.0.7')
 
+    depends_on('c', type=('build'))
+    depends_on('cxx', type=('build'))
     depends_on('automake', type=('build'))
     depends_on('autoconf', type=('build'))
     depends_on('libtool', type=('build'))
@@ -31,9 +33,17 @@ class Thapi(AutotoolsPackage):
     depends_on('babeltrace2', type=('build', 'link', 'run'))
     depends_on('protobuf@3.12.4:', type=('build', 'link', 'run'))
     depends_on('lttng-ust', type=('build', 'link', 'run'), when='@0.0.8:')
+    depends_on('lttng-ust@2.12.8:', type=('build', 'link', 'run'), when='@develop')
     depends_on('lttng-tools', type=('build', 'link', 'run'), when='@0.0.8:')
     depends_on('lttng-ust@:2.12.999', type=('build', 'link', 'run'), when='@:0.0.7')
     depends_on('lttng-tools@:2.12.999', type=('build', 'link', 'run'), when='@:0.0.7')
+
+    # Check compilers and versions. Version checks are mainly for magic_enum:
+    # https://github.com/Neargye/magic_enum?tab=readme-ov-file#compiler-compatibility
+    conflicts('%gcc@:8', msg='GCC version >= 9 required.')
+    conflicts('%llvm@:4', msg='clang >= 5 required.')
+    conflicts("%oneapi@:2023", msg="OneAPI >= 2024.0.0 is required.")
+    conflicts('%msvc', msg='MSVC is not supported.')
 
     # Restricting to ruby <= 3.1 when spack is less than 0.23
     if Version(spack.spack_version) < Version("0.23"):
