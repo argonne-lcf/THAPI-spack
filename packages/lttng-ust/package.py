@@ -45,6 +45,10 @@ class LttngUst(AutotoolsPackage):
     depends_on('numactl')
     depends_on('pkg-config')
 
+    def setup_build_environment(self, env: EnvironmentModifications):
+        env.prepend_path("LDFLAGS", "-L" + self.spec["numactl"].prefix.lib)
+        env.prepend_path("CFLAGS", "-I" + self.spec["numactl"].prefix.include)
+
     def configure_args(self):
         args = []
         args.extend(self.enable_or_disable("api-doc"))

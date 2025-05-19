@@ -67,6 +67,11 @@ class Babeltrace2(AutotoolsPackage):
     patch('3079913.patch', when='@:2.0.999')
     patch('0001-ctf-grow-stored_values-array-when-necessary.patch', when='@:2.0.999')
 
+    def setup_build_environment(self, env: EnvironmentModifications):
+        env.prepend_path("LD_LIBRARY_PATH", self.spec["glib"].prefix.lib)
+        env.prepend_path("LDFLAGS", "-L" + self.spec["elfutils"].prefix.lib)
+        env.prepend_path("CFLAGS", "-I" + self.spec["elfutils"].prefix.include)
+
     def configure_args(self):
         args = []
         args.extend(self.enable_or_disable('python-bindings'))
