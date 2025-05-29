@@ -1,4 +1,4 @@
-From 71540e46aef1da5595b817563ee231c6a3aae3df Mon Sep 17 00:00:00 2001
+From b5f4b7b273ce932654ab608ea983ca6756a41141 Mon Sep 17 00:00:00 2001
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Date: Sat, 14 Oct 2023 09:36:58 -0400
 Subject: [PATCH] consumer: Fix discarded events aggregation
@@ -15,12 +15,14 @@ Subject: [PATCH] consumer: Fix discarded events aggregation
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Change-Id: I1a0fca2dcf6e3fe5ec37509838515545b5ee9062
 ---
+ src/common/consumer/consumer-stream.cpp | 46 ++++++++++++++++++-------
+ 1 file changed, 33 insertions(+), 13 deletions(-)
 
 diff --git a/src/common/consumer/consumer-stream.cpp b/src/common/consumer/consumer-stream.cpp
-index 0742c86..2801f1d 100644
+index ed19a2317..f1ea06bfc 100644
 --- a/src/common/consumer/consumer-stream.cpp
 +++ b/src/common/consumer/consumer-stream.cpp
-@@ -77,13 +77,42 @@
+@@ -97,6 +97,36 @@ static void consumer_stream_metadata_assert_locked_all(struct lttng_consumer_str
  	consumer_stream_data_assert_locked_all(stream);
  }
  
@@ -56,15 +58,16 @@ index 0742c86..2801f1d 100644
 +
  /* Only used for data streams. */
  static int consumer_stream_update_stats(struct lttng_consumer_stream *stream,
- 					const struct stream_subbuffer *subbuf)
- {
+ 					struct stream_subbuffer *subbuf_)
+@@ -104,7 +134,6 @@ static int consumer_stream_update_stats(struct lttng_consumer_stream *stream,
  	int ret = 0;
  	uint64_t sequence_number;
+ 	const stream_subbuffer *subbuf = subbuf_;
 -	const uint64_t discarded_events = subbuf->info.data.events_discarded;
  
  	if (!subbuf->info.data.sequence_number.is_set) {
  		/* Command not supported by the tracer. */
-@@ -111,18 +140,9 @@
+@@ -132,18 +161,9 @@ static int consumer_stream_update_stats(struct lttng_consumer_stream *stream,
  		goto end;
  	}
  	stream->last_sequence_number = sequence_number;
@@ -86,3 +89,6 @@ index 0742c86..2801f1d 100644
  	ret = 0;
  
  end:
+-- 
+2.48.1
+
