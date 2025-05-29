@@ -51,7 +51,9 @@ class LttngTools(AutotoolsPackage):
     depends_on('libxml2@2.7.6:')
     depends_on('pkg-config')
 
-    patch('71540e4.ring_buffer_lost.diff', when='@2.14:')
+    # https://review.lttng.org/c/lttng-tools/+/11048?tab=comments
+    # Rebased on master
+    patch('0001-consumer-Fix-discarded-events-aggregation.patch', when='@2.14:')
 
     def configure_args(self):
         args = []
