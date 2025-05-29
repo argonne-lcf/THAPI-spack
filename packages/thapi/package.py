@@ -6,6 +6,7 @@
 
 from spack.package import *
 import spack.version
+import sys
 
 class Thapi(AutotoolsPackage):
     """A tracing infrastructure for heterogeneous computing applications."""
@@ -60,7 +61,10 @@ class Thapi(AutotoolsPackage):
     depends_on('ruby-metababel@1.1.2:', type=('build'), when='@0.0.12:')
 
     depends_on('libiberty+pic')
-    depends_on('libffi')
+    if sys.platform == "darwin":
+        depends_on('libffi@3.4.8:')
+    else:
+        depends_on('libffi')
     depends_on('mpi', when='+mpi')
     # We add a Python dependency at buildtime, because `lttng-gen-tp` needs it.
     # We don't add Python as a runtime dependency of lttng to avoid python propagated as a runtime dependency of thapi
