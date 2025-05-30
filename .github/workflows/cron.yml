@@ -1,0 +1,29 @@
+name: Install Thapi master and develop every week
+on:
+  schedule:
+    # At 00:00 on Sunday.”
+    - cron: "0 0 * * 0"
+jobs:
+  myJob:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Checkout Spack
+      uses: actions/checkout@v4
+      with:
+        repository: spack/spack
+        ref: releases/latest
+        path: external/spack
+    - name: Activate
+      run: |
+        . external/spack/share/spack/setup-env.sh
+        spack repo add ./
+    - name: Install thapi master
+      run: |
+        . external/spack/share/spack/setup-env.sh
+        spack install $SPACK_OPT thapi@master ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby
+    - name: Install thapi develop
+      run: |
+        . external/spack/share/spack/setup-env.sh
+        spack install $SPACK_OPT thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby
