@@ -44,4 +44,4 @@ jobs:
       run: |
         . external/spack/share/spack/setup-env.sh
         spack repo add ./
-    - run: spack install --show-log-on-error --fail-fast {{ matrix.deps }}
+        spack install --show-log-on-error --fail-fast ${{ matrix.deps }}
