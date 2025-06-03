@@ -17,17 +17,7 @@ jobs:
   run_tests_gcc:
     strategy:
       matrix:
-        deps: ["thapi ^ruby",
-               "thapi@0.0.7 ^ruby",
-               "thapi@0.0.8 ^ruby",
-               "thapi@0.0.9 ^ruby",
-               "thapi@0.0.10 ^ruby",
-               "thapi@0.0.11 ^ruby",
-               "thapi@0.0.12 ^ruby",
-               "thapi@master ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby",
-               "thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby",
-               "thapi@develop+clang-parser ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby"
-              ]
+        deps: ["thapi@develop%clang@19+clang-parser"]
     needs: pre_job
     if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
     runs-on: ubuntu-latest
@@ -42,6 +32,10 @@ jobs:
         path: external/spack
     - name: Activate, Add Spack
       run: |
+        sudo apt-get install libllvm-19-ocaml-dev libllvm19 llvm-19 llvm-19-dev llvm-19-doc llvm-19-examples llvm-19-runtime
+        sudo apt-get install clang-19 clang-tools-19 clang-19-doc libclang-common-19-dev libclang-19-dev libclang1-19 python3-clang-19
         . external/spack/share/spack/setup-env.sh
         spack repo add ./
+        spack compiler find
+        spack -d spec ${{ matrix.deps }}
         spack install --show-log-on-error --fail-fast ${{ matrix.deps }}
