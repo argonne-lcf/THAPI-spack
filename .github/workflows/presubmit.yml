@@ -1,16 +1,5 @@
 name: Presubmit
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-  workflow_dispatch:
-    inputs:
-      debug_enabled:
-        type: boolean
-        description: 'Run the build with tmate debugging enabled'
-        required: false
-        default: false
+on: [push, pull_request]
 env:
   SPACK_OPT: "--show-log-on-error --fail-fast"
 jobs:
@@ -35,9 +24,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3.13
-      if: ${{ inputs.debug_enabled }}
     - name: Checkout Spack
       uses: actions/checkout@v4
       with:
@@ -81,6 +67,3 @@ jobs:
       run: |
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby
-    - name: Block to allow inspecting failures
-      run: sleep 30m
-      if: ${{ failure() && inputs.debug_enabled }}
