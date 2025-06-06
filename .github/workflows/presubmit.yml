@@ -39,10 +39,10 @@ jobs:
     - name: Activate, Add Spack
       run: |
         # install llvm+clang
-        sudo apt-get install libllvm16 llvm-16 llvm-16-dev
-        sudo apt-get install libclang-16-dev
+        sudo apt-get install libllvm18 llvm-18 llvm-18-dev
+        sudo apt-get install libclang-18-dev
         # find the prefix where libclang is installed
-        llvm_prefix=`llvm-config-16 --prefix`
+        llvm_prefix=`llvm-config-18 --prefix`
 
         # initialize spack
         . external/spack/share/spack/setup-env.sh
@@ -57,7 +57,7 @@ jobs:
         echo "  llvm:"                      >> ~/.spack/packages.yaml
         echo "    buildable: false"         >> ~/.spack/packages.yaml
         echo "    externals:"               >> ~/.spack/packages.yaml
-        echo "    - spec: llvm@16+clang"    >> ~/.spack/packages.yaml
+        echo "    - spec: llvm@18+clang"    >> ~/.spack/packages.yaml
         echo "      prefix: ${llvm_prefix}" >> ~/.spack/packages.yaml
 
         spack -d spec ${{ matrix.deps }}
