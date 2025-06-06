@@ -17,7 +17,7 @@ jobs:
   run_tests_gcc:
     strategy:
       matrix:
-        deps: ["thapi@develop%clang@19+clang-parser"]
+        deps: ["thapi@develop+clang-parser"]
     needs: pre_job
     if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
     runs-on: ubuntu-latest
@@ -32,10 +32,20 @@ jobs:
         path: external/spack
     - name: Activate, Add Spack
       run: |
-        sudo apt-get install libllvm-19-ocaml-dev libllvm19 llvm-19 llvm-19-dev llvm-19-doc llvm-19-examples llvm-19-runtime
-        sudo apt-get install clang-19 clang-tools-19 clang-19-doc libclang-common-19-dev libclang-19-dev libclang1-19 python3-clang-19
+        sudo apt-get install libllvm16 llvm-16 llvm-16-dev
+        sudo apt-get install libclang-16-dev
+        llvm_prefix=`llvm-config-16 --prefix`
+
         . external/spack/share/spack/setup-env.sh
         spack repo add ./
         spack compiler find
+        spack external find
+
+        echo "  llvm:"                      >> ~/.spack/packages.yaml
+        echo "    buildable: false"         >> ~/.spack/packages.yaml
+        echo "    externals:"               >> ~/.spack/packages.yaml
+        echo "    - spec: llvm@16+clang"    >> ~/.spack/packages.yaml
+        echo "      prefix: ${llvm_prefix}" >> ~/.spack/packages.yaml
+
         spack -d spec ${{ matrix.deps }}
         spack install --show-log-on-error --fail-fast ${{ matrix.deps }}
