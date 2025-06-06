@@ -35,8 +35,6 @@ jobs:
         # install llvm+clang (maybe we can get by only installing libclang-dev)
         sudo apt-get install libllvm16 llvm-16 llvm-16-dev
         sudo apt-get install libclang-16-dev
-        # find the prefix where libclang is installed
-        llvm_prefix=`llvm-config-16 --prefix`
 
         # initialize spack
         . external/spack/share/spack/setup-env.sh
@@ -46,13 +44,6 @@ jobs:
         spack compiler find
         # find all the exernal packages known to spack
         spack external find --all
-
-        # point spack to llvm+clang installed through apt-get
-        echo "  llvm:"                      >> ~/.spack/packages.yaml
-        echo "    buildable: false"         >> ~/.spack/packages.yaml
-        echo "    externals:"               >> ~/.spack/packages.yaml
-        echo "    - spec: llvm@16+clang"    >> ~/.spack/packages.yaml
-        echo "      prefix: ${llvm_prefix}" >> ~/.spack/packages.yaml
 
         spack -d spec ${{ matrix.deps }}
         spack install --show-log-on-error --fail-fast ${{ matrix.deps }}
