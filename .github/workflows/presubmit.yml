@@ -32,8 +32,7 @@ jobs:
         path: external/spack
     - name: Activate, Add Spack
       run: |
-        # install llvm+clang (maybe we can get by only installing libclang-dev)
-        sudo apt-get install libllvm16 llvm-16 llvm-16-dev
+        # install clang (llvm is already present in the runners)
         sudo apt-get install libclang-16-dev
 
         # initialize spack
@@ -42,9 +41,10 @@ jobs:
         spack repo add ./
         # find compilers
         spack compiler find
-        # find all the external packages known to spack except bzip2 and xz.
-        # having bzip2 and xz as external packages causes elfutils build to fail.
-        spack external find --all --exclude=bzip2,xz
+        # find build related external packages known to spack.
+        spack external find
+        # find llvm
+        spack external find llvm
 
         spack -d spec ${{ matrix.deps }}
         spack install --show-log-on-error --fail-fast ${{ matrix.deps }}
