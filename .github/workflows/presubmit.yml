@@ -1,7 +1,5 @@
 name: Presubmit
 on: [push, pull_request]
-env:
-  SPACK_OPT: "--show-log-on-error --fail-fast"
 jobs:
   pre_job:
     runs-on: ubuntu-latest
@@ -17,10 +15,12 @@ jobs:
           do_not_skip: '["pull_request"]'
 
   run_tests_gcc:
+    strategy:
+      matrix:
+        deps: ["thapi@develop+clang-parser"]
     needs: pre_job
     if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
     runs-on: ubuntu-latest
-    name: Test THAPI Spack install
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -30,40 +30,35 @@ jobs:
         repository: spack/spack
         ref: releases/latest
         path: external/spack
-    - name: Activate, add, and install
+    - name: Patch py-libclang spack package
       run: |
+        # patch spack
+        py_libclang_patch=`pwd`/patches/py-libclang.patch
+        cd external/spack
+        git apply $py_libclang_patch
+    - name: Activate, Add Spack
+      run: |
+        # install llvm+clang
+        sudo apt-get install libllvm18 llvm-18 llvm-18-dev
+        sudo apt-get install libclang-18-dev
+        # find the prefix where libclang is installed
+        llvm_prefix=`llvm-config-18 --prefix`
+
+        # initialize spack
         . external/spack/share/spack/setup-env.sh
+        # add thapi
         spack repo add ./
-        spack install $SPACK_OPT thapi ^ruby
-    - name: Install thapi v0.0.7
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@0.0.7 ^ruby
-    - name: Install thapi v0.0.8
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@0.0.8 ^ruby
-    - name: Install thapi v0.0.9
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@0.0.9 ^ruby
-    - name: Install thapi v0.0.10
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@0.0.10 ^ruby
-    - name: Install thapi v0.0.11
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@0.0.11 ^ruby
-    - name: Install thapi v0.0.12
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@0.0.12 ^ruby
-    - name: Install thapi master
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@master ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby
-    - name: Install thapi develop
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby
+        # find compilers
+        spack compiler find
+        # find build related external packages known to spack.
+        spack external find
+
+        # point spack to llvm+clang installed through apt-get
+        echo "  llvm:"                      >> ~/.spack/packages.yaml
+        echo "    buildable: false"         >> ~/.spack/packages.yaml
+        echo "    externals:"               >> ~/.spack/packages.yaml
+        echo "    - spec: llvm@18+clang"    >> ~/.spack/packages.yaml
+        echo "      prefix: ${llvm_prefix}" >> ~/.spack/packages.yaml
+
+        spack -d spec ${{ matrix.deps }}
+        spack install --show-log-on-error --fail-fast ${{ matrix.deps }}
