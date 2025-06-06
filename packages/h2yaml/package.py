@@ -9,12 +9,14 @@ class H2yaml(PythonPackage):
     homepage = "https://github.com/TApplencourt/h2yaml"
     url = "https://github.com/TApplencourt/h2yaml/archive/refs/tags/v0.1.1.tar.gz"
 
+    version("0.1.2", sha256="d5a338da036d35f8fc3faa381a2b41a8f4cc68d7ca5abbf114c2569ca63e47ec")
     version("0.1.1", sha256="7bc695d4aca62baae9708e20351c94154db08a26f7fd31b9b0f2e52bcfd0bf98")
 
     depends_on("python@3.10:", type=("build", "run", "test"))
     depends_on("py-setuptools", type="build")
-    depends_on("py-libclang", type=("run","test"))
-    depends_on("py-pyyaml", type=("run","test"))
+    depends_on("py-libclang", type=("run", "test"))
+    depends_on("llvm+clang", type=("run", "test"))
+    depends_on("py-pyyaml", type=("run", "test"))
     depends_on("py-pytest", type=("test"))
 
     def setup_run_environment(self, env):
