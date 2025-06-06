@@ -42,8 +42,9 @@ jobs:
         spack repo add ./
         # find compilers
         spack compiler find
-        # find all the exernal packages known to spack
-        spack external find --all
+        # find all the external packages known to spack except bzip2.
+        # bzip2 from ci runner causes elfutils build to fail.
+        spack external find --all --exclude bzip2
 
         spack -d spec ${{ matrix.deps }}
         spack install --show-log-on-error --fail-fast ${{ matrix.deps }}
