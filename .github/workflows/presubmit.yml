@@ -30,12 +30,6 @@ jobs:
         repository: spack/spack
         ref: releases/latest
         path: external/spack
-    - name: Patch py-libclang spack package
-      run: |
-        # patch spack
-        py_libclang_patch=`pwd`/patches/py-libclang.patch
-        cd external/spack
-        git apply $py_libclang_patch
     - name: Activate, Add Spack
       run: |
         # install llvm+clang
