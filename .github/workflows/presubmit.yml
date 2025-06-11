@@ -44,15 +44,9 @@ jobs:
         spack repo add ./
         # find compilers
         spack compiler find
-        # find build related external packages known to spack.
-        spack external find
-
-        # point spack to llvm+clang installed through apt-get
-        echo "  llvm:"                      >> ~/.spack/packages.yaml
-        echo "    buildable: false"         >> ~/.spack/packages.yaml
-        echo "    externals:"               >> ~/.spack/packages.yaml
-        echo "    - spec: llvm@18+clang"    >> ~/.spack/packages.yaml
-        echo "      prefix: ${llvm_prefix}" >> ~/.spack/packages.yaml
+        # find external packages known to spack (avoid bzip2 and xz
+        # discovery due to an error).
+        spack external find --all --exclude bzip2 --exclude xz
 
         spack -d spec ${{ matrix.deps }}
         spack install --show-log-on-error --fail-fast ${{ matrix.deps }}
