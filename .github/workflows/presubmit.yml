@@ -35,9 +35,12 @@ jobs:
         . external/spack/share/spack/setup-env.sh
         spack repo add ./
         spack compiler find
-        # find external packages known to spack (avoid bzip2, and xz
-        # discovery due to errors).
+        # find external packages known to spack (excluding bzip2 and xz since they
+        # cause build failures in elfutils).
         spack external find --all --exclude bzip2 --exclude xz
+    - name: Install thapi
+      run: |
+        . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT thapi ^ruby
     - name: Install thapi v0.0.7
       run: |
@@ -90,8 +93,9 @@ jobs:
         . external/spack/share/spack/setup-env.sh
         spack repo add ./
         spack compiler find
-        # find external packages known to spack (avoid bzip2, xz and llvm
-        # discovery due to errors).
+        # find external packages known to spack (avoid bzip2 and xz since they
+        # cause build failures in elfutils, avoid llvm since spack doesn't find
+        # it correctly).
         spack external find --all --exclude bzip2 --exclude xz --exclude llvm
 
         # install llvm+clang
