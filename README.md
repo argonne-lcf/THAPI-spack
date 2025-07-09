@@ -1,29 +1,38 @@
 # THAPI-spack
-This is a spack environment for THAPI.
 
-## How to install THAPI
+This repository provides a [Spack](https://spack.io) environment for installing and managing [THAPI](https://github.com/argonne-lcf/THAPI).
 
-This assumes that you have a valid `spack` in your path
+## How to Install THAPI
 
-```
+> **Note**: This guide assumes `spack` is installed and available in your `PATH`.
+
+⚠️ **Important**: The default branch for Spack is `develop`, which is be unstable. To ensure a reliable installation, use the `releases/latest` branch of Spack.  See the section below on installing Spack.
+
+```bash
+# Clone the THAPI-spack repository and add it as a Spack repo
 git clone https://github.com/argonne-lcf/THAPI-spack
 spack repo add ./THAPI-spack/
+# Install THAPI
 spack install thapi
 ```
 
-Then you can simply load  thapi it via 
-```
+Once installed, you can load THAPI with:
+```bash
 spack load thapi
 ```
 
-### How to install spack
+### How to Install Spack
 
-```
+If you don't have Spack installed yet:
+```bash
 git clone -c feature.manyFiles=true -b releases/latest https://github.com/spack/spack.git
 . spack/share/spack/setup-env.sh
 ```
 
-## Note regarding building THAPI from source
+## Building THAPI from Source.
 
-You can use spack to install THAPI, then use `spack build-env thapi` to get the correct environment required to build THAPI for source. ( `spack build-env thapi bash` will spawn a new bash will all the ENV variables corretcly set) 
-
+You can use Spack to install the required dependencies and set up the environment to build THAPI from source:
+```bash
+spack build-env thapi bash
+```
+This will spawn a new shell with the correct environment variables set for building THAPI manualy.
