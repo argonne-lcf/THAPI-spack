@@ -55,39 +55,39 @@ jobs:
       run: |
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT thapi ^ruby
-    - name: Install thapi v0.0.7
+    - name: Install thapi@0.0.7
       run: |
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT thapi@0.0.7 ^ruby
-    - name: Install thapi v0.0.8
+    - name: Install thapi@0.0.8
       run: |
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT thapi@0.0.8 ^ruby
-    - name: Install thapi v0.0.9
+    - name: Install thapi@0.0.9
       run: |
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT thapi@0.0.9 ^ruby
-    - name: Install thapi v0.0.10
+    - name: Install thapi@0.0.10
       run: |
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT thapi@0.0.10 ^ruby
-    - name: Install thapi v0.0.11
+    - name: Install thapi@0.0.11
       run: |
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT thapi@0.0.11 ^ruby
-    - name: Install thapi v0.0.12
+    - name: Install thapi@0.0.12
       run: |
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT thapi@0.0.12 ^ruby
-    - name: Install thapi master
+    - name: Install thapi@master
       run: |
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT thapi@master ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby
-    - name: Install thapi develop
+    - name: Install thapi@develop
       run: |
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby
-    - name: Install thapi develop +clang-parser
+    - name: Install thapi@develop+clang-parser
       run: |
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT thapi@develop+clang-parser ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby
