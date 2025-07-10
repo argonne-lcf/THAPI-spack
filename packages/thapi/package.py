@@ -62,6 +62,7 @@ class Thapi(AutotoolsPackage):
     depends_on('libiberty+pic')
     depends_on('libffi')
     depends_on('mpi', when='+mpi')
+    depends_on('mpi', when='+sync-daemon-mpi')
     depends_on('h2yaml', when='+clang-parser')
 
     # We add a Python dependency at buildtime, because `lttng-gen-tp` needs it.
@@ -69,13 +70,18 @@ class Thapi(AutotoolsPackage):
     depends_on('python', type=('build'))
 
     variant('strict', default=False, description='Enable -Werror during the build')    
-    variant('mpi', default=False, description='Enable MPI support for the Sync Daemon')
+    variant('mpi', default=False, description='Enable MPI support for the Sync Daemon', when='@:develop')
+    variant('sync-daemon-mpi', default=False, description='Enable MPI support for the Sync Daemon',
+            when='@develop')
     variant('clang-parser', default=False, description='Enable Clang Parser')
 
     patch('0001-Ignore-int-conversions.patch', when='@0.0.8:0.0.11')
     def configure_args(self):
         args = [] 
-        args.extend(self.enable_or_disable('mpi'))
+        if self.spec.version == Version("develop"):
+            args.extend(self.enable_or_disable('sync-daemon-mpi'))
+        else:
+            args.extend(self.enable_or_disable('mpi'))
         args.extend(self.enable_or_disable('strict'))
         args.extend(self.enable_or_disable('clang-parser'))
         return args
