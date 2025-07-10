@@ -15,8 +15,8 @@ class Babeltrace2(AutotoolsPackage):
     maintainers = ['Kerilk']
 
     version('master', branch='master')
-    version('2.1.1',      sha256='1ad8cea3fc31e8d18e869d0c01581318e534f3976a9f3636fdab4423f1113d47')
-    version('2.1.0',      sha256='808426a78efdeb1db71c71dba9ddb39902f7cc2604cee698849bc291d0af377e')
+    version('2.1.1',      sha256='5033ca8c57fdb5b110f44693b543c01bbf8b0cafdf1496930aad4c0e74c4727f')
+    version('2.1.0',      sha256='af182591efe62039e22d02e93a083d7835df21eac8cf84a4c980804f76040e48')
     version('2.0.6',      sha256='a01c7e75e642de0b5b91f32cc706234c99eb556fcd52c9959045dc23a9ec52c9')
     version('2.0.5',      sha256='7b8f9ef2a7ee7c9ec292d4568811cf6926089b25e49cdaab449e2cb724edf2b4')
     version('2.0.4',      sha256='774f116685dab5db9c51577dde43c8c1df482aae6bb78a089b1e9e7c8b489bca')
