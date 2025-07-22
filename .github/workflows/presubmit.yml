@@ -46,25 +46,21 @@ jobs:
       if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
     - name: Setup spack environment
       run: |
+        # install llvm+clang
+        sudo apt-get install libllvm18 llvm-18 llvm-18-dev
+        sudo apt-get install libclang-18-dev
+
         . external/spack/share/spack/setup-env.sh
         spack repo add ./
         spack compiler find
         # find external packages known to spack (avoid bzip2 and xz since they
-        # cause build failures in elfutils, avoid llvm since spack doesn't find
-        # it correctly).
-        spack external find --all --exclude bzip2 --exclude xz --exclude llvm
+        # cause build failures in elfutils).
+        spack external find --all --exclude bzip2 --exclude xz
 
-        # install llvm+clang
-        sudo apt-get install libllvm18 llvm-18 llvm-18-dev
-        sudo apt-get install libclang-18-dev
         # find the prefix where libclang is installed
         llvm_prefix=`llvm-config-18 --prefix`
         # point spack to llvm+clang installed through apt-get
-        echo "  llvm:"                      >> ~/.spack/packages.yaml
-        echo "    buildable: false"         >> ~/.spack/packages.yaml
-        echo "    externals:"               >> ~/.spack/packages.yaml
-        echo "    - spec: llvm@18+clang"    >> ~/.spack/packages.yaml
-        echo "      prefix: ${llvm_prefix}" >> ~/.spack/packages.yaml
+        sed -i "/spec: llvm@18/{n;s|.*|      prefix: ${llvm_prefix}|}" ~/.spack/packages.yaml
     - name: Install thapi
       run: |
         . external/spack/share/spack/setup-env.sh
