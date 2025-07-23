@@ -28,6 +28,7 @@ class LttngTools(AutotoolsPackage):
     variant('man-pages', default=False, description='Build man pages')
 
     depends_on('lttng-ust@master', when='@master')
+    depends_on('lttng-ust@2.14', when='@2.14')
     depends_on('lttng-ust@2.13.8:2.13.999', when='@2.13.13:2.13.999')
     depends_on('lttng-ust@2.13.0:2.13.6', when='@2.13.0:2.13.9')
     depends_on('lttng-ust@2.12.0:2.12.999', when='@2.12')
