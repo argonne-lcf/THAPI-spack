@@ -50,6 +50,9 @@ jobs:
         sudo apt-get install libllvm18 llvm-18 llvm-18-dev
         sudo apt-get install libclang-18-dev
 
+        # install libnuma-dev
+        sudo apt-get install libnuma-dev
+
         . external/spack/share/spack/setup-env.sh
         spack repo add ./
         spack compiler find
