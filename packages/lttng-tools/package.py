@@ -38,7 +38,7 @@ class LttngTools(AutotoolsPackage):
     depends_on('lttng-ust@2.11.0:2.11.999', when='@2.11')
     depends_on('lttng-ust@2.10.0:2.10.999', when='@2.10')
 
-    depends_on('babeltrace2', when='@master')
+    depends_on('babeltrace2', when='@2.14:')
 
     with when("+man-pages"):
         depends_on('asciidoc@8.6.8:', type='build')
