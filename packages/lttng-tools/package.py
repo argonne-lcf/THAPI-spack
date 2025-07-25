@@ -59,6 +59,8 @@ class LttngTools(AutotoolsPackage):
     depends_on('libxml2@2.7.6:')
     depends_on('pkg-config')
 
+    patch('popt_include_fixes.patch', when='@:2.12.999')
+
     def configure_args(self):
         args = []
         args.extend(self.enable_or_disable("man-pages"))
