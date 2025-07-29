@@ -28,6 +28,7 @@ class LttngTools(AutotoolsPackage):
     version('2.10.11', sha256='3cb7341d2802ba154f6863c5c20368f8273173ab7080c3ae1ae7180ac7a6f8c5')
 
     variant('man-pages', default=False, description='Build man pages')
+    variant('tests', default=False, description='Build the tests')
 
     depends_on('lttng-ust@master', when='@master')
     depends_on('lttng-ust@2.14.0:2.14.999', when='@2.14.0:2.14.999')
@@ -42,6 +43,9 @@ class LttngTools(AutotoolsPackage):
     with when("+man-pages"):
         depends_on('asciidoc@8.6.8:', type='build')
         depends_on('xmlto@0.0.25:', type='build')
+
+    with when("+tests"):
+        depends_on('babeltrace2', type='build')
 
     depends_on('autoconf', type='build')
     depends_on('automake', type='build')
@@ -58,4 +62,5 @@ class LttngTools(AutotoolsPackage):
     def configure_args(self):
         args = []
         args.extend(self.enable_or_disable("man-pages"))
+        args.extend(self.enable_or_disable("tests"))
         return args
