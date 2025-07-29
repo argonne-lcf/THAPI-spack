@@ -17,6 +17,7 @@ class LttngTools(AutotoolsPackage):
     maintainers = ['Kerilk']
 
     version('master', branch='master')
+    version('2.14.0', sha256='d8c39c26cec13b7bd82551cd52a22efc358b888e36ebcf9c1b60ef1c3a3c2fd3')
     version('2.13.13', sha256='ff5f4f00b081dac66092afe8e72b7c790670931cf1c1ee0deaa7f80fbc53883e')
     version('2.13.9',  sha256='8d94dc95b608cf70216b01203a3f8242b97a232db2e23421a2f43708da08f337')
     version('2.12.11', sha256='40a394400aa751231116602a0a53f6943237c56f25c53f422b5b4b38361b96b8')
@@ -27,13 +28,14 @@ class LttngTools(AutotoolsPackage):
     variant('man-pages', default=False, description='Build man pages')
 
     depends_on('lttng-ust@master', when='@master')
+    depends_on('lttng-ust@2.14', when='@2.14')
     depends_on('lttng-ust@2.13.8:2.13.999', when='@2.13.13:2.13.999')
     depends_on('lttng-ust@2.13.0:2.13.6', when='@2.13.0:2.13.9')
     depends_on('lttng-ust@2.12.0:2.12.999', when='@2.12')
     depends_on('lttng-ust@2.11.0:2.11.999', when='@2.11')
     depends_on('lttng-ust@2.10.0:2.10.999', when='@2.10')
 
-    depends_on('babeltrace2', when='@master')
+    depends_on('babeltrace2', when='@2.14:')
 
     with when("+man-pages"):
         depends_on('asciidoc@8.6.8:', type='build')
@@ -51,7 +53,17 @@ class LttngTools(AutotoolsPackage):
     depends_on('libxml2@2.7.6:')
     depends_on('pkg-config')
 
+    patch('popt_include_fixes.patch', when='@:2.12.999')
+
     def configure_args(self):
         args = []
         args.extend(self.enable_or_disable("man-pages"))
         return args
+
+    def setup_build_environment(self, env):
+        # Without the following line, configure checks for userspace-rcu headers
+        # fails to find them in some systems.
+        env.prepend_path("CPPFLAGS", "-I" + self.spec["userspace-rcu"].prefix.include)
+        # Without the following line, configure checks for userspace-rcu libraries
+        # fails to find them in some systems.
+        env.prepend_path("LDFLAGS", "-L" + self.spec["userspace-rcu"].prefix.lib)

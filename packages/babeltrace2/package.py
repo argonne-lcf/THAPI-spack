@@ -25,7 +25,9 @@ class Babeltrace2(AutotoolsPackage):
 
     variant('python-bindings', default=False, description='Build the Python bindings')
     variant('python-plugins', default=False, description='Enable the Python plugins support for the library and converter')
-    variant('debug-info', default=True, description='disable the debug info support (default on macOS, Solaris and Windows)')
+    # FIXME: Turning on debug-info=True causes a configure failure due to
+    # autoconf not being able to find libdw.
+    variant('debug-info', default=False, description='disable the debug info support (default on macOS, Solaris and Windows)')
     variant('api-doc', default=False, description='Build HTML API documentation')
     variant('built-in-plugins', default=False, description='Statically-link in-tree plug-ins into the babeltrace2 executable')
     variant('built-in-python-plugin-support', default=False, description='Statically-link Python plugin support into the babeltrace library')
@@ -90,3 +92,8 @@ class Babeltrace2(AutotoolsPackage):
                 env.prepend_path('PYTHONPATH', self.prefix)
 
         return args
+
+    def setup_build_environment(self, env):
+        # Without the following line, conftest checking glib version picks up
+        # system glib instead of the spack installed glib.
+        env.prepend_path("LD_LIBRARY_PATH", self.spec["glib"].prefix.lib)
