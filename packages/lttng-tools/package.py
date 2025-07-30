@@ -17,6 +17,9 @@ class LttngTools(AutotoolsPackage):
     maintainers = ['Kerilk']
 
     version('master', branch='master')
+    version('2.14.0',  sha256='d8c39c26cec13b7bd82551cd52a22efc358b888e36ebcf9c1b60ef1c3a3c2fd3')
+    version('2.13.15', sha256='edfcf924d86054178b286b50e151a440eee9ad79b7e08d7d12c84dc006ca151f')
+    version('2.13.14', sha256='6213d9ed0d24b791c074f39b439ff85670eeaefc483d2b73c19fcf79ec1621d4')
     version('2.13.13', sha256='ff5f4f00b081dac66092afe8e72b7c790670931cf1c1ee0deaa7f80fbc53883e')
     version('2.13.9',  sha256='8d94dc95b608cf70216b01203a3f8242b97a232db2e23421a2f43708da08f337')
     version('2.12.11', sha256='40a394400aa751231116602a0a53f6943237c56f25c53f422b5b4b38361b96b8')
@@ -25,8 +28,10 @@ class LttngTools(AutotoolsPackage):
     version('2.10.11', sha256='3cb7341d2802ba154f6863c5c20368f8273173ab7080c3ae1ae7180ac7a6f8c5')
 
     variant('man-pages', default=False, description='Build man pages')
+    variant('tests', default=False, description='Build the tests')
 
     depends_on('lttng-ust@master', when='@master')
+    depends_on('lttng-ust@2.14.0:2.14.999', when='@2.14.0:2.14.999')
     depends_on('lttng-ust@2.13.8:2.13.999', when='@2.13.13:2.13.999')
     depends_on('lttng-ust@2.13.0:2.13.6', when='@2.13.0:2.13.9')
     depends_on('lttng-ust@2.12.0:2.12.999', when='@2.12')
@@ -38,6 +43,9 @@ class LttngTools(AutotoolsPackage):
     with when("+man-pages"):
         depends_on('asciidoc@8.6.8:', type='build')
         depends_on('xmlto@0.0.25:', type='build')
+
+    with when("+tests"):
+        depends_on('babeltrace2', type='build')
 
     depends_on('autoconf', type='build')
     depends_on('automake', type='build')
@@ -54,4 +62,5 @@ class LttngTools(AutotoolsPackage):
     def configure_args(self):
         args = []
         args.extend(self.enable_or_disable("man-pages"))
+        args.extend(self.enable_or_disable("tests"))
         return args
