@@ -60,6 +60,7 @@ class LttngTools(AutotoolsPackage):
     depends_on('pkg-config')
 
     patch('popt_include_fixes.patch', when='@:2.12.999')
+    patch('disable_tests.patch', when='@:2.12.999')
 
     def configure_args(self):
         args = []
