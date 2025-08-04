@@ -27,6 +27,7 @@ class LttngUst(AutotoolsPackage):
     patch('1f41dc0.diff', when='@2.13.4:2.13.6')
     patch('55cca69.diff', when='@2.13.4:')
 
+    variant('examples', default=False, description='Build examples')
     variant('api-doc', default=False, description='Build HTML API documentation')
     variant('man-pages', default=False, description='Build man pages')
 
@@ -48,6 +49,7 @@ class LttngUst(AutotoolsPackage):
 
     def configure_args(self):
         args = []
+        args.extend(self.enable_or_disable("examples"))
         args.extend(self.enable_or_disable("api-doc"))
         args.extend(self.enable_or_disable("man-pages"))
         return args
