@@ -61,6 +61,7 @@ class LttngTools(AutotoolsPackage):
 
     patch('popt_include_fixes.patch', when='@:2.12.999')
     patch('disable_tests.patch', when='@:2.12.999')
+    force_autoreconf = True
 
     def configure_args(self):
         args = []
