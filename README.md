@@ -29,10 +29,10 @@ git clone -c feature.manyFiles=true -b releases/latest https://github.com/spack/
 . spack/share/spack/setup-env.sh
 ```
 
-## Building THAPI from Source.
+## Building THAPI from Source
 
 You can use Spack to install the required dependencies and set up the environment to build THAPI from source:
 ```bash
 spack build-env thapi bash
 ```
-This will spawn a new shell with the correct environment variables set for building THAPI manualy.
+This will spawn a new shell with the correct environment variables set for building THAPI manually.
