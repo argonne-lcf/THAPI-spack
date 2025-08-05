@@ -6,7 +6,7 @@ This repository provides a [Spack](https://spack.io) environment for installing 
 
 > **Note**: This guide assumes `spack` is installed and available in your `PATH`.
 
-⚠️ **Important**: The default branch for Spack is `develop`, which is unstable. To ensure a reliable installation, use the `v0.23.1` branch of Spack.  See the section below on installing Spack.
+⚠️ **Important**: The default branch for Spack is `develop`, which is unstable. To ensure a reliable installation, use the latest release of Spack.  See the section below on installing Spack.
 
 ```bash
 # Clone the THAPI-spack repository and add it as a Spack repo
@@ -25,7 +25,7 @@ spack load thapi
 
 If you don't have Spack installed yet:
 ```bash
-git clone -c feature.manyFiles=true -b v0.23.1 https://github.com/spack/spack.git
+git clone -c feature.manyFiles=true -b releases/latest https://github.com/spack/spack.git
 . spack/share/spack/setup-env.sh
 ```
 
