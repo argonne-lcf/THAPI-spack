@@ -79,11 +79,3 @@ class LttngTools(AutotoolsPackage):
         args.extend(self.enable_or_disable("tests"))
         args.extend(self.enable_or_disable("bin-lttng-crash"))
         return args
-
-    def setup_build_environment(self, env):
-        # Without the following line, configure checks for userspace-rcu headers
-        # fails to find them in some systems.
-        env.prepend_path("CPPFLAGS", "-I" + self.spec["userspace-rcu"].prefix.include)
-        # Without the following line, configure checks for userspace-rcu libraries
-        # fails to find them in some systems.
-        env.prepend_path("LDFLAGS", "-L" + self.spec["userspace-rcu"].prefix.lib)
