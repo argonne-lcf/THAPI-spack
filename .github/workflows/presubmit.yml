@@ -39,7 +39,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: spack/spack
-        ref: v0.23.1 # TODO use releases/latest
+        ref: releases/latest
         path: external/spack
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
