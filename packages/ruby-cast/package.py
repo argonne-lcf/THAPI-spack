@@ -14,7 +14,7 @@ class RubyCast(RubyPackage):
     homepage = "http://github.com/oggy/cast"
     git = "http://github.com/oggy/cast.git"
 
-    version('0.3.1', tag='v0.3.1', get_full_repo=True)
+    version('0.3.1', tag='v0.3.1', get_full_repo=True, commit='3c9b06093680781242dd72b04065ea62412daee1')
 
     depends_on('ruby@2.3.0:', type=('build', 'run'))
     depends_on('ruby-racc', type=('build', 'run'))

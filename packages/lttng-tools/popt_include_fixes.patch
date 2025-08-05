@@ -1,0 +1,24 @@
+diff --git a/tests/utils/testapp/gen-ns-events/Makefile.am b/tests/utils/testapp/gen-ns-events/Makefile.am
+index adc76ee52..8a766945f 100644
+--- a/tests/utils/testapp/gen-ns-events/Makefile.am
++++ b/tests/utils/testapp/gen-ns-events/Makefile.am
+@@ -5,6 +5,7 @@ AM_CPPFLAGS += -I$(top_srcdir)/tests/utils -I$(srcdir) \
+ 
+ noinst_PROGRAMS = gen-ns-events
+ gen_ns_events_SOURCES = gen-ns-events.c
++gen_ns_events_CPPFLAGS = $(POPT_CFLAGS) $(AM_CPPFLAGS)
+ gen_ns_events_LDADD = \
+ 		$(top_builddir)/tests/utils/libtestutils.la \
+ 		$(DL_LIBS) $(POPT_LIBS)
+diff --git a/tests/utils/testapp/gen-ust-events-ns/Makefile.am b/tests/utils/testapp/gen-ust-events-ns/Makefile.am
+index 35e6d6700..fab8c5803 100644
+--- a/tests/utils/testapp/gen-ust-events-ns/Makefile.am
++++ b/tests/utils/testapp/gen-ust-events-ns/Makefile.am
+@@ -6,6 +6,7 @@ AM_CPPFLAGS += -I$(top_srcdir)/tests/utils -I$(srcdir) \
+ if HAVE_LIBLTTNG_UST_CTL
+ noinst_PROGRAMS = gen-ust-events-ns
+ gen_ust_events_ns_SOURCES = gen-ust-events-ns.c tp.c tp.h
++gen_ust_events_ns_CPPFLAGS = $(POPT_CFLAGS) $(AM_CPPFLAGS)
+ gen_ust_events_ns_LDADD = $(UST_LIBS) -llttng-ust-fork \
+ 		$(top_builddir)/tests/utils/libtestutils.la \
+ 		$(DL_LIBS) $(POPT_LIBS)

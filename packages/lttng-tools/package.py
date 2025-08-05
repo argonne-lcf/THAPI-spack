@@ -28,6 +28,7 @@ class LttngTools(AutotoolsPackage):
     version('2.10.11', sha256='3cb7341d2802ba154f6863c5c20368f8273173ab7080c3ae1ae7180ac7a6f8c5')
 
     variant('man-pages', default=False, description='Build man pages')
+    # FIXME: spack runs into build failures building the lttng-tools tests.
     variant('tests', default=False, description='Build the tests')
 
     depends_on('lttng-ust@master', when='@master')
@@ -38,7 +39,7 @@ class LttngTools(AutotoolsPackage):
     depends_on('lttng-ust@2.11.0:2.11.999', when='@2.11')
     depends_on('lttng-ust@2.10.0:2.10.999', when='@2.10')
 
-    depends_on('babeltrace2', when='@master')
+    depends_on('babeltrace2', when='@2.14:')
 
     with when("+man-pages"):
         depends_on('asciidoc@8.6.8:', type='build')
@@ -59,8 +60,24 @@ class LttngTools(AutotoolsPackage):
     depends_on('libxml2@2.7.6:')
     depends_on('pkg-config')
 
+    patch('popt_include_fixes.patch', when='@:2.12.999')
+    # `--disable-test` is not available on lttng-tools v2.12 and below. Even though we have the
+    # variant on our spack package, it doesn't actually turn off the tests without this patch.
+    patch('disable_tests.patch', when='@:2.12.999')
+    # disable_tests.patch changes configure.ac so we need to regenerate the configure file.
+    # Apparently, spack doesn't generate the configure file if there is one already.
+    force_autoreconf = True
+
     def configure_args(self):
         args = []
         args.extend(self.enable_or_disable("man-pages"))
         args.extend(self.enable_or_disable("tests"))
         return args
+
+    def setup_build_environment(self, env):
+        # Without the following line, configure checks for userspace-rcu headers
+        # fails to find them in some systems.
+        env.prepend_path("CPPFLAGS", "-I" + self.spec["userspace-rcu"].prefix.include)
+        # Without the following line, configure checks for userspace-rcu libraries
+        # fails to find them in some systems.
+        env.prepend_path("LDFLAGS", "-L" + self.spec["userspace-rcu"].prefix.lib)

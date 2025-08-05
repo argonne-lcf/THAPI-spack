@@ -39,7 +39,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: spack/spack
-        ref: v0.23.1 # TODO use releases/latest
+        ref: releases/latest
         path: external/spack
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
@@ -48,25 +48,30 @@ jobs:
       if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
     - name: Setup spack environment
       run: |
+        # install llvm+clang
+        sudo apt-get install libllvm18 llvm-18 llvm-18-dev
+        sudo apt-get install libclang-18-dev
+
+        # install libnuma-dev
+        sudo apt-get install libnuma-dev
+
         . external/spack/share/spack/setup-env.sh
         spack repo add ./
         spack compiler find
         # find external packages known to spack (avoid bzip2 and xz since they
-        # cause build failures in elfutils, avoid llvm since spack doesn't find
-        # it correctly).
-        spack external find --all --exclude bzip2 --exclude xz --exclude llvm
+        # cause build failures in elfutils).
+        spack external find --all --exclude bzip2 --exclude xz
 
-        # install llvm+clang
-        sudo apt-get install libllvm18 llvm-18 llvm-18-dev
-        sudo apt-get install libclang-18-dev
+        # spack v1.0 stores both compilers and external packages in the same packages.yaml
+        # (compared to packages.yaml and compilers.yaml pre v1.0).
+        # So, even if we pass `--exclude llvm` to `spack external find`, packages.yaml will have
+        # an entry for llvm as `spack compiler find` finds it. Therefore, instead of adding a new
+        # llvm entry in packages.yaml, we have to change the existing one.
+
         # find the prefix where libclang is installed
         llvm_prefix=`llvm-config-18 --prefix`
         # point spack to llvm+clang installed through apt-get
-        echo "  llvm:"                      >> ~/.spack/packages.yaml
-        echo "    buildable: false"         >> ~/.spack/packages.yaml
-        echo "    externals:"               >> ~/.spack/packages.yaml
-        echo "    - spec: llvm@18+clang"    >> ~/.spack/packages.yaml
-        echo "      prefix: ${llvm_prefix}" >> ~/.spack/packages.yaml
+        sed -i "/spec: llvm@18/{n;s|.*|      prefix: ${llvm_prefix}|}" ~/.spack/packages.yaml
     - name: Install thapi
       run: |
         . external/spack/share/spack/setup-env.sh
