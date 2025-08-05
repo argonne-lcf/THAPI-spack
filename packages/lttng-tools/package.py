@@ -28,6 +28,7 @@ class LttngTools(AutotoolsPackage):
     version('2.10.11', sha256='3cb7341d2802ba154f6863c5c20368f8273173ab7080c3ae1ae7180ac7a6f8c5')
 
     variant('man-pages', default=False, description='Build man pages')
+    # FIXME: spack runs into build failures building the lttng-tools tests.
     variant('tests', default=False, description='Build the tests')
 
     depends_on('lttng-ust@master', when='@master')
@@ -60,7 +61,11 @@ class LttngTools(AutotoolsPackage):
     depends_on('pkg-config')
 
     patch('popt_include_fixes.patch', when='@:2.12.999')
+    # `--disable-test` is not available on lttng-tools v2.12 and below. Even though we have the
+    # variant on our spack package, it doesn't actually turn off the tests without this patch.
     patch('disable_tests.patch', when='@:2.12.999')
+    # disable_tests.patch changes configure.ac so we need to regenerate the configure file.
+    # Apparently, spack doesn't generate the configure file if there is one already.
     force_autoreconf = True
 
     def configure_args(self):
