@@ -28,6 +28,7 @@ class Thapi(AutotoolsPackage):
     depends_on('autoconf', type=('build'))
     depends_on('libtool', type=('build'))
     depends_on('pkgconfig')
+
     # 4.3+ for grouped target 
     depends_on('gmake@4.3:', type=('build'))
     depends_on('babeltrace2', type=('build', 'link', 'run'))

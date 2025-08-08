@@ -48,9 +48,13 @@ class LttngTools(AutotoolsPackage):
     with when("+tests"):
         depends_on('babeltrace2', type='build')
 
+    depends_on('c', type='build')
+    depends_on('cxx', type='build')
     depends_on('autoconf', type='build')
     depends_on('automake', type='build')
     depends_on('libtool', type='build')
+    depends_on('pkg-config')
+
     # https://github.com/spack/spack/commit/e53bc780e4afdbec7263ef06c6266529abac4253
     depends_on('uuid')
     depends_on('popt@1.13:')
@@ -58,7 +62,6 @@ class LttngTools(AutotoolsPackage):
     depends_on('userspace-rcu@0.11.0:', when='@2.11:')
     depends_on('userspace-rcu@0.9.0:', when='@:2.10.999')
     depends_on('libxml2@2.7.6:')
-    depends_on('pkg-config')
 
     patch('popt_include_fixes.patch', when='@:2.12.999')
     # `--disable-test` is not available on lttng-tools v2.12 and below. Even though we have the

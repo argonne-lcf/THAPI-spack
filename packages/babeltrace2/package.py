@@ -36,6 +36,8 @@ class Babeltrace2(AutotoolsPackage):
     variant('ubsan', default=False, description='Build with UndefinedBehaviorSanitizer', when='@2.1:')
     variant('Werror', default=False, description='Enable -Werror')
 
+    depends_on('c', type='build')
+    depends_on('cxx', type='build')
     depends_on('autoconf', type='build')
     depends_on('automake', type='build')
     depends_on('libtool', type='build')
