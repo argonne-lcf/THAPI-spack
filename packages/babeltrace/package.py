@@ -19,6 +19,7 @@ class Babeltrace(AutotoolsPackage):
 
     depends_on('c', type='build')
     depends_on('cxx', type='build')
+    depends_on('pkg-config')
 
     depends_on('glib@2.22:', type=('build', 'link'))
     depends_on('uuid')
@@ -26,7 +27,6 @@ class Babeltrace(AutotoolsPackage):
     depends_on('elfutils', when='@1.4.0:')
     depends_on('python', when='+python')
     depends_on('swig', when='+python')
-    depends_on('pkg-config')
 
     parallel = False
 
