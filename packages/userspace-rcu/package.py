@@ -35,6 +35,8 @@ class UserspaceRcu(AutotoolsPackage):
     version('0.9.6',  sha256='4d9e4ca40c079e0b0e9f912a9092589b97fbaf80eb6537e9ae70d48c09472efa')
 
     depends_on('m4',       type='build')
+    depends_on('c', type='build')
+    depends_on('cxx', type='build')
     depends_on('autoconf', type='build')
     depends_on('automake', type='build')
     depends_on('libtool',  type='build')
