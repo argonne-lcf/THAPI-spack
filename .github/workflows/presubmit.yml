@@ -11,7 +11,7 @@ on:
         default: false
 
 env:
-  SPACK_OPT: "-p 2 --show-log-on-error --fail-fast"
+  SPACK_OPT: "--concurrent-packages 2 --show-log-on-error --fail-fast"
 
 jobs:
   pre_job:
