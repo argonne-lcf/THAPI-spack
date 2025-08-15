@@ -38,14 +38,17 @@ class LttngUst(AutotoolsPackage):
     with when("+api-doc"):
         depends_on('asciidoc@8.6.8:', type='build')
 
+    depends_on('c', type='build')
+    depends_on('cxx', type='build')
     depends_on('autoconf', type='build')
     depends_on('automake', type='build')
     depends_on('libtool', type='build')
+    depends_on('pkg-config')
+
     depends_on('userspace-rcu@0.14:', when='@2.14:')
     depends_on('userspace-rcu@0.12:', when='@2.13:')
     depends_on('userspace-rcu@0.11:', when='@:2.12.999')
     depends_on('numactl')
-    depends_on('pkg-config')
 
     def configure_args(self):
         args = []
