@@ -27,7 +27,7 @@ jobs:
           paths_ignore: '["**/README.md"]'
           do_not_skip: '["pull_request"]'
 
-  run_tests:
+  thapi:
     needs: pre_job
     if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
     runs-on: ubuntu-latest
@@ -48,10 +48,6 @@ jobs:
       if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
     - name: Setup spack environment
       run: |
-        # install llvm+clang
-        sudo apt-get install libllvm18 llvm-18 llvm-18-dev
-        sudo apt-get install libclang-18-dev
-
         # install libnuma-dev
         sudo apt-get install libnuma-dev
 
@@ -61,54 +57,54 @@ jobs:
         # find external packages known to spack (avoid bzip2 and xz since they
         # cause build failures in elfutils).
         spack external find --all --exclude bzip2 --exclude xz
-
-        # spack v1.0 stores both compilers and external packages in the same packages.yaml
-        # (compared to packages.yaml and compilers.yaml pre v1.0).
-        # So, even if we pass `--exclude llvm` to `spack external find`, packages.yaml will have
-        # an entry for llvm as `spack compiler find` finds it. Therefore, instead of adding a new
-        # llvm entry in packages.yaml, we have to change the existing one.
-
-        # find the prefix where libclang is installed
-        llvm_prefix=`llvm-config-18 --prefix`
-        # point spack to llvm+clang installed through apt-get
-        sed -i "/spec: llvm@18/{n;s|.*|      prefix: ${llvm_prefix}|}" ~/.spack/packages.yaml
     - name: Install thapi
       run: |
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT thapi ^ruby
+    - name: Upload spack repository
+      uses: actions/upload-artifact@v4
+      with:
+        name: spack_repo
+        retention-days: 2
+        path: ${{ github.workspace }}/external
+        if-no-files-found: error
+    - run: cp -r ${HOME}/.spack ${{ github.workspace }}/
+    - name: Upload spack config
+      uses: actions/upload-artifact@v4
+      with:
+        name: spack_config
+        retention-days: 2
+        include-hidden-files: true
+        path: ${{ github.workspace }}/.spack
+        if-no-files-found: error
+
+  thapi_0_0_7:
+    needs: thapi
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      with:
+        detached: true
+      if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+    - name: Setup spack environment
+      run: |
+        # install libnuma-dev
+        sudo apt-get install libnuma-dev
+    - name: Download spack repository
+      uses: actions/download-artifact@v4
+      with:
+        name: spack_repo
+        path: ${{ github.workspace }}/external
+    - name: Download spack config
+      uses: actions/download-artifact@v4
+      with:
+        name: spack_config
+        path: ${{ github.workspace }}/.spack
+    - run: cp -r ${{ github.workspace }}/.spack ${HOME}/
     - name: Install thapi@0.0.7
       run: |
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT thapi@0.0.7 ^ruby
-    - name: Install thapi@0.0.8
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@0.0.8 ^ruby
-    - name: Install thapi@0.0.9
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@0.0.9 ^ruby
-    - name: Install thapi@0.0.10
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@0.0.10 ^ruby
-    - name: Install thapi@0.0.11
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@0.0.11 ^ruby
-    - name: Install thapi@0.0.12
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@0.0.12 ^ruby
-    - name: Install thapi@master
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@master ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby
-    - name: Install thapi@develop
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby
-    - name: Install thapi@develop+clang-parser
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@develop+clang-parser ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby
