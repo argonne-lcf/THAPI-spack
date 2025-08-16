@@ -68,7 +68,7 @@ jobs:
         retention-days: 2
         path: ${{ github.workspace }}/external
         if-no-files-found: error
-    - run: cp -r ${HOME}/.spack ${{ github.workspace }}/
+    - run: mv ${HOME}/.spack ${{ github.workspace }}/
     - name: Upload spack config
       uses: actions/upload-artifact@v4
       with:
@@ -103,7 +103,7 @@ jobs:
       with:
         name: spack_config
         path: ${{ github.workspace }}/.spack
-    - run: cp -r ${{ github.workspace }}/.spack ${HOME}/
+    - run: mv ${{ github.workspace }}/.spack ${HOME}/
     - name: Install thapi@0.0.7
       run: |
         . external/spack/share/spack/setup-env.sh
