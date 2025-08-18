@@ -46,7 +46,7 @@ jobs:
       with:
         detached: true
       if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
-    - name: Setup spack environment
+    - name: Install apt-get packages
       run: |
         # install llvm+clang
         sudo apt-get install libllvm18 llvm-18 llvm-18-dev
@@ -54,7 +54,8 @@ jobs:
 
         # install libnuma-dev
         sudo apt-get install libnuma-dev
-
+    - name: Setup spack environment
+      run: |
         . external/spack/share/spack/setup-env.sh
         spack repo add ./
         spack compiler find
@@ -67,7 +68,7 @@ jobs:
         # So, even if we pass `--exclude llvm` to `spack external find`, packages.yaml will have
         # an entry for llvm as `spack compiler find` finds it. Therefore, instead of adding a new
         # llvm entry in packages.yaml, we have to change the existing one.
-
+        #
         # find the prefix where libclang is installed
         llvm_prefix=`llvm-config-18 --prefix`
         # point spack to llvm+clang installed through apt-get
