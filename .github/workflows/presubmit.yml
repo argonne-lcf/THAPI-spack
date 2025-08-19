@@ -28,7 +28,7 @@ jobs:
           paths_ignore: '["**/README.md"]'
           do_not_skip: '["pull_request"]'
 
-  thapi:
+  thapi_dependencies:
     needs: pre_job
     if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
     runs-on: ubuntu-latest
@@ -65,7 +65,7 @@ jobs:
     - name: Install thapi
       run: |
         . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi ^ruby
+        spack install --only dependencies $SPACK_OPT thapi ^ruby
     - name: Upload thapi build cache
       uses: actions/upload-artifact@v4
       with:
@@ -75,13 +75,13 @@ jobs:
         path: ${{ env.CACHE_DIR }}
         if-no-files-found: error
 
-  thapi_versions:
+  thapi:
     strategy:
       matrix:
-        version: ['0.0.7 ^ruby', '0.0.8 ^ruby', '0.0.9 ^ruby', '0.0.10 ^ruby', '0.0.11 ^ruby', '0.0.12 ^ruby', 'master ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby', 'develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby', 'develop+clang-parser ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby']
-    needs: thapi
+        version: ['thapi ^ruby', 'thapi@0.0.7 ^ruby', 'thapi@0.0.8 ^ruby', 'thapi@0.0.9 ^ruby', 'thapi@0.0.10 ^ruby', 'thapi@0.0.11 ^ruby', 'thapi@0.0.12 ^ruby', 'thapi@master ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby', 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby', 'thapi@develop+clang-parser ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby']
+    needs: thapi_dependencies
     runs-on: ubuntu-latest
-    name: thapi@${{ matrix.version }}
+    name: ${{ matrix.version }}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -117,7 +117,7 @@ jobs:
         # Setup spack build cache:
         spack mirror add --autopush --unsigned thapi_cache ${CACHE_DIR}
     - name: Install clang
-      if: ${{ matrix.version == 'develop+clang-parser ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby' }}
+      if: ${{ matrix.version == 'thapi@develop+clang-parser ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby' }}
       run: |
         # install llvm+clang
         sudo apt-get install libllvm18 llvm-18 llvm-18-dev
@@ -133,7 +133,7 @@ jobs:
         llvm_prefix=`llvm-config-18 --prefix`
         # point spack to llvm+clang installed through apt-get
         sed -i "/spec: llvm@18/{n;s|.*|      prefix: ${llvm_prefix}|}" ~/.spack/packages.yaml
-    - name: Install thapi@${{ matrix.version }}
+    - name: Install ${{ matrix.version }}
       run: |
         . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@${{ matrix.version }}
+        spack install $SPACK_OPT ${{ matrix.version }}
