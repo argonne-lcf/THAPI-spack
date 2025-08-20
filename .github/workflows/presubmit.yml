@@ -141,3 +141,14 @@ jobs:
       run: |
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT ${{ matrix.version }}
+
+  cleanup:
+    needs: thapi
+    runs-on: ubuntu-latest
+    name: Cleanup the build cache
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - uses: geekyeggo/delete-artifact@v5
+      with:
+          name: ${{ env.CACHE_DIR }}
