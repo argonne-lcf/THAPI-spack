@@ -22,8 +22,8 @@ jobs:
     - name: Install thapi master
       run: |
         . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@master ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby
+        spack install $SPACK_OPT thapi@master
     - name: Install thapi develop
       run: |
         . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby
+        spack install $SPACK_OPT thapi@develop
