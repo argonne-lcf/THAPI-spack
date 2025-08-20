@@ -12,9 +12,9 @@ runs:
         detached: true
       if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
     - name: Install apt-get packages
-      run: |
-        # install libnuma-dev
-        sudo apt-get install libnuma-dev
+      uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: libnuma-dev
     - name: Checkout Spack
       uses: actions/checkout@v4
       with:
