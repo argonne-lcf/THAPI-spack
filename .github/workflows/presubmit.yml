@@ -36,34 +36,10 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Checkout Spack
-      uses: actions/checkout@v4
+    - name: Checkout Thapi Deps (spack,...)
+      uses: ./.github/actions/setup-thapi-deps
       with:
-        repository: spack/spack
-        ref: releases/latest
-        path: external/spack
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
-      with:
-        detached: true
-      if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
-    - name: Install apt-get packages
-      run: |
-        # install libnuma-dev
-        sudo apt-get install libnuma-dev
-    - name: Setup spack environment
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack repo add ./
-        spack compiler find
-        # find external packages known to spack (avoid bzip2 and xz since
-        # they cause build failures in elfutils).
-        spack external find --all --exclude bzip2 --exclude xz
-
-        # Setup a spack mirror to store built packages. More info can be
-        # found here:
-        # https://spack.readthedocs.io/en/latest/binary_caches.html
-        spack mirror add --autopush --unsigned thapi_cache ${CACHE_DIR}
+        cache-dir: ${CACHE_DIR}
     - name: Install thapi dependencies
       run: |
         . external/spack/share/spack/setup-env.sh
@@ -86,38 +62,16 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Checkout Spack
-      uses: actions/checkout@v4
-      with:
-        repository: spack/spack
-        ref: releases/latest
-        path: external/spack
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
-      with:
-        detached: true
-      if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
-    - name: Install apt-get packages
-      run: |
-        # install libnuma-dev
-        sudo apt-get install libnuma-dev
     - name: Download thapi build cache
       uses: actions/download-artifact@v4
       with:
         name: thapi_cache
         path: ${{ env.CACHE_DIR }}
-    - name: Setup spack environment
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack repo add ./
-        spack compiler find
-        # find external packages known to spack (avoid bzip2 and xz since
-        # they cause build failures in elfutils).
-        spack external find --all --exclude bzip2 --exclude xz
-
-        # Setup spack build cache:
-        spack mirror add --autopush --unsigned thapi_cache ${CACHE_DIR}
-    - name: Install clang
+    - name: Checkout Thapi Deps (spack,...)
+      uses: ./.github/actions/setup-thapi-deps
+      with:
+        cache-dir: ${CACHE_DIR}
+    - name: Install clang for new parser
       if: ${{ matrix.version == 'thapi@develop+clang-parser ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby' }}
       run: |
         # install llvm+clang
