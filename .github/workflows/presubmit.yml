@@ -55,7 +55,7 @@ jobs:
   install_thapi:
     strategy:
       matrix:
-        version: ['thapi ^ruby', 'thapi@0.0.7 ^ruby', 'thapi@0.0.8 ^ruby', 'thapi@0.0.9 ^ruby', 'thapi@0.0.10 ^ruby', 'thapi@0.0.11 ^ruby', 'thapi@0.0.12 ^ruby', 'thapi@master ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby', 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby', 'thapi@develop+clang-parser ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby']
+        version: ['thapi', 'thapi@0.0.7', 'thapi@0.0.8', 'thapi@0.0.9', 'thapi@0.0.10', 'thapi@0.0.11', 'thapi@0.0.12', 'thapi@master', 'thapi@develop', 'thapi@develop+clang-parser']
     needs: install_thapi_dependencies
     runs-on: ubuntu-latest
     name: Install ${{ matrix.version }}
@@ -72,7 +72,7 @@ jobs:
       with:
         cache-dir: ${{ env.CACHE_DIR }}
     - name: Install clang for new parser
-      if: ${{ matrix.version == 'thapi@develop+clang-parser ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby' }}
+      if: ${{ matrix.version == 'thapi@develop+clang-parser' }}
       run: |
         # install llvm+clang
         sudo apt-get install libllvm18 llvm-18 llvm-18-dev
