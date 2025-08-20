@@ -39,7 +39,7 @@ jobs:
     - name: Checkout Thapi Deps (spack,...)
       uses: ./.github/actions/setup-thapi-deps
       with:
-        cache-dir: ${CACHE_DIR}
+        cache-dir: ${{ env.CACHE_DIR }}
     - name: Install thapi dependencies
       run: |
         . external/spack/share/spack/setup-env.sh
@@ -70,7 +70,7 @@ jobs:
     - name: Checkout Thapi Deps (spack,...)
       uses: ./.github/actions/setup-thapi-deps
       with:
-        cache-dir: ${CACHE_DIR}
+        cache-dir: ${{ env.CACHE_DIR }}
     - name: Install clang for new parser
       if: ${{ matrix.version == 'thapi@develop+clang-parser ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby' }}
       run: |
