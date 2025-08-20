@@ -64,7 +64,7 @@ jobs:
         # found here:
         # https://spack.readthedocs.io/en/latest/binary_caches.html
         spack mirror add --autopush --unsigned thapi_cache ${CACHE_DIR}
-    - name: Install thapi
+    - name: Install thapi dependencies
       run: |
         . external/spack/share/spack/setup-env.sh
         spack install --only dependencies $SPACK_OPT thapi ^ruby
@@ -72,7 +72,6 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: thapi_cache
-        retention-days: 2
         include-hidden-files: true
         path: ${{ env.CACHE_DIR }}
         if-no-files-found: error
