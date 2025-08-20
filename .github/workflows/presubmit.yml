@@ -32,7 +32,7 @@ jobs:
     needs: pre_job
     if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
     runs-on: ubuntu-latest
-    name: thapi
+    name: Install thapi dependencies
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -56,11 +56,13 @@ jobs:
         . external/spack/share/spack/setup-env.sh
         spack repo add ./
         spack compiler find
-        # find external packages known to spack (avoid bzip2 and xz since they
-        # cause build failures in elfutils).
+        # find external packages known to spack (avoid bzip2 and xz since
+        # they cause build failures in elfutils).
         spack external find --all --exclude bzip2 --exclude xz
 
-        # Setup spack build cache:
+        # Setup a spack mirror to store built packages. More info can be
+        # found here:
+        # https://spack.readthedocs.io/en/latest/binary_caches.html
         spack mirror add --autopush --unsigned thapi_cache ${CACHE_DIR}
     - name: Install thapi
       run: |
@@ -81,7 +83,7 @@ jobs:
         version: ['thapi ^ruby', 'thapi@0.0.7 ^ruby', 'thapi@0.0.8 ^ruby', 'thapi@0.0.9 ^ruby', 'thapi@0.0.10 ^ruby', 'thapi@0.0.11 ^ruby', 'thapi@0.0.12 ^ruby', 'thapi@master ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby', 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby', 'thapi@develop+clang-parser ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby']
     needs: thapi_dependencies
     runs-on: ubuntu-latest
-    name: ${{ matrix.version }}
+    name: Install ${{ matrix.version }}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -110,8 +112,8 @@ jobs:
         . external/spack/share/spack/setup-env.sh
         spack repo add ./
         spack compiler find
-        # find external packages known to spack (avoid bzip2 and xz since they
-        # cause build failures in elfutils).
+        # find external packages known to spack (avoid bzip2 and xz since
+        # they cause build failures in elfutils).
         spack external find --all --exclude bzip2 --exclude xz
 
         # Setup spack build cache:
@@ -123,11 +125,13 @@ jobs:
         sudo apt-get install libllvm18 llvm-18 llvm-18-dev
         sudo apt-get install libclang-18-dev
 
-        # spack v1.0 stores both compilers and external packages in the same packages.yaml
-        # (compared to packages.yaml and compilers.yaml pre v1.0).
-        # So, even if we pass `--exclude llvm` to `spack external find`, packages.yaml will have
-        # an entry for llvm as `spack compiler find` finds it. Therefore, instead of adding a new
-        # llvm entry in packages.yaml, we have to change the existing one.
+        # spack v1.0 stores both compilers and external packages in the
+        # same packages.yaml (compared to packages.yaml and compilers.yaml
+        # pre v1.0). So, even if we pass `--exclude llvm` to
+        # `spack external find`, packages.yaml will have an entry for llvm
+        # as `spack compiler find` finds it. Therefore, instead of adding
+        # a new llvm entry in packages.yaml, we have to change the
+        # existing one.
         #
         # find the prefix where libclang is installed
         llvm_prefix=`llvm-config-18 --prefix`
