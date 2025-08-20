@@ -144,6 +144,7 @@ jobs:
 
   cleanup:
     needs: thapi
+    if: always()
     runs-on: ubuntu-latest
     name: Cleanup the build cache
     steps:
