@@ -22,6 +22,7 @@ runs:
         ref: releases/latest
         path: external/spack
     - name: Setup spack environment
+      shell: bash
       run: |
         . external/spack/share/spack/setup-env.sh
         spack repo add ./
