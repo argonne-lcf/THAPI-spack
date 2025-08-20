@@ -152,4 +152,4 @@ jobs:
       uses: actions/checkout@v4
     - uses: geekyeggo/delete-artifact@v5
       with:
-          name: ${{ env.CACHE_DIR }}
+          name: thapi_cache
