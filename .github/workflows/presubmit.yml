@@ -12,7 +12,7 @@ on:
 
 env:
   SPACK_OPT: "--concurrent-packages 2 --show-log-on-error --fail-fast"
-  CACHE_DIR: "${{ github.workspace }}/thapi_cache"
+  CACHE_DIR: "${{ github.workspace }}/thapi_cache_${{ github.run_id }}"
 
 jobs:
   pre_job:
