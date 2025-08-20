@@ -12,6 +12,7 @@ on:
 
 env:
   SPACK_OPT: "--concurrent-packages 2 --show-log-on-error --fail-fast"
+  CACHE_DIR: "${{ github.workspace }}/thapi_cache_${{ github.run_id }}"
 
 jobs:
   pre_job:
@@ -27,88 +28,81 @@ jobs:
           paths_ignore: '["**/README.md"]'
           do_not_skip: '["pull_request"]'
 
-  run_tests:
+  install_thapi_dependencies:
     needs: pre_job
     if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
     runs-on: ubuntu-latest
-    name: Test THAPI Spack install
+    name: Install thapi dependencies
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Checkout Spack
+    - name: Checkout Thapi Deps (spack,...)
+      uses: ./.github/actions/setup-thapi-deps
+      with:
+        cache-dir: ${{ env.CACHE_DIR }}
+    - name: Install thapi dependencies
+      run: |
+        . external/spack/share/spack/setup-env.sh
+        spack install --only dependencies $SPACK_OPT thapi ^ruby
+    - name: Upload thapi build cache
+      uses: actions/upload-artifact@v4
+      with:
+        name: thapi_cache
+        include-hidden-files: true
+        path: ${{ env.CACHE_DIR }}
+        if-no-files-found: error
+
+  install_thapi:
+    strategy:
+      matrix:
+        version: ['thapi ^ruby', 'thapi@0.0.7 ^ruby', 'thapi@0.0.8 ^ruby', 'thapi@0.0.9 ^ruby', 'thapi@0.0.10 ^ruby', 'thapi@0.0.11 ^ruby', 'thapi@0.0.12 ^ruby', 'thapi@master ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby', 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby', 'thapi@develop+clang-parser ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby']
+    needs: install_thapi_dependencies
+    runs-on: ubuntu-latest
+    name: Install ${{ matrix.version }}
+    steps:
+    - name: Checkout
       uses: actions/checkout@v4
+    - name: Download thapi build cache
+      uses: actions/download-artifact@v4
       with:
-        repository: spack/spack
-        ref: releases/latest
-        path: external/spack
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
+        name: thapi_cache
+        path: ${{ env.CACHE_DIR }}
+    - name: Checkout Thapi Deps (spack,...)
+      uses: ./.github/actions/setup-thapi-deps
       with:
-        detached: true
-      if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
-    - name: Setup spack environment
+        cache-dir: ${{ env.CACHE_DIR }}
+    - name: Install clang for new parser
+      if: ${{ matrix.version == 'thapi@develop+clang-parser ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby' }}
       run: |
         # install llvm+clang
         sudo apt-get install libllvm18 llvm-18 llvm-18-dev
         sudo apt-get install libclang-18-dev
 
-        # install libnuma-dev
-        sudo apt-get install libnuma-dev
-
-        . external/spack/share/spack/setup-env.sh
-        spack repo add ./
-        spack compiler find
-        # find external packages known to spack (avoid bzip2 and xz since they
-        # cause build failures in elfutils).
-        spack external find --all --exclude bzip2 --exclude xz
-
-        # spack v1.0 stores both compilers and external packages in the same packages.yaml
-        # (compared to packages.yaml and compilers.yaml pre v1.0).
-        # So, even if we pass `--exclude llvm` to `spack external find`, packages.yaml will have
-        # an entry for llvm as `spack compiler find` finds it. Therefore, instead of adding a new
-        # llvm entry in packages.yaml, we have to change the existing one.
-
+        # spack v1.0 stores both compilers and external packages in the
+        # same packages.yaml (compared to packages.yaml and compilers.yaml
+        # pre v1.0). So, even if we pass `--exclude llvm` to
+        # `spack external find`, packages.yaml will have an entry for llvm
+        # as `spack compiler find` finds it. Therefore, instead of adding
+        # a new llvm entry in packages.yaml, we have to change the
+        # existing one.
+        #
         # find the prefix where libclang is installed
         llvm_prefix=`llvm-config-18 --prefix`
         # point spack to llvm+clang installed through apt-get
         sed -i "/spec: llvm@18/{n;s|.*|      prefix: ${llvm_prefix}|}" ~/.spack/packages.yaml
-    - name: Install thapi
+    - name: Install ${{ matrix.version }}
       run: |
         . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi ^ruby
-    - name: Install thapi@0.0.7
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@0.0.7 ^ruby
-    - name: Install thapi@0.0.8
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@0.0.8 ^ruby
-    - name: Install thapi@0.0.9
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@0.0.9 ^ruby
-    - name: Install thapi@0.0.10
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@0.0.10 ^ruby
-    - name: Install thapi@0.0.11
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@0.0.11 ^ruby
-    - name: Install thapi@0.0.12
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@0.0.12 ^ruby
-    - name: Install thapi@master
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@master ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby
-    - name: Install thapi@develop
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby
-    - name: Install thapi@develop+clang-parser
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@develop+clang-parser ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master ^ruby
+        spack install $SPACK_OPT ${{ matrix.version }}
+
+  cleanup:
+    needs: install_thapi
+    if: always()
+    runs-on: ubuntu-latest
+    name: Cleanup the build cache
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - uses: geekyeggo/delete-artifact@v5
+      with:
+          name: thapi_cache
