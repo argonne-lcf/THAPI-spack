@@ -34,13 +34,15 @@ class Thapi(AutotoolsPackage):
     depends_on('protobuf@3.12.4:', type=('build', 'link', 'run'))
     depends_on('babeltrace2', type=('build', 'link', 'run'))
     depends_on('babeltrace2@master', type=('build', 'link', 'run'), when='@master')
+    depends_on('babeltrace2@master', type=('build', 'link', 'run'), when='@develop')
     depends_on('lttng-ust', type=('build', 'link', 'run'), when='@0.0.8:')
     depends_on('lttng-ust@:2.12.999', type=('build', 'link', 'run'), when='@:0.0.7')
     depends_on('lttng-ust@master:', type=('build', 'link', 'run'), when='@master')
-    depends_on('lttng-ust@2.12.8:', type=('build', 'link', 'run'), when='@develop')
+    depends_on('lttng-ust@master:', type=('build', 'link', 'run'), when='@develop')
     depends_on('lttng-tools', type=('build', 'link', 'run'), when='@0.0.8:')
     depends_on('lttng-tools@:2.12.999', type=('build', 'link', 'run'), when='@:0.0.7')
     depends_on('lttng-tools@master', type=('build', 'link', 'run'), when='@master')
+    depends_on('lttng-tools@master', type=('build', 'link', 'run'), when='@develop')
 
     # Check compilers and versions. Version checks are mainly for magic_enum:
     # https://github.com/Neargye/magic_enum?tab=readme-ov-file#compiler-compatibility
