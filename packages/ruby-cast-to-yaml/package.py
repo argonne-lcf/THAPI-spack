@@ -5,6 +5,8 @@
 
 
 from spack.package import *
+
+
 class RubyCastToYaml(RubyPackage):
     """Extract information fom a C ast"""
 

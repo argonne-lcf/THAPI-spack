@@ -5,6 +5,8 @@
 
 
 from spack.package import *
+
+
 class RubyWalk(RubyPackage):
     """Directory tree traversal tool inspired by python os.walk"""
 

@@ -5,6 +5,8 @@
 
 
 from spack.package import *
+
+
 class RubyNarrayFfi(RubyPackage):
     """Ruby narray ffi interface"""
 

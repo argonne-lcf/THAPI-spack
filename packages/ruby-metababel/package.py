@@ -5,6 +5,8 @@
 
 
 from spack.package import *
+
+
 class RubyMetababel(RubyPackage):
     """YAML to Babeltrace 2 Component compiler-compiler"""
 

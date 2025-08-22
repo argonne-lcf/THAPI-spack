@@ -5,6 +5,8 @@
 
 
 from spack.package import *
+
+
 class LttngUst(AutotoolsPackage):
     """Linux Tracing Toolkit next generation user space tracer (LTTng-UST)."""
 

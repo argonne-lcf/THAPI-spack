@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack.package import *
+
+
 class Babeltrace2(AutotoolsPackage):
     """Babeltrace /ˈbæbəltreɪs/, an EfficiOS project, is an open-source
     trace manipulation toolkit."""

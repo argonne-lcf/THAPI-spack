@@ -5,6 +5,8 @@
 
 
 from spack.package import *
+
+
 class RubyNokogiri(RubyPackage):
     """Nokogiri (鋸) makes it easy and painless to work with XML and HTML from
        Ruby. It provides a sensible, easy-to-understand API for reading,

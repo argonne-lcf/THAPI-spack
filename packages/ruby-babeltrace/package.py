@@ -5,6 +5,8 @@
 
 
 from spack.package import *
+
+
 class RubyBabeltrace(RubyPackage):
     """Ruby libbabeltrace ffi bindings"""
 

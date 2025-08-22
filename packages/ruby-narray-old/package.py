@@ -5,6 +5,7 @@
 
 from spack.package import *
 
+
 class RubyNarrayOld(RubyPackage):
     """Numerical N-dimensional Array class"""
 
