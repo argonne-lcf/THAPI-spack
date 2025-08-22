@@ -23,6 +23,12 @@ class Thapi(AutotoolsPackage):
     version("0.0.8", tag="v0.0.8")
     version("0.0.7", tag="v0.0.7")
 
+    variant("strict", default=False, description="Enable -Werror during the build")
+    variant("mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@:develop")
+    variant("sync-daemon-mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@develop")
+    variant("clang-parser", default=False, description="Enable Clang Parser")
+    variant("archive", default=False, description='Enable archive mode of THAPI', when='@develop')
+
     depends_on("c", type=("build"))
     depends_on("cxx", type=("build"))
     depends_on("automake", type=("build"))
@@ -73,13 +79,9 @@ class Thapi(AutotoolsPackage):
     depends_on("h2yaml", when="+clang-parser")
 
     # We add a Python dependency at buildtime, because `lttng-gen-tp` needs it.
-    # We don't add Python as a runtime dependency of lttng to avoid python propagated as a runtime dependency of thapi
+    # We don't add Python as a runtime dependency of lttng to avoid python
+    # propagated as a runtime dependency of thapi
     depends_on("python", type=("build"))
-
-    variant("strict", default=False, description="Enable -Werror during the build")
-    variant("mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@:develop")
-    variant("sync-daemon-mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@develop")
-    variant("clang-parser", default=False, description="Enable Clang Parser")
 
     patch("0001-Ignore-int-conversions.patch", when="@0.0.8:0.0.11")
 
