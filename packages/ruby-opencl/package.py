@@ -5,6 +5,8 @@
 
 
 from spack.package import *
+
+
 class RubyOpencl(RubyPackage):
     """Ruby OpenCL FFI bindings. OpenCL 3.0 ready"""
 

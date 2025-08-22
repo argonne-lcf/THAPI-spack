@@ -4,8 +4,9 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
-from spack.package import *
 import spack.version
+from spack.package import *
+
 
 class RubyCast(RubyPackage):
     """C parser and AST constructor."""
