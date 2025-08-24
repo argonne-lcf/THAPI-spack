@@ -1,0 +1,17 @@
+[tool.ruff]
+preview = true
+
+[tool.ruff.lint]
+# FIXME
+extend-ignore = [
+  "F403",
+  "F405", # may be undefined, or defined from star imports
+]
+
+[tool.ruff.lint.flake8-quotes]
+docstring-quotes = "double"
+inline-quotes = "double"
+multiline-quotes = "double"
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
