@@ -16,6 +16,7 @@ class PyLibclang(PythonPackage):
 
     license("Apache-2.0")
 
+    # fmt: off
     version("18.1.1", sha256="829f1afbf6a704da2130f541279e58d719eb9b67713a0641eb723a2970de1b66")
     version("17.0.6", sha256="dfdc19199ba3ed2169e7f9849bd1472d61fc1fdb8af699e3d083c27e53d394c3")
     version("16.0.6", sha256="626bc239e7568354c8bc5137541732ae81c4e65221b27d9021b9f13306a7a1b2")
@@ -29,6 +30,7 @@ class PyLibclang(PythonPackage):
     version("11.0.0", sha256="aec204414ea412e4d4e041b0bf48123881338ac723bbcfa948f2a1b92a2428b5")
     version("10.0.1", sha256="c15d8f97c4d0f3d4501e8b2625b343569fd92690afebe6260a2c64463d713995")
     version("9.0.1", sha256="fc84e7bf3b0eb4f11c496d6603f111e3d8cda97094d6c9c512361371f1b76f1c")
+    # fmt: on
 
     depends_on("python@2.7:2.8,3.3:", type=("build", "run"))
     depends_on("py-setuptools", type="build")

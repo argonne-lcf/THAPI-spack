@@ -13,7 +13,9 @@ class RubyRitual(RubyPackage):
     homepage = "https://github.com/oggy/ritual"
     url      = "https://rubygems.org/downloads/ritual-0.5.1.gem"
 
+    # fmt: off
     version('0.5.1', sha256='9c1a574b23a98c0139fa87d1c30ea85094e14fe194d11bfa975e58248788770b', expand=False)
+    # fmt: on
 
     depends_on('ruby@2.3.0:', type=('build', 'run'))
     depends_on('ruby-thor', type=('build', 'run'))

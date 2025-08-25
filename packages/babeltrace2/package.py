@@ -16,6 +16,7 @@ class Babeltrace2(AutotoolsPackage):
 
     maintainers = ['Kerilk']
 
+    # fmt: off 
     version('master', branch='master')
     version('2.1.1',      sha256='5033ca8c57fdb5b110f44693b543c01bbf8b0cafdf1496930aad4c0e74c4727f')
     version('2.1.0',      sha256='af182591efe62039e22d02e93a083d7835df21eac8cf84a4c980804f76040e48')
@@ -24,6 +25,7 @@ class Babeltrace2(AutotoolsPackage):
     version('2.0.4',      sha256='774f116685dab5db9c51577dde43c8c1df482aae6bb78a089b1e9e7c8b489bca')
     version('2.0.3',      sha256='a53625152554102d868ba8395347d0daba0bec9c4b854c3e9bd97c77b0bf04a0')
     version('2.0.2',      sha256='30c684e8b948fb79b12ee6861957dc3b99f2aba33a11cfb7fbe598e8a4aae24a')
+    # fmt: on
 
     variant('python-bindings', default=False, description='Build the Python bindings')
     variant('python-plugins', default=False, description='Enable the Python plugins support for the library and converter')

@@ -15,6 +15,7 @@ class RubyMetababel(RubyPackage):
     list_url = "https://rubygems.org/gems/metababel/versions"
     list_depth = 1
 
+    # fmt: off
     version('1.1.2', sha256='b41ef5d18bf10b2cd9726260e9409c4eef8922f3ed9de03fdfa8e7a1416395b9', expand=False)
     version('1.1.1', sha256='9f6a20b0a11c884935e074a3949d8a66eb0a585ff19603120441fc6cad73a0ea', expand=False)
     version('1.1.0', sha256='43a0fcfece2de92b589bdffb19e7346e7c6e7076aa703b5dcc97daf0fb1b06b7', expand=False)
@@ -28,5 +29,7 @@ class RubyMetababel(RubyPackage):
     version('0.0.2', sha256='920d2157e8b5586455c211b88470441ac9a361fe84481abe184732e299a3c701', expand=False)
     version('0.0.1', sha256='3d7a515faea00d4e8b7fc6b01c57b6d8ef6b5135dfd7361f5717a19bc12e6475', expand=False)
     version('0.0.0', sha256='9af39e0af353d9ff9c74f301b0a8fea409b784ded622a9e30d387b1cb233d50a', expand=False)
+    # fmt: on
+
 
     depends_on('ruby@2.7.0:', type=('build', 'run'))

@@ -16,6 +16,7 @@ class LttngUst(AutotoolsPackage):
 
     maintainers = ['Kerilk']
 
+    # fmt: off
     version('master', branch='master')
     version("2.14.0", sha256="82cdfd304bbb2b2b7d17cc951a6756b37a9f73868ec0ba7db448a0d5ca51b763")
     version("2.13.9", sha256="c56418f49f12dab9c0333c4cacf2511bbd8bf28fb5604ce7439a816cde18f132")
@@ -25,6 +26,7 @@ class LttngUst(AutotoolsPackage):
     version('2.12.0', sha256='1983edb525f3f27e3494088d8d5389b4c71af66bbfe63c6f1df2ad95aa44a528')
     version('2.11.2', sha256='6b481cec7fe748503c827319e3356137bceef4cce8adecbda3a94c6effcdd161')
     version('2.10.7', sha256='a9c651eea8a33f50c07a6e69e3e4094e4897340c97eb0166e6dde0e80668742b')
+    # fmt: on
 
     patch('1f41dc0.diff', when='@2.13.4:2.13.6')
     patch('55cca69.diff', when='@2.13.4:')

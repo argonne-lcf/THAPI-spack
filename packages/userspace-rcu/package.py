@@ -15,6 +15,7 @@ class UserspaceRcu(AutotoolsPackage):
     homepage = "https://liburcu.org/"
     url      = "https://github.com/urcu/userspace-rcu/archive/v0.11.1.tar.gz"
 
+    # fmt: off
     version('0.15.3', sha256='b9b3516b4a403e96fe6be471a52df672dfd89249b8b27b19bc9ef4cc7cb40275')
     version('0.14.1', sha256='d8f883c774e1be4fecb216e0ed594fb595ecb04a15720db876ae29a41e198437')
     version('0.14.0', sha256='42fb5129a3fffe5a4b790dfe1ea3a734c69ee095fefbf649326269bba94c262d')
@@ -35,6 +36,7 @@ class UserspaceRcu(AutotoolsPackage):
     version('0.11.0', sha256='7834e4692565b491b9d2d258095d6c05089c9bae8a1bef280c338d15ba02e9ac')
     version('0.10.2', sha256='e117c416fced894e24720cc1b38247074a13020f19d6704b38e554cbcb993d06')
     version('0.9.6',  sha256='4d9e4ca40c079e0b0e9f912a9092589b97fbaf80eb6537e9ae70d48c09472efa')
+    # fmt: on
 
     depends_on('c', type='build')
     depends_on('cxx', type='build')

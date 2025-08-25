@@ -13,7 +13,9 @@ class RubyBabeltrace(RubyPackage):
     homepage = "https://github.com/argonne-lcf/babeltrace-ruby"
     url      = "https://rubygems.org/downloads/babeltrace-0.1.3.gem"
 
+    # fmt: off
     version('0.1.3', sha256='bce6133637c18d503efb6b88ebffcbbdef8561310366b5c5d32751f6ae4b055c', expand=False)
+    # fmt: on
 
     depends_on('ruby@2.3.0:', type=('build', 'run'))
     depends_on('ruby-walk', type=('build', 'run'))

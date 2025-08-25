@@ -14,6 +14,7 @@ class Thapi(AutotoolsPackage):
     homepage = "https://github.com/argonne-lcf/THAPI"
     git      = "https://github.com/argonne-lcf/THAPI.git"
 
+    # fmt: off
     version('master', branch='master', preferred=True)
     version('develop', branch='devel')
     version('0.0.12', tag='v0.0.12')
@@ -22,6 +23,7 @@ class Thapi(AutotoolsPackage):
     version('0.0.9', tag='v0.0.9')
     version('0.0.8', tag='v0.0.8')
     version('0.0.7', tag='v0.0.7')
+    # fmt: on
 
     depends_on('c', type=('build'))
     depends_on('cxx', type=('build'))

@@ -15,6 +15,8 @@ class RubyFfi(RubyPackage):
     homepage = "https://github.com/ffi/ffi/wiki"
     url      = "https://rubygems.org/downloads/ffi-1.15.4.gem"
 
+    # fmt: off
     version('1.15.4', sha256='56cfca5261ead48688241236adfefb07a000a6d17184d7a4eed48d55b9675d6b', expand=False)
+    # fmt: on
 
     depends_on('ruby@2.3.0:', type=('build', 'run'))
