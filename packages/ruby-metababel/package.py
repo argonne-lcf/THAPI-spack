@@ -11,7 +11,7 @@ class RubyMetababel(RubyPackage):
     """YAML to Babeltrace 2 Component compiler-compiler"""
 
     homepage = "https://github.com/TApplencourt/metababel"
-    url      = "https://rubygems.org/downloads/metababel-0.0.0.gem"
+    url = "https://rubygems.org/downloads/metababel-0.0.0.gem"
     list_url = "https://rubygems.org/gems/metababel/versions"
     list_depth = 1
 
@@ -31,5 +31,4 @@ class RubyMetababel(RubyPackage):
     version('0.0.0', sha256='9af39e0af353d9ff9c74f301b0a8fea409b784ded622a9e30d387b1cb233d50a', expand=False)
     # fmt: on
 
-
-    depends_on('ruby@2.7.0:', type=('build', 'run'))
+    depends_on("ruby@2.7.0:", type=("build", "run"))

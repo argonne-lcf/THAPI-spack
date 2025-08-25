@@ -13,7 +13,7 @@ class UserspaceRcu(AutotoolsPackage):
     linearly with the number of cores."""
 
     homepage = "https://liburcu.org/"
-    url      = "https://github.com/urcu/userspace-rcu/archive/v0.11.1.tar.gz"
+    url = "https://github.com/urcu/userspace-rcu/archive/v0.11.1.tar.gz"
 
     # fmt: off
     version('0.15.3', sha256='b9b3516b4a403e96fe6be471a52df672dfd89249b8b27b19bc9ef4cc7cb40275')
@@ -38,22 +38,25 @@ class UserspaceRcu(AutotoolsPackage):
     version('0.9.6',  sha256='4d9e4ca40c079e0b0e9f912a9092589b97fbaf80eb6537e9ae70d48c09472efa')
     # fmt: on
 
-    depends_on('c', type='build')
-    depends_on('cxx', type='build')
-    depends_on('autoconf', type='build')
-    depends_on('automake', type='build')
-    depends_on('libtool',  type='build')
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("autoconf", type="build")
+    depends_on("automake", type="build")
+    depends_on("libtool", type="build")
 
-    patch('examples.patch', sha256='49aa8fa99d3a1315c639d2a90014079c34a7d0a6dde110b6cbb7b02f87324742')
     patch(
-        '0001-fix-add-lurcu-common-to-pkg-config-libs-for-each-fla.patch',
-        when='@0.11.0:0.11.2',
+        "examples.patch",
+        sha256="49aa8fa99d3a1315c639d2a90014079c34a7d0a6dde110b6cbb7b02f87324742",
     )
     patch(
-        '0001-fix-add-lurcu-common-to-pkg-config-libs-for-each-fla.patch',
-        when='@0.12.0:0.12.1',
+        "0001-fix-add-lurcu-common-to-pkg-config-libs-for-each-fla.patch",
+        when="@0.11.0:0.11.2",
+    )
+    patch(
+        "0001-fix-add-lurcu-common-to-pkg-config-libs-for-each-fla.patch",
+        when="@0.12.0:0.12.1",
     )
 
     def autoreconf(self, spec, prefix):
-        bash = which('bash')
-        bash('./bootstrap')
+        bash = which("bash")
+        bash("./bootstrap")

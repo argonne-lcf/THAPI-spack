@@ -11,10 +11,10 @@ class LttngUst(AutotoolsPackage):
     """Linux Tracing Toolkit next generation user space tracer (LTTng-UST)."""
 
     homepage = "https://lttng.org"
-    url      = "https://lttng.org/files/lttng-ust/lttng-ust-2.12.0.tar.bz2"
-    git      = "https://github.com/lttng/lttng-ust.git"
+    url = "https://lttng.org/files/lttng-ust/lttng-ust-2.12.0.tar.bz2"
+    git = "https://github.com/lttng/lttng-ust.git"
 
-    maintainers = ['Kerilk']
+    maintainers = ["Kerilk"]
 
     # fmt: off
     version('master', branch='master')
@@ -28,31 +28,31 @@ class LttngUst(AutotoolsPackage):
     version('2.10.7', sha256='a9c651eea8a33f50c07a6e69e3e4094e4897340c97eb0166e6dde0e80668742b')
     # fmt: on
 
-    patch('1f41dc0.diff', when='@2.13.4:2.13.6')
-    patch('55cca69.diff', when='@2.13.4:')
+    patch("1f41dc0.diff", when="@2.13.4:2.13.6")
+    patch("55cca69.diff", when="@2.13.4:")
 
-    variant('examples', default=False, description='Build examples')
-    variant('api-doc', default=False, description='Build HTML API documentation')
-    variant('man-pages', default=False, description='Build man pages')
+    variant("examples", default=False, description="Build examples")
+    variant("api-doc", default=False, description="Build HTML API documentation")
+    variant("man-pages", default=False, description="Build man pages")
 
     with when("+man-pages"):
-        depends_on('asciidoc@8.6.8:', type='build')
-        depends_on('xmlto@0.0.25:', type='build')
+        depends_on("asciidoc@8.6.8:", type="build")
+        depends_on("xmlto@0.0.25:", type="build")
 
     with when("+api-doc"):
-        depends_on('asciidoc@8.6.8:', type='build')
+        depends_on("asciidoc@8.6.8:", type="build")
 
-    depends_on('c', type='build')
-    depends_on('cxx', type='build')
-    depends_on('autoconf', type='build')
-    depends_on('automake', type='build')
-    depends_on('libtool', type='build')
-    depends_on('pkg-config')
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("autoconf", type="build")
+    depends_on("automake", type="build")
+    depends_on("libtool", type="build")
+    depends_on("pkg-config")
 
-    depends_on('userspace-rcu@0.14:', when='@2.14:')
-    depends_on('userspace-rcu@0.12:', when='@2.13:')
-    depends_on('userspace-rcu@0.11:', when='@:2.12.999')
-    depends_on('numactl')
+    depends_on("userspace-rcu@0.14:", when="@2.14:")
+    depends_on("userspace-rcu@0.12:", when="@2.13:")
+    depends_on("userspace-rcu@0.11:", when="@:2.12.999")
+    depends_on("numactl")
 
     def configure_args(self):
         args = []

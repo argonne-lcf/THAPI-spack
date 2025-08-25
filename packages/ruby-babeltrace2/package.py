@@ -11,7 +11,7 @@ class RubyBabeltrace2(RubyPackage):
     """Ruby libbabeltrace2 ffi bindings"""
 
     homepage = "https://github.com/argonne-lcf/babeltrace2-ruby"
-    url      = "https://rubygems.org/downloads/babeltrace2-0.1.1.gem"
+    url = "https://rubygems.org/downloads/babeltrace2-0.1.1.gem"
 
     # fmt: off
     version('0.1.5', sha256='9b8f7d14ad333be568cf4be1a52573af77f3047200c11f1c05d85b85ffd86a6d', expand=False)
@@ -21,14 +21,14 @@ class RubyBabeltrace2(RubyPackage):
     version('0.1.1', sha256='2a5c35a72ded62240230dd5b31eb7f2e6cdeabc5b29685a0b636c73c17a6c30c', expand=False)
     # fmt: on
 
-    depends_on('ruby@2.3.0:', type=('build', 'run'))
-    depends_on('ruby-ffi', type=('build', 'run'))
-    depends_on('babeltrace2@2.0.4:', type=('run'))
+    depends_on("ruby@2.3.0:", type=("build", "run"))
+    depends_on("ruby-ffi", type=("build", "run"))
+    depends_on("babeltrace2@2.0.4:", type=("run"))
 
     def setup_run_environment(self, env):
         super().setup_run_environment(env)
-        env.prepend_path('LD_LIBRARY_PATH', self.spec['babeltrace2'].prefix.lib)
+        env.prepend_path("LD_LIBRARY_PATH", self.spec["babeltrace2"].prefix.lib)
 
     def setup_dependent_build_environment(self, env, dependent_spec):
         super().setup_dependent_build_environment(env, dependent_spec)
-        env.prepend_path('LD_LIBRARY_PATH', self.spec['babeltrace2'].prefix.lib)
+        env.prepend_path("LD_LIBRARY_PATH", self.spec["babeltrace2"].prefix.lib)

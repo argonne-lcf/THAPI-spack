@@ -11,10 +11,10 @@ class LttngTools(AutotoolsPackage):
     """Linux Tracing Toolkit next generation tools (LTTng-tools)."""
 
     homepage = "https://lttng.org"
-    url      = "https://lttng.org/files/lttng-tools/lttng-tools-2.12.0.tar.bz2"
-    git      = "https://github.com/lttng/lttng-tools.git"
+    url = "https://lttng.org/files/lttng-tools/lttng-tools-2.12.0.tar.bz2"
+    git = "https://github.com/lttng/lttng-tools.git"
 
-    maintainers = ['Kerilk']
+    maintainers = ["Kerilk"]
 
     # fmt: off
     version('master', branch='master')
@@ -29,46 +29,46 @@ class LttngTools(AutotoolsPackage):
     version('2.10.11', sha256='3cb7341d2802ba154f6863c5c20368f8273173ab7080c3ae1ae7180ac7a6f8c5')
     # fmt: on
 
-    variant('man-pages', default=False, description='Build man pages')
+    variant("man-pages", default=False, description="Build man pages")
     # FIXME: spack runs into build failures building the lttng-tools tests.
-    variant('tests', default=False, description='Build the tests')
+    variant("tests", default=False, description="Build the tests")
 
-    depends_on('lttng-ust@master', when='@master')
-    depends_on('lttng-ust@2.14.0:2.14.999', when='@2.14.0:2.14.999')
-    depends_on('lttng-ust@2.13.8:2.13.999', when='@2.13.13:2.13.999')
-    depends_on('lttng-ust@2.13.0:2.13.6', when='@2.13.0:2.13.9')
-    depends_on('lttng-ust@2.12.0:2.12.999', when='@2.12')
-    depends_on('lttng-ust@2.11.0:2.11.999', when='@2.11')
-    depends_on('lttng-ust@2.10.0:2.10.999', when='@2.10')
+    depends_on("lttng-ust@master", when="@master")
+    depends_on("lttng-ust@2.14.0:2.14.999", when="@2.14.0:2.14.999")
+    depends_on("lttng-ust@2.13.8:2.13.999", when="@2.13.13:2.13.999")
+    depends_on("lttng-ust@2.13.0:2.13.6", when="@2.13.0:2.13.9")
+    depends_on("lttng-ust@2.12.0:2.12.999", when="@2.12")
+    depends_on("lttng-ust@2.11.0:2.11.999", when="@2.11")
+    depends_on("lttng-ust@2.10.0:2.10.999", when="@2.10")
 
-    depends_on('babeltrace2', when='@2.14:')
+    depends_on("babeltrace2", when="@2.14:")
 
     with when("+man-pages"):
-        depends_on('asciidoc@8.6.8:', type='build')
-        depends_on('xmlto@0.0.25:', type='build')
+        depends_on("asciidoc@8.6.8:", type="build")
+        depends_on("xmlto@0.0.25:", type="build")
 
     with when("+tests"):
-        depends_on('babeltrace2', type='build')
+        depends_on("babeltrace2", type="build")
 
-    depends_on('c', type='build')
-    depends_on('cxx', type='build')
-    depends_on('autoconf', type='build')
-    depends_on('automake', type='build')
-    depends_on('libtool', type='build')
-    depends_on('pkg-config')
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("autoconf", type="build")
+    depends_on("automake", type="build")
+    depends_on("libtool", type="build")
+    depends_on("pkg-config")
 
     # https://github.com/spack/spack/commit/e53bc780e4afdbec7263ef06c6266529abac4253
-    depends_on('uuid')
-    depends_on('popt@1.13:')
-    depends_on('userspace-rcu@0.14.1:', when='@2.14:')
-    depends_on('userspace-rcu@0.11.0:', when='@2.11:')
-    depends_on('userspace-rcu@0.9.0:', when='@:2.10.999')
-    depends_on('libxml2@2.7.6:')
+    depends_on("uuid")
+    depends_on("popt@1.13:")
+    depends_on("userspace-rcu@0.14.1:", when="@2.14:")
+    depends_on("userspace-rcu@0.11.0:", when="@2.11:")
+    depends_on("userspace-rcu@0.9.0:", when="@:2.10.999")
+    depends_on("libxml2@2.7.6:")
 
-    patch('popt_include_fixes.patch', when='@:2.12.999')
+    patch("popt_include_fixes.patch", when="@:2.12.999")
     # `--disable-test` is not available on lttng-tools v2.12 and below. Even though we have the
     # variant on our spack package, it doesn't actually turn off the tests without this patch.
-    patch('disable_tests.patch', when='@:2.12.999')
+    patch("disable_tests.patch", when="@:2.12.999")
     # disable_tests.patch changes configure.ac so we need to regenerate the configure file.
     # Apparently, spack doesn't generate the configure file if there is one already.
     force_autoreconf = True

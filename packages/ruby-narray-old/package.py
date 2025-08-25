@@ -10,10 +10,10 @@ class RubyNarrayOld(RubyPackage):
     """Numerical N-dimensional Array class"""
 
     homepage = "http://masa16.github.io/narray/"
-    url      = "https://rubygems.org/downloads/narray-0.6.1.2.gem"
+    url = "https://rubygems.org/downloads/narray-0.6.1.2.gem"
 
     # fmt: off
     version('0.6.1.2', sha256='73bf101929a1570e8034058e1296fec58d6c3386c26bf26810d33f70dd4236b7', expand=False)
     # fmt: on
 
-    depends_on('ruby', type=('build', 'run'))
+    depends_on("ruby", type=("build", "run"))
