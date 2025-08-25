@@ -17,7 +17,11 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: ruff format check
-      uses: astral-sh/ruff-action@v3
-      with:
-        args: "format --check --diff"
+    - name: Setup Python
+      uses: actions/setup-python@v5
+    - name: Install ruff
+      run: |
+        pip install ruff
+    - name: Check formatting
+      run: |
+        ./format.sh --check
