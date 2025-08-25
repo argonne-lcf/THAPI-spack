@@ -27,7 +27,7 @@ class Thapi(AutotoolsPackage):
     variant("mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@:develop")
     variant("sync-daemon-mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@develop")
     variant("clang-parser", default=False, description="Enable Clang Parser")
-    variant("archive", default=False, description='Enable archive mode of THAPI', when='@develop')
+    variant("archive", default=False, description="Enable archive mode of THAPI", when="@develop")
 
     depends_on("c", type=("build"))
     depends_on("cxx", type=("build"))
@@ -49,7 +49,8 @@ class Thapi(AutotoolsPackage):
     depends_on("lttng-tools", type=("build", "link", "run"), when="@0.0.8:")
     depends_on("lttng-tools@:2.12.999", type=("build", "link", "run"), when="@:0.0.7")
     depends_on("lttng-tools@master", type=("build", "link", "run"), when="@master")
-    depends_on("lttng-tools@master", type=("build", "link", "run"), when="@develop")
+    depends_on("lttng-tools", type=("build", "link", "run"), when="@develop")
+    depends_on("lttng-tools@2.14.0-archive ~bin-lttng-crash", type=("build", "link", "run"), when="+archive")
 
     # Check compilers and versions. Version checks are mainly for magic_enum:
     # https://github.com/Neargye/magic_enum?tab=readme-ov-file#compiler-compatibility

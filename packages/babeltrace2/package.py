@@ -17,6 +17,7 @@ class Babeltrace2(AutotoolsPackage):
     maintainers = ["Kerilk"]
 
     version("master", branch="master")
+    version("2.1.2-archive", git="https://github.com/argonne-lcf/babeltrace.git", branch="anl-ms3-v2.1.2")
     version("2.1.1", sha256="5033ca8c57fdb5b110f44693b543c01bbf8b0cafdf1496930aad4c0e74c4727f")
     version("2.1.0", sha256="af182591efe62039e22d02e93a083d7835df21eac8cf84a4c980804f76040e48")
     version("2.0.6", sha256="a01c7e75e642de0b5b91f32cc706234c99eb556fcd52c9959045dc23a9ec52c9")
@@ -47,6 +48,7 @@ class Babeltrace2(AutotoolsPackage):
 
     depends_on("glib@2.28:", type=("build", "link"))
     depends_on("elfutils@0.154:")
+    depends_on("lttng-tools", when="@2.1.2-archive")
 
     with when("+python-bindings"):
         depends_on("python@3.4:")
