@@ -1,5 +1,6 @@
 [tool.ruff]
 preview = true
+line-length = 150
 
 [tool.ruff.lint]
 # FIXME
