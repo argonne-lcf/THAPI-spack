@@ -42,6 +42,7 @@ class LttngTools(AutotoolsPackage):
     depends_on("lttng-ust@2.10.0:2.10.999", when="@2.10")
 
     depends_on("babeltrace2", type="build", when="+tests")
+    # depends on babeltrace conditionally to avoid circular dependency.
     depends_on("babeltrace2", when="@2.14: +bin-lttng-crash")
 
     with when("+man-pages"):
