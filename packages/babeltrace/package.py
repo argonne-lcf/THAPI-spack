@@ -14,10 +14,8 @@ class Babeltrace(AutotoolsPackage):
     homepage = "http://www.efficios.com/babeltrace"
     url = "https://www.efficios.com/files/babeltrace/babeltrace-1.2.4.tar.bz2"
 
-    # fmt: off
-    version('1.5.8', sha256='9ff143e4d1d7f1902b05542ac8f1747fb2d7e0ca31c6fa39ccae5765e11d6fc2')
-    version('1.2.4', sha256='666e3a1ad2dc7d5703059963056e7800f0eab59c8eeb6be2efe4f3acc5209eb1')
-    # fmt: on
+    version("1.5.8", sha256="9ff143e4d1d7f1902b05542ac8f1747fb2d7e0ca31c6fa39ccae5765e11d6fc2")
+    version("1.2.4", sha256="666e3a1ad2dc7d5703059963056e7800f0eab59c8eeb6be2efe4f3acc5209eb1")
 
     variant("python", default=False, description="With python bindings")
 

@@ -14,8 +14,6 @@ class RubyRacc(RubyPackage):
     homepage = "https://rubygems.org/gems/racc"
     url = "https://rubygems.org/downloads/racc-1.8.1.gem"
 
-    # fmt: off
-    version('1.8.1', sha256='4a7f6929691dbec8b5209a0b373bc2614882b55fc5d2e447a21aaa691303d62f', expand=False)
-    # fmt: on
+    version("1.8.1", sha256="4a7f6929691dbec8b5209a0b373bc2614882b55fc5d2e447a21aaa691303d62f", expand=False)
 
     depends_on("ruby@2.5.0:", type=("build", "run"))

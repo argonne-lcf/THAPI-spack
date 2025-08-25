@@ -14,16 +14,14 @@ class Thapi(AutotoolsPackage):
     homepage = "https://github.com/argonne-lcf/THAPI"
     git = "https://github.com/argonne-lcf/THAPI.git"
 
-    # fmt: off
-    version('master', branch='master', preferred=True)
-    version('develop', branch='devel')
-    version('0.0.12', tag='v0.0.12')
-    version('0.0.11', tag='v0.0.11')
-    version('0.0.10', tag='v0.0.10')
-    version('0.0.9', tag='v0.0.9')
-    version('0.0.8', tag='v0.0.8')
-    version('0.0.7', tag='v0.0.7')
-    # fmt: on
+    version("master", branch="master", preferred=True)
+    version("develop", branch="devel")
+    version("0.0.12", tag="v0.0.12")
+    version("0.0.11", tag="v0.0.11")
+    version("0.0.10", tag="v0.0.10")
+    version("0.0.9", tag="v0.0.9")
+    version("0.0.8", tag="v0.0.8")
+    version("0.0.7", tag="v0.0.7")
 
     depends_on("c", type=("build"))
     depends_on("cxx", type=("build"))
@@ -79,18 +77,8 @@ class Thapi(AutotoolsPackage):
     depends_on("python", type=("build"))
 
     variant("strict", default=False, description="Enable -Werror during the build")
-    variant(
-        "mpi",
-        default=False,
-        description="Enable MPI support for the Sync Daemon",
-        when="@:develop",
-    )
-    variant(
-        "sync-daemon-mpi",
-        default=False,
-        description="Enable MPI support for the Sync Daemon",
-        when="@develop",
-    )
+    variant("mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@:develop")
+    variant("sync-daemon-mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@develop")
     variant("clang-parser", default=False, description="Enable Clang Parser")
 
     patch("0001-Ignore-int-conversions.patch", when="@0.0.8:0.0.11")

@@ -13,9 +13,7 @@ class RubyNarrayFfi(RubyPackage):
     homepage = "https://github.com/Nanosim-LIG/narray-ffi"
     url = "https://rubygems.org/downloads/narray_ffi-1.4.4.gem"
 
-    # fmt: off
-    version('1.4.4', sha256='26621b4cea463635867aa8305ad863e67c5bb8321df74e5d3fc95c6425b6197b', expand=False)
-    # fmt: on
+    version("1.4.4", sha256="26621b4cea463635867aa8305ad863e67c5bb8321df74e5d3fc95c6425b6197b", expand=False)
 
     depends_on("ruby", type=("build", "run"))
     depends_on("ruby-narray-old", type=("build", "run"))
