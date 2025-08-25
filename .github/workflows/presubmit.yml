@@ -105,4 +105,4 @@ jobs:
       uses: actions/checkout@v4
     - uses: geekyeggo/delete-artifact@v5
       with:
-          name: thapi_cache
+        name: thapi_cache

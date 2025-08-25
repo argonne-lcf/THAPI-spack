@@ -18,15 +18,15 @@ class RubyCast(RubyPackage):
     git = "http://github.com/oggy/cast.git"
 
     if Version(spack.spack_version) < Version("1.0"):
-        version('0.3.1', tag='v0.3.1', get_full_repo=True)
+        version("0.3.1", tag="v0.3.1", get_full_repo=True)
     else:
-        version('0.3.1', tag='v0.3.1', get_full_repo=True, commit='3c9b06093680781242dd72b04065ea62412daee1')
+        version("0.3.1", tag="v0.3.1", get_full_repo=True, commit="3c9b06093680781242dd72b04065ea62412daee1")
 
-    depends_on('ruby@2.3.0:', type=('build', 'run'))
-    depends_on('ruby-racc', type=('build', 'run'))
-    depends_on('ruby-ritual', type=('build'))
-    depends_on('ruby-rake', type=('build'))
-    depends_on('re2c', type=('build'))
+    depends_on("ruby@2.3.0:", type=("build", "run"))
+    depends_on("ruby-racc", type=("build", "run"))
+    depends_on("ruby-ritual", type=("build"))
+    depends_on("ruby-rake", type=("build"))
+    depends_on("re2c", type=("build"))
 
-    patch('fix_import.patch')
-    patch('fix_race_condition.patch')
+    patch("fix_import.patch")
+    patch("fix_race_condition.patch")

@@ -11,8 +11,8 @@ class RubyWalk(RubyPackage):
     """Directory tree traversal tool inspired by python os.walk"""
 
     homepage = "https://rubygems.org/gems/walk"
-    url      = "https://rubygems.org/downloads/walk-0.1.0.gem"
+    url = "https://rubygems.org/downloads/walk-0.1.0.gem"
 
-    version('0.1.0', sha256='79705078a5a505ab218ff154997b837b03639dc6422c492b6b9ee6e6ab01ff60', expand=False)
+    version("0.1.0", sha256="79705078a5a505ab218ff154997b837b03639dc6422c492b6b9ee6e6ab01ff60", expand=False)
 
-    depends_on('ruby', type=('build', 'run'))
+    depends_on("ruby", type=("build", "run"))
