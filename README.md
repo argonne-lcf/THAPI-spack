@@ -36,3 +36,9 @@ You can use Spack to install the required dependencies and set up the environmen
 spack build-env thapi bash
 ```
 This will spawn a new shell with the correct environment variables set for building THAPI manually.
+
+### Developer documentation
+
+Before committing changes and/or opening a PR, please make sure to format code by running
+`./format.sh`. This requires `ruff` and `git` to be installed (`pip install ruff` should
+install `ruff`). Always use the `format.sh` script -- don't use `ruff` directly.
