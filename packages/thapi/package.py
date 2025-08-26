@@ -42,7 +42,7 @@ class Thapi(AutotoolsPackage):
 
     depends_on("babeltrace2", type=("build", "link", "run"))
     depends_on("babeltrace2@master", type=("build", "link", "run"), when="@master")
-    depends_on("babeltrace2@2.1.2-archive", type=("build", "link", "run"), when="+archive")
+    depends_on("babeltrace2@2.1.0-archive", type=("build", "link", "run"), when="+archive")
 
     depends_on("lttng-ust", type=("build", "link", "run"), when="@0.0.8:")
     depends_on("lttng-ust@:2.12.999", type=("build", "link", "run"), when="@:0.0.7")
