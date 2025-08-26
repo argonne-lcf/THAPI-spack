@@ -39,12 +39,15 @@ class Thapi(AutotoolsPackage):
     # 4.3+ for grouped target
     depends_on("gmake@4.3:", type=("build"))
     depends_on("protobuf@3.12.4:", type=("build", "link", "run"))
+
     depends_on("babeltrace2", type=("build", "link", "run"))
-    depends_on("babeltrace2@2.1.2-archive", type=("build", "link", "run"), when="+archive")
     depends_on("babeltrace2@master", type=("build", "link", "run"), when="@master")
+    depends_on("babeltrace2@2.1.2-archive", type=("build", "link", "run"), when="+archive")
+
     depends_on("lttng-ust", type=("build", "link", "run"), when="@0.0.8:")
     depends_on("lttng-ust@:2.12.999", type=("build", "link", "run"), when="@:0.0.7")
     depends_on("lttng-ust@master", type=("build", "link", "run"), when="@master")
+
     depends_on("lttng-tools", type=("build", "link", "run"), when="@0.0.8:")
     depends_on("lttng-tools@:2.12.999", type=("build", "link", "run"), when="@:0.0.7")
     depends_on("lttng-tools@master", type=("build", "link", "run"), when="@master")
