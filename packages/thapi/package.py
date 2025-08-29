@@ -23,6 +23,12 @@ class Thapi(AutotoolsPackage):
     version("0.0.8", tag="v0.0.8")
     version("0.0.7", tag="v0.0.7")
 
+    variant("strict", default=False, description="Enable -Werror during the build")
+    variant("mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@:develop")
+    variant("sync-daemon-mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@develop")
+    variant("clang-parser", default=False, description="Enable Clang Parser")
+    variant("archive", default=False, description="Enable archive mode of THAPI", when="@develop")
+
     depends_on("c", type=("build"))
     depends_on("cxx", type=("build"))
     depends_on("automake", type=("build"))
@@ -33,17 +39,19 @@ class Thapi(AutotoolsPackage):
     # 4.3+ for grouped target
     depends_on("gmake@4.3:", type=("build"))
     depends_on("protobuf@3.12.4:", type=("build", "link", "run"))
+
     depends_on("babeltrace2", type=("build", "link", "run"))
     depends_on("babeltrace2@master", type=("build", "link", "run"), when="@master")
-    depends_on("babeltrace2@master", type=("build", "link", "run"), when="@develop")
+    depends_on("babeltrace2@2.1.0-archive", type=("build", "link", "run"), when="+archive")
+
     depends_on("lttng-ust", type=("build", "link", "run"), when="@0.0.8:")
     depends_on("lttng-ust@:2.12.999", type=("build", "link", "run"), when="@:0.0.7")
     depends_on("lttng-ust@master", type=("build", "link", "run"), when="@master")
-    depends_on("lttng-ust@master", type=("build", "link", "run"), when="@develop")
+
     depends_on("lttng-tools", type=("build", "link", "run"), when="@0.0.8:")
     depends_on("lttng-tools@:2.12.999", type=("build", "link", "run"), when="@:0.0.7")
     depends_on("lttng-tools@master", type=("build", "link", "run"), when="@master")
-    depends_on("lttng-tools@master", type=("build", "link", "run"), when="@develop")
+    depends_on("lttng-tools@2.14.0-archive ~bin-lttng-crash", type=("build", "link", "run"), when="+archive")
 
     # Check compilers and versions. Version checks are mainly for magic_enum:
     # https://github.com/Neargye/magic_enum?tab=readme-ov-file#compiler-compatibility
@@ -74,13 +82,9 @@ class Thapi(AutotoolsPackage):
     depends_on("h2yaml", when="+clang-parser")
 
     # We add a Python dependency at buildtime, because `lttng-gen-tp` needs it.
-    # We don't add Python as a runtime dependency of lttng to avoid python propagated as a runtime dependency of thapi
+    # We don't add Python as a runtime dependency of lttng to avoid python
+    # propagated as a runtime dependency of thapi
     depends_on("python", type=("build"))
-
-    variant("strict", default=False, description="Enable -Werror during the build")
-    variant("mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@:develop")
-    variant("sync-daemon-mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@develop")
-    variant("clang-parser", default=False, description="Enable Clang Parser")
 
     patch("0001-Ignore-int-conversions.patch", when="@0.0.8:0.0.11")
 
