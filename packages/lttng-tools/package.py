@@ -29,8 +29,7 @@ class LttngTools(AutotoolsPackage):
     version("2.10.11", sha256="3cb7341d2802ba154f6863c5c20368f8273173ab7080c3ae1ae7180ac7a6f8c5")
 
     variant("man-pages", default=False, description="Build man pages")
-    # FIXME: spack runs into build failures building the lttng-tools tests.
-    variant("tests", default=False, description="Build the tests")
+    variant("tests", default=True, description="Build the tests")
     variant("bin-lttng-crash", default=True, description="Enable lttng components related to crash tracing")
 
     depends_on("lttng-ust@master", when="@master")
@@ -41,7 +40,7 @@ class LttngTools(AutotoolsPackage):
     depends_on("lttng-ust@2.11.0:2.11.999", when="@2.11")
     depends_on("lttng-ust@2.10.0:2.10.999", when="@2.10")
 
-    depends_on("babeltrace2", type="build", when="+tests")
+    depends_on("babeltrace2", when="+tests")
     # depends on babeltrace conditionally to avoid circular dependency.
     depends_on("babeltrace2", when="@2.14: +bin-lttng-crash")
 
