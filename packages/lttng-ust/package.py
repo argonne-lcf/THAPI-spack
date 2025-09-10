@@ -32,6 +32,9 @@ class LttngUst(AutotoolsPackage):
     variant("examples", default=False, description="Build examples")
     variant("api-doc", default=False, description="Build HTML API documentation")
     variant("man-pages", default=False, description="Build man pages")
+    # FIXME: with NUMA enabled, lttng-ust can't find libnuma during install
+    # on Polaris.
+    variant("numa", default=False, description="Enable NUMA support")
 
     with when("+man-pages"):
         depends_on("asciidoc@8.6.8:", type="build")
@@ -57,4 +60,5 @@ class LttngUst(AutotoolsPackage):
         args.extend(self.enable_or_disable("examples"))
         args.extend(self.enable_or_disable("api-doc"))
         args.extend(self.enable_or_disable("man-pages"))
+        args.extend(self.enable_or_disable("numa"))
         return args
