@@ -32,6 +32,9 @@ class LttngUst(AutotoolsPackage):
     variant("examples", default=False, description="Build examples")
     variant("api-doc", default=False, description="Build HTML API documentation")
     variant("man-pages", default=False, description="Build man pages")
+    # FIXME: with NUMA enabled, lttng-ust can't find libnuma during install
+    # on Polaris.
+    variant("numa", default=False, description="Enable NUMA support")
 
     with when("+man-pages"):
         depends_on("asciidoc@8.6.8:", type="build")
@@ -57,12 +60,5 @@ class LttngUst(AutotoolsPackage):
         args.extend(self.enable_or_disable("examples"))
         args.extend(self.enable_or_disable("api-doc"))
         args.extend(self.enable_or_disable("man-pages"))
+        args.extend(self.enable_or_disable("numa"))
         return args
-
-    def setup_build_environment(self, env):
-        # Without the following line, configure checks for userspace-rcu headers
-        # fails to find them in some systems.
-        env.prepend_path("CPPFLAGS", "-I" + self.spec["userspace-rcu"].prefix.include)
-        # Without the following line, configure checks for userspace-rcu libraries
-        # fails to find them in some systems.
-        env.prepend_path("LDFLAGS", "-L" + self.spec["userspace-rcu"].prefix.lib)
