@@ -13,6 +13,7 @@ class RubyOpencl(RubyPackage):
     homepage = "https://github.com/Nanosim-LIG/opencl-ruby"
     url = "https://rubygems.org/downloads/opencl_ruby_ffi-1.3.12.gem"
 
+    version("1.3.13", sha256="cee949f04086a068795a41b71fd7fd7714bbde9418cfd86605803bca615201e0", expand=False)
     version("1.3.12", sha256="e177a50112ab3b9379277943b3112110f52ac32eb2f039c2796b5e11762308ce", expand=False)
 
     depends_on("ruby", type=("build", "run"))
