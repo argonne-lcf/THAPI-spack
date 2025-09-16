@@ -17,16 +17,33 @@ spack repo add ./THAPI-spack/
 spack install thapi
 ```
 
-One may be able to reduce the time to install thapi by using `--concurrent-packages` option in `spack install`
-as below:
-```sh
-spack install --concurrent-packages 2 thapi
-```
-
 Once installed, you can load THAPI with:
 ```bash
 spack load thapi
 ```
+
+### Tips for speeding up THAPI installation
+
+`spack external find` can be used to find existing packages on the system known to Spack. This way you can
+avoid building them when building THAPI. Use the following command before installing THAPI to find external
+packages available on the system:
+```sh
+spack external find --all
+```
+Some packages when found using `spack external find` is known to cause build failures. If you run into such
+cases, use `spack external find --exclude <pkg>` so that Spack will build them instead of using the system
+installed versions.
+```sh
+spack external find --all --exclude bzip2 --exclude xz --exclude curl
+```
+
+One may also be able to reduce the time to install THAPI by using `--concurrent-packages` option in `spack install`
+as below:
+```sh
+spack install --concurrent-packages 2 thapi
+```
+Depending on the available number of CPU cores and how parallelizable the dependency graph is for the particular
+specification, one may be able to specify more concurrent packages (as compared to `2` in the above example).
 
 ### How to Install Spack
 
