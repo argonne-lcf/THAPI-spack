@@ -4,7 +4,7 @@ This repository provides a [Spack](https://spack.io) environment for installing 
 
 ## How to Install THAPI
 
-✍️**Note**: This guide assumes `spack` is installed and available in your `PATH`. If it is not, see [How to Install Spack](#how-to-install-spack)
+✍️**Note**: This guide assumes `spack` is installed and available in your `PATH`. If it is not, see [How to Install Spack](#how-to-install-spack).
 
 ⚠️ **Important**: The default branch for Spack is `develop`, which is unstable. To ensure a reliable installation,
 use the latest release of Spack.  See the section below on installing Spack.
