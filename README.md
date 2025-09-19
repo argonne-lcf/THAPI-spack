@@ -6,9 +6,6 @@ This repository provides a [Spack](https://spack.io) environment for installing 
 
 ✍️**Note**: This guide assumes `spack` is installed and available in your `PATH`. If it is not, see [How to Install Spack](#how-to-install-spack).
 
-⚠️ **Important**: The default branch for Spack is `develop`, which is unstable. To ensure a reliable installation,
-use the latest release of Spack.  See the section below on installing Spack.
-
 ```bash
 # Clone the THAPI-spack repository and add it as a Spack repo
 git clone https://github.com/argonne-lcf/THAPI-spack
@@ -46,6 +43,9 @@ Depending on the available number of CPU cores and how parallelizable the depend
 specification, one may be able to specify more concurrent packages (as compared to `2` in the above example).
 
 ### How to Install Spack
+
+⚠️ **Important**: The default branch for Spack is `develop`, which is unstable. To ensure a reliable installation,
+use the latest release of Spack, as shown below.  
 
 If you don't have Spack installed yet:
 ```bash
