@@ -56,7 +56,7 @@ jobs:
     strategy:
       matrix:
         version: ['thapi', 'thapi@0.0.7', 'thapi@0.0.8', 'thapi@0.0.9', 'thapi@0.0.10', 'thapi@0.0.11',
-          'thapi@0.0.12', 'thapi@master', 'thapi@develop', 'thapi@develop+clang-parser', 'thapi@develop+archive']
+          'thapi@0.0.12', 'thapi@master', 'thapi@develop', 'thapi@develop+archive']
     needs: install_thapi_dependencies
     runs-on: ubuntu-latest
     name: Install ${{ matrix.version }}
