@@ -97,5 +97,4 @@ class Thapi(AutotoolsPackage):
         if not self.spec.satisfies("+clang-parser"):
             args.append("--disable-clang-parser")
 
-
         return args
