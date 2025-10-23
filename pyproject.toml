@@ -16,3 +16,8 @@ multiline-quotes = "double"
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.1",
+]
