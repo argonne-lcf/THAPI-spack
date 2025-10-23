@@ -78,7 +78,6 @@ class Thapi(AutotoolsPackage):
     depends_on("libiberty+pic")
     depends_on("libffi")
     depends_on("mpi", when="+mpi")
-    depends_on("mpi", when="+sync-daemon-mpi")
     depends_on("h2yaml@0.3.0:", when="+clang-parser")
 
     # We add a Python dependency at buildtime, because `lttng-gen-tp` needs it.
@@ -95,8 +94,8 @@ class Thapi(AutotoolsPackage):
         else:
             args.extend(self.enable_or_disable("mpi"))
         args.extend(self.enable_or_disable("strict"))
-
         if not self.spec.satisfies("+clang-parser"):
             args.append("--disable-clang-parser")
+
 
         return args
