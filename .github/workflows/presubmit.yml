@@ -57,7 +57,7 @@ jobs:
       matrix:
         version: ['thapi', 'thapi@0.0.7', 'thapi@0.0.8', 'thapi@0.0.9', 'thapi@0.0.10', 'thapi@0.0.11',
           'thapi@0.0.12', 'thapi@master', 'thapi@develop', 'thapi@develop+clang-parser', 'thapi@develop+archive',
-          'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace@master']
+          'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master']
     needs: install_thapi_dependencies
     runs-on: ubuntu-latest
     name: Install ${{ matrix.version }}
@@ -93,12 +93,12 @@ jobs:
         # point spack to llvm+clang installed through apt-get
         sed -i "/spec: llvm@18/{n;s|.*|      prefix: ${llvm_prefix}|}" ~/.spack/packages.yaml
     - name: Install ${{ matrix.version }}
-      if: ${{ matrix.version != 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace@master' }}
+      if: ${{ matrix.version != 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master' }}
       run: |
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT ${{ matrix.version }}
     - name: Install thapi@develop with master versions of dependencies
-      if: ${{ matrix.version == 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace@master' }}
+      if: ${{ matrix.version == 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master' }}
       continue-on-error: true
       run: |
         . external/spack/share/spack/setup-env.sh
