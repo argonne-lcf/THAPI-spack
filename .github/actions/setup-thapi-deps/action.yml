@@ -6,11 +6,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
-      with:
-        detached: true
-      if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
     - name: Install apt-get packages
       uses: awalsh128/cache-apt-pkgs-action@latest
       with:
@@ -21,6 +16,11 @@ runs:
         repository: spack/spack
         ref: releases/latest
         path: external/spack
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      with:
+        detached: true
+      if: ${{ github.event_name == 'workflow_dispatch' && (inputs.debug_enabled == true || inputs.debug_enabled == 'true') }}
     - name: Setup spack environment
       shell: bash
       run: |
