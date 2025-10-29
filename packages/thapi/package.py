@@ -26,7 +26,7 @@ class Thapi(AutotoolsPackage):
     variant("strict", default=False, description="Enable -Werror during the build")
     variant("mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@:develop")
     variant("sync-daemon-mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@develop")
-    variant("clang-parser", default=False, description="Enable Clang Parser")
+    variant("clang-parser", default=True, description="Enable Clang Parser", when="@develop")
     variant("archive", default=False, description="Enable archive mode of THAPI", when="@develop")
 
     depends_on("c", type=("build"))
@@ -76,7 +76,7 @@ class Thapi(AutotoolsPackage):
     depends_on("libffi")
     depends_on("mpi", when="+mpi")
     depends_on("mpi", when="+sync-daemon-mpi")
-    depends_on("h2yaml", when="+clang-parser")
+    depends_on("h2yaml@0.3.0:", when="+clang-parser")
 
     # We add a Python dependency at buildtime, because `lttng-gen-tp` needs it.
     # We don't add Python as a runtime dependency of lttng to avoid python
@@ -92,5 +92,6 @@ class Thapi(AutotoolsPackage):
         else:
             args.extend(self.enable_or_disable("mpi"))
         args.extend(self.enable_or_disable("strict"))
-        args.extend(self.enable_or_disable("clang-parser"))
+        if not self.spec.satisfies("+clang-parser"):
+            args.append("--disable-clang-parser")
         return args
