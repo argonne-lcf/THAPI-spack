@@ -102,8 +102,7 @@ jobs:
       continue-on-error: true
       run: |
         . external/spack/share/spack/setup-env.sh
-        result=$( spack install $SPACK_OPT ${{ matrix.version }}; echo $? )
-        echo $result
+        spack install $SPACK_OPT ${{ matrix.version }} || true
 
   cleanup:
     needs: install_thapi
