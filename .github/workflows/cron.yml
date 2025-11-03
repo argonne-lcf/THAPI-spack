@@ -3,6 +3,7 @@ on:
   schedule:
     # At 00:00 on Sunday.”
     - cron: "0 0 * * 0"
+  workflow_dispatch:
 jobs:
   myJob:
     runs-on: ubuntu-latest
