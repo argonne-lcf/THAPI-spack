@@ -15,6 +15,7 @@ class RubyMetababel(RubyPackage):
     list_url = "https://rubygems.org/gems/metababel/versions"
     list_depth = 1
 
+    version("1.1.4", sha256="3a45823822d3fd96d07c2651e8221e1e2659fedd4b20e60e2a167b43d7132643", expand=False)
     version("1.1.3", sha256="b07ddc91013adf7f3957b070d4e6aaaa4914d5ad1d51fdc54be81c6d53699845", expand=False)
     version("1.1.2", sha256="b41ef5d18bf10b2cd9726260e9409c4eef8922f3ed9de03fdfa8e7a1416395b9", expand=False)
     version("1.1.1", sha256="9f6a20b0a11c884935e074a3949d8a66eb0a585ff19603120441fc6cad73a0ea", expand=False)
