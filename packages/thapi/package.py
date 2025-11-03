@@ -79,7 +79,7 @@ class Thapi(AutotoolsPackage):
     depends_on("libffi")
     depends_on("mpi", when="+mpi")
     depends_on("mpi", when="+sync-daemon-mpi")
-    depends_on("h2yaml", when="+clang-parser")
+    depends_on("h2yaml@0.3.0:", when="+clang-parser")
 
     # We add a Python dependency at buildtime, because `lttng-gen-tp` needs it.
     # We don't add Python as a runtime dependency of lttng to avoid python
