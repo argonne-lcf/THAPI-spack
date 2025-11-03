@@ -70,7 +70,7 @@ class Thapi(AutotoolsPackage):
     depends_on("ruby-metababel@0.1.0:0.9", type=("build"), when="@:0.0.10")
     depends_on("ruby-metababel@1.0.0:", type=("build"), when="@0.0.11")
     depends_on("ruby-metababel@1.1.2:", type=("build"), when="@0.0.12:")
-    depends_on("ruby-metababel@1.1.3:", type=("build"), when="develop")
+    depends_on("ruby-metababel@1.1.4:", type=("build"), when="develop")
 
     depends_on("libiberty+pic")
     depends_on("libffi")
