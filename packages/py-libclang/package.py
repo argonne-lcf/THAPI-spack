@@ -38,9 +38,11 @@ class PyLibclang(PythonPackage):
 
     def patch(self):
         s = self.spec["llvm"]
-        filter_file(
-            "source_dir = './native/'",
-            "source_dir = '{0}-{1}'".format(s.libs.directories[0], s.version.string),
-            "setup.py",
-            string=True,
-        )
+
+        if self.spec.version <= Version("13"):
+            filter_file(
+                "source_dir = './native/'",
+                "source_dir = '{0}-{1}'".format(s.libs.directories[0], s.version.string),
+                "setup.py",
+                string=True,
+            )
