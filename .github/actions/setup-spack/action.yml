@@ -47,13 +47,13 @@ runs:
         # a new llvm entry in packages.yaml, we have to change the
         # existing one.
         #
-        # find the prefix where libclang is installed
+        cp ~/.spack/packages.yaml ~/.spack/packages.yaml.old
+        # find the prefix where llvm is installed
         llvm_prefix=$(llvm-config-18 --prefix)
         # point spack to llvm+clang installed through apt-get
-        cp ~/.spack/packages.yaml ~/.spack/packages.yaml.old
         # Assume `spec` key come before `prefix` key in yaml
-        #  - spec: intel-oneapi-compilers@2025.2.0`
-        #    prefix: /opt/aurora/25.190.0/oneapi 
+        #  - spec: llvm@18.1.3
+        #    prefix: /usr/local/llvm
         awk -v pkg="llvm@18" -v new_prefix=${llvm_prefix} '
             match($0, "- spec: "pkg) {f=1} # Match spec context
             f && /prefix:/ {sub($2, new_prefix); f=0} # Use new prefix if in correct spec

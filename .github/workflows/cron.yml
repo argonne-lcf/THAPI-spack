@@ -8,10 +8,10 @@ jobs:
   install_thapi_dependencies:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: ./.github/actions/cache-spack
-      with:
-        mode: 'upload'
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/cache-spack
+        with:
+          mode: 'upload'
   install_thapi:
     strategy:
       matrix:
@@ -20,10 +20,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Install ${{ matrix.version }}
     steps:
-    - name: Download Spack Cache
-      uses: ./.github/actions/cache-spack
-      with:
-        mode: 'download'
-    - run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install ${{ matrix.version }}
+      - name: Download Spack Cache
+        uses: ./.github/actions/cache-spack
+        with:
+          mode: 'download'
+      - run: |
+          . external/spack/share/spack/setup-env.sh
+          spack install ${{ matrix.version }}

@@ -9,10 +9,8 @@ on:
         description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
         required: false
         default: false
-
 env:
   SPACK_OPT: "--concurrent-packages 2 --show-log-on-error --fail-fast"
-
 jobs:
   pre_job:
     runs-on: ubuntu-latest
@@ -26,50 +24,45 @@ jobs:
           skip_after_successful_duplicate: 'true'
           paths_ignore: '["**/README.md"]'
           do_not_skip: '["pull_request"]'
-
   install_thapi_dependencies:
     needs: pre_job
     if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
     runs-on: ubuntu-latest
-    name:  Generate and Upload Spack Cache
+    name: Generate and Upload Spack Cache
     steps:
-    - uses: actions/checkout@v4
-    - uses: ./.github/actions/cache-spack
-      with:
-        mode: 'upload'
-
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/cache-spack
+        with:
+          mode: 'upload'
   install_thapi:
     strategy:
       matrix:
-        version: ['thapi', 'thapi@0.0.7', 'thapi@0.0.8', 'thapi@0.0.9', 'thapi@0.0.10', 'thapi@0.0.11',
-          'thapi@0.0.12', 'thapi@master', 'thapi@develop', 'thapi@develop+archive',
-          'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master']
+        version: ['thapi', 'thapi@0.0.7', 'thapi@0.0.8', 'thapi@0.0.9', 'thapi@0.0.10', 'thapi@0.0.11', 'thapi@0.0.12', 'thapi@master', 'thapi@develop', 'thapi@develop+archive', 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master']
     needs: install_thapi_dependencies
     runs-on: ubuntu-latest
     name: Install ${{ matrix.version }}
     steps:
-    - name: Download Spack Cache
-      uses: ./.github/actions/cache-spack
-      with:
-        mode: 'download'
-    - name: Install ${{ matrix.version }}
-      if: ${{ matrix.version != 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master' }}
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT ${{ matrix.version }}
-    - name: Install thapi@develop with master versions of dependencies
-      if: ${{ matrix.version == 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master' }}
-      continue-on-error: true
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT ${{ matrix.version }} || true
-
+      - name: Download Spack Cache
+        uses: ./.github/actions/cache-spack
+        with:
+          mode: 'download'
+      - name: Install ${{ matrix.version }}
+        if: ${{ matrix.version != 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master' }}
+        run: |
+          . external/spack/share/spack/setup-env.sh
+          spack install $SPACK_OPT ${{ matrix.version }}
+      - name: Install thapi@develop with master versions of dependencies
+        if: ${{ matrix.version == 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master' }}
+        continue-on-error: true
+        run: |
+          . external/spack/share/spack/setup-env.sh
+          spack install $SPACK_OPT ${{ matrix.version }} || true
   cleanup:
     needs: install_thapi
     if: always()
     runs-on: ubuntu-latest
     name: Cleanup the build cache
     steps:
-    - uses: ./.github/actions/cache-spack
-      with:
-        mode: 'cleanup'
+      - uses: ./.github/actions/cache-spack
+        with:
+          mode: 'cleanup'
