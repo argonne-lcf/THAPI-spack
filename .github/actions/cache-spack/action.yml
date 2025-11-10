@@ -1,0 +1,45 @@
+name: 'Cache Spack'
+description: "Custom composite action that can upload or download artifacts"
+inputs:
+  mode:
+    description: "Operation mode: upload or download"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set cache directory
+      shell: bash
+      run: |
+        echo "_SA_CACHE_DIR=$GITHUB_WORKSPACE/thapi_cache_$GITHUB_RUN_ID" >> $GITHUB_ENV
+    - uses: actions/checkout@v4
+    - name: Setup spack
+      uses: ./.github/actions/setup-spack
+      with:
+        cache-dir: ${{ env._SA_CACHE_DIR }}
+    - name: Build thapi cache
+      if: ${{ inputs.mode == 'upload' }}
+      shell: bash
+      run: |
+        . external/spack/share/spack/setup-env.sh
+        # Will use `SPACK_OPT` if defined my our callee 
+        spack install --only dependencies $SPACK_OPT thapi
+    - name: Upload thapi cache
+      if: ${{ inputs.mode == 'upload' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: thapi_cache
+        include-hidden-files: true
+        path: ${{ env._SA_CACHE_DIR }}
+        if-no-files-found: error
+    - name: Download thapi cache
+      if: ${{ inputs.mode == 'download' }}
+      uses: ./.github/actions/download-artifact@v4
+      with:
+        name: thapi_cache
+        path: ${{ env._SA_CACHE_DIR }}
+    - name: Clean thapi-cachei
+      if: ${{ inputs.mode == 'cleanup' }}
+      uses: geekyeggo/delete-artifact@v5
+      with:
+        name: thapi_cache
