@@ -32,12 +32,13 @@ runs:
         # find external packages known to spack (avoid bzip2 and xz since
         # they cause build failures in elfutils).
         spack external find --all --exclude bzip2 --exclude xz
-
         # Setup a spack mirror to store built packages. More info can be
         # found here:
         # https://spack.readthedocs.io/en/latest/binary_caches.html
         spack mirror add --autopush --unsigned thapi_cache ${{ inputs.cache-dir }}
     - name: Fix Spack Package for yaml
+      shell: bash
+      run: |
         # spack v1.0 stores both compilers and external packages in the
         # same packages.yaml (compared to packages.yaml and compilers.yaml
         # pre v1.0). So, even if we pass `--exclude llvm` to
@@ -57,4 +58,4 @@ runs:
             match($0, "- spec: "pkg) {f=1} # Match spec context
             f && /prefix:/ {sub($2, new_prefix); f=0} # Use new prefix if in correct spec
             {print}
-       ' ~/.spack/packages.yaml.old > ~/.spack/packages.yaml
+        ' ~/.spack/packages.yaml.old > ~/.spack/packages.yaml

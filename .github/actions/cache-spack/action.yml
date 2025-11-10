@@ -4,7 +4,6 @@ inputs:
   mode:
     description: "Operation mode: upload or download"
     required: true
-
 runs:
   using: "composite"
   steps:
