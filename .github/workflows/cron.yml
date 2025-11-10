@@ -5,26 +5,25 @@ on:
     - cron: "0 0 * * 0"
   workflow_dispatch:
 jobs:
-  myJob:
+  install_thapi_dependencies:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - name: Checkout Spack
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
+    - uses: ./.github/actions/cache-spack
       with:
-        repository: spack/spack
-        ref: releases/latest
-        path: external/spack
-    - name: Activate
-      run: |
+        mode: 'upload'
+  install_thapi:
+    strategy:
+      matrix:
+        version: ['thapi', 'thapi@develop']
+    needs: install_thapi_dependencies
+    runs-on: ubuntu-latest
+    name: Install ${{ matrix.version }}
+    steps:
+    - name: Download Spack Cache
+      uses: ./.github/actions/cache-spack
+      with:
+        mode: 'download'
+    - run: |
         . external/spack/share/spack/setup-env.sh
-        spack repo add ./
-    - name: Install thapi master
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@master
-    - name: Install thapi develop
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@develop
+        spack install ${{ matrix.version }}
