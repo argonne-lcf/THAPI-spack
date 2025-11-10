@@ -30,7 +30,6 @@ class H2yaml(PythonPackage):
     depends_on("python@3.10:", type=("build", "run", "test"))
     depends_on("py-setuptools", type="build")
     depends_on("py-libclang@18:", type=("run", "test"))
-    depends_on("llvm@18:+clang", type=("run", "test"))
     depends_on("py-pyyaml", type=("run", "test"))
     depends_on("py-pytest", type=("test"))
 
