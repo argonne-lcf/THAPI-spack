@@ -47,8 +47,6 @@ class PyLibclang(PythonPackage):
 
     def setup_run_environment(self, env):
         lib = self.spec["llvm"].prefix.lib
-        env.prepend_path("LD_LIBRARY_PATH", lib)
-        env.set("LIBCLANG_PATH", lib)
         env.set("LIBCLANG_FILE", find_libclang_so(lib))
 
     def setup_test_environment(self, env):
