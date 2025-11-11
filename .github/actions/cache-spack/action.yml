@@ -22,7 +22,11 @@ runs:
       run: |
         . external/spack/share/spack/setup-env.sh
         # Will use `SPACK_OPT` if defined my our callee 
+        spack env create myenv
+        spack env activate myenv
         spack install --only dependencies $SPACK_OPT thapi
+        spack mirror create -d ${{ env._SA_CACHE_DIR }} -a
+        cp $SPACK_ROOT/var/spack/environments/myenv/spack.lock ${{ env._SA_CACHE_DIR }}}
     - name: Upload thapi cache
       if: ${{ inputs.mode == 'upload' }}
       uses: actions/upload-artifact@v4
@@ -37,6 +41,13 @@ runs:
       with:
         name: thapi_cache
         path: ${{ env._SA_CACHE_DIR }}
+    - name: Use thapi cache
+      if: ${{ inputs.mode == 'download' }}
+      shell: bash
+      run: |
+        . external/spack/share/spack/setup-env.sh
+        spack mirror add thapi_mirror ${{ env._SA_CACHE_DIR }}
+        spack env create myenv2 ${{ env._SA_CACHE_DIR }}/spack.lock
     - name: Clean thapi-cache
       if: ${{ inputs.mode == 'cleanup' }}
       uses: geekyeggo/delete-artifact@v5
