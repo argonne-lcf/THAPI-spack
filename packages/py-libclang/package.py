@@ -2,8 +2,17 @@
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-
 from spack.package import *
+import re
+import os
+
+
+def find_libclang_so(root):
+    regex = re.compile(r"libclang(?:-\d+)?.so(?:.\d+)?")
+    for root, dirs, files in os.walk(root):
+        for file in files:
+            if regex.match(file):
+                return file
 
 
 class PyLibclang(PythonPackage):
@@ -35,6 +44,15 @@ class PyLibclang(PythonPackage):
 
     for ver in ["9", "10", "11", "13", "14", "15", "16", "17", "18"]:
         depends_on("llvm+clang@" + ver, when="@" + ver, type="build")
+
+    def setup_run_environment(self, env):
+        lib = self.spec["llvm"].prefix.lib
+        env.prepend_path("LD_LIBRARY_PATH", lib)
+        env.set("LIBCLANG_PATH", lib)
+        env.set("LIBCLANG_FILE", find_libclang_so(lib))
+
+    def setup_test_environment(self, env):
+        self.setup_run_environment(env)
 
     def patch(self):
         s = self.spec["llvm"]
