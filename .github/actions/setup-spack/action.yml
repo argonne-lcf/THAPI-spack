@@ -31,7 +31,7 @@ runs:
         spack compiler find
         # find external packages known to spack (avoid bzip2 and xz since
         # they cause build failures in elfutils).
-        #spack external find --all --exclude bzip2 --exclude xz
+        spack external find --all --exclude bzip2 --exclude xz
         # Setup a spack mirror to store built packages. More info can be
         # found here:
         # https://spack.readthedocs.io/en/latest/binary_caches.html
