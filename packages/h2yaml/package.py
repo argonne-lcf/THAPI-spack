@@ -20,6 +20,7 @@ class H2yaml(PythonPackage):
     homepage = "https://github.com/TApplencourt/h2yaml"
     url = "https://github.com/TApplencourt/h2yaml/archive/refs/tags/v0.1.1.tar.gz"
 
+    version("0.3.2", sha256="57fa0163ae3a27b9a44dc1c85a4886a49a528c30605502faff1ac380fa69e9b6")
     version("0.3.1", sha256="f1a45e83bd1898add516a380dd0d7b54870f6e9211b9bc068bd73f93f297033f")
     version("0.3.0", sha256="f78f4c9f4516736ffe000a5ea691557cb7091cff7337af2936483a90eac4ffcd")
     version("0.1.4", sha256="0c1e3871833a984f6d8375a69659f199eb30bcb51ed45b99c01c33abc7367b7c")
