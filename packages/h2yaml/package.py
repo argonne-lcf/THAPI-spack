@@ -24,12 +24,6 @@ class H2yaml(PythonPackage):
     depends_on("py-pyyaml", type=("run", "test"))
     depends_on("py-pytest", type=("test"))
 
-    def setup_run_environment(self, env):
-        env.prepend_path("LD_LIBRARY_PATH", self.spec["llvm"].prefix.lib)
-
-    def setup_test_environment(self, env):
-        env.prepend_path("LD_LIBRARY_PATH", self.spec["llvm"].prefix.lib)
-
     def setup_build_environment(self, env):
         """Wrapper until spack has a real implementation of setup_test_environment()"""
         if self.run_tests:

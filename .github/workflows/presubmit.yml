@@ -79,19 +79,6 @@ jobs:
         # install llvm+clang
         sudo apt-get install libllvm18 llvm-18 llvm-18-dev
         sudo apt-get install libclang-18-dev
-
-        # spack v1.0 stores both compilers and external packages in the
-        # same packages.yaml (compared to packages.yaml and compilers.yaml
-        # pre v1.0). So, even if we pass `--exclude llvm` to
-        # `spack external find`, packages.yaml will have an entry for llvm
-        # as `spack compiler find` finds it. Therefore, instead of adding
-        # a new llvm entry in packages.yaml, we have to change the
-        # existing one.
-        #
-        # find the prefix where libclang is installed
-        llvm_prefix=`llvm-config-18 --prefix`
-        # point spack to llvm+clang installed through apt-get
-        sed -i "/spec: llvm@18/{n;s|.*|      prefix: ${llvm_prefix}|}" ~/.spack/packages.yaml
     - name: Install ${{ matrix.version }}
       if: ${{ matrix.version != 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master' }}
       run: |
