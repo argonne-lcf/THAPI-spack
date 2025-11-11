@@ -20,11 +20,11 @@ jobs:
       run: |
         . external/spack/share/spack/setup-env.sh
         spack repo add ./
-    - name: Install thapi master
-      run: |
-        . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@master
     - name: Install thapi develop
       run: |
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT thapi@develop
+    - name: Install thapi master
+      run: |
+        . external/spack/share/spack/setup-env.sh
+        spack install $SPACK_OPT thapi@master
