@@ -4,9 +4,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack.package import *
-from glob import glob
-from os import *
-import subprocess
+import os
 import sys
 
 
@@ -39,10 +37,7 @@ class PyLibclang(PythonPackage):
     def setup_run_environment(self, env):
         super().setup_run_environment(env)
         s = self.spec["llvm"]
-        cp = subprocess.run(
-            [path.join(s.prefix.bin, "llvm-config-" + str(s.version[0])), "--libdir"], capture_output=True, encoding=sys.stdout.encoding
-        )
-        libpath = cp.stdout.rstrip("\r\n")
-        libpattern = path.join(libpath, "libclang-" + str(s.version[0]) + ".*")
-        libname = glob(libpattern)[0]
+        llvm_config = os.path.join(s.prefix.bin, "llvm-config-" + str(s.version[0]))
+        output == Executable(llvm_config)("--libdir", output=str, error=str)
+        lib_path = output.rstrip("\r\n")
         env.set("LIBCLANG_LIBRARY_FILE", libname)
