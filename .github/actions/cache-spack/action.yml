@@ -33,11 +33,11 @@ runs:
         if-no-files-found: error
     - name: Download thapi cache
       if: ${{ inputs.mode == 'download' }}
-      uses: ./.github/actions/download-artifact@v4
+      uses: actions/download-artifact@v4
       with:
         name: thapi_cache
         path: ${{ env._SA_CACHE_DIR }}
-    - name: Clean thapi-cachei
+    - name: Clean thapi-cache
       if: ${{ inputs.mode == 'cleanup' }}
       uses: geekyeggo/delete-artifact@v5
       with:

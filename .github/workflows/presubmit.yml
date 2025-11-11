@@ -64,6 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Cleanup the build cache
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/cache-spack
         with:
           mode: 'cleanup'
