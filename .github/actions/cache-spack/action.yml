@@ -12,7 +12,14 @@ runs:
       run: |
         echo "_SA_CACHE_DIR=$GITHUB_WORKSPACE/thapi_cache_$GITHUB_RUN_ID" >> $GITHUB_ENV
     - uses: actions/checkout@v4
-    - name: Setup spack
+    - name: Download thapi cache
+      if: ${{ inputs.mode == 'download' }}
+      uses: actions/download-artifact@v4
+      with:
+        name: thapi_cache
+        path: ${{ env._SA_CACHE_DIR }}
+
+    - name: Setup spack Upload
       uses: ./.github/actions/setup-spack
       with:
         cache-dir: ${{ env._SA_CACHE_DIR }}
@@ -22,11 +29,7 @@ runs:
       run: |
         . external/spack/share/spack/setup-env.sh
         # Will use `SPACK_OPT` if defined my our callee 
-        spack env create myenv
-        spack env activate myenv
-        spack install --only dependencies $SPACK_OPT thapi
-        spack mirror create -d ${{ env._SA_CACHE_DIR }} -a
-        cp $SPACK_ROOT/var/spack/environments/myenv/spack.lock ${{ env._SA_CACHE_DIR }}}
+        spack install --only dependencies $SPACK_OPT thapi 
     - name: Upload thapi cache
       if: ${{ inputs.mode == 'upload' }}
       uses: actions/upload-artifact@v4
@@ -35,19 +38,33 @@ runs:
         include-hidden-files: true
         path: ${{ env._SA_CACHE_DIR }}
         if-no-files-found: error
-    - name: Download thapi cache
-      if: ${{ inputs.mode == 'download' }}
-      uses: actions/download-artifact@v4
-      with:
-        name: thapi_cache
-        path: ${{ env._SA_CACHE_DIR }}
-    - name: Use thapi cache
+    - name: Fix Spack Package for yaml
       if: ${{ inputs.mode == 'download' }}
       shell: bash
       run: |
-        . external/spack/share/spack/setup-env.sh
-        spack mirror add thapi_mirror ${{ env._SA_CACHE_DIR }}
-        spack env create myenv2 ${{ env._SA_CACHE_DIR }}/spack.lock
+        # install llvm+clang
+        sudo apt-get install libllvm18 llvm-18 llvm-18-dev
+        sudo apt-get install libclang-18-dev
+        # spack v1.0 stores both compilers and external packages in the
+        # same packages.yaml (compared to packages.yaml and compilers.yaml
+        # pre v1.0). So, even if we pass `--exclude llvm` to
+        # `spack external find`, packages.yaml will have an entry for llvm
+        # as `spack compiler find` finds it. Therefore, instead of adding
+        # a new llvm entry in packages.yaml, we have to change the
+        # existing one.
+        #
+        cp ~/.spack/packages.yaml ~/.spack/packages.yaml.old
+        # find the prefix where llvm is installed
+        llvm_prefix=$(llvm-config-18 --prefix)
+        # point spack to llvm+clang installed through apt-get
+        # Assume `spec` key come before `prefix` key in yaml
+        #  - spec: llvm@18.1.3
+        #    prefix: /usr/local/llvm
+        awk -v pkg="llvm@18" -v new_prefix=${llvm_prefix} '
+            match($0, "- spec: "pkg) {f=1} # Match spec context
+            f && /prefix:/ {sub($2, new_prefix); f=0} # Use new prefix if in correct spec
+            {print}
+        ' ~/.spack/packages.yaml.old > ~/.spack/packages.yaml
     - name: Clean thapi-cache
       if: ${{ inputs.mode == 'cleanup' }}
       uses: geekyeggo/delete-artifact@v5

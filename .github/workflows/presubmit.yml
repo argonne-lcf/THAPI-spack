@@ -51,14 +51,12 @@ jobs:
         if: ${{ matrix.version != 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master' }}
         run: |
           . external/spack/share/spack/setup-env.sh
-          spack env activate myenv2
           spack install $SPACK_OPT ${{ matrix.version }}
       - name: Install thapi@develop with master versions of dependencies
         if: ${{ matrix.version == 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master' }}
         continue-on-error: true
         run: |
           . external/spack/share/spack/setup-env.sh
-          spack env activate myenv2
           spack install $SPACK_OPT ${{ matrix.version }} || true
   cleanup:
     needs: install_thapi

@@ -11,7 +11,7 @@ runs:
       # - llvm are required for h2yaml, an we cannot build llvm on the CI
       # - libnuma is required, because SPACK fail to build it
       with:
-        packages: libnuma-dev libllvm18 llvm-18 llvm-18-dev libclang-18-dev
+        packages: libnuma-dev #libllvm18 llvm-18 llvm-18-dev libclang-18-dev
     - name: Checkout Spack
       uses: actions/checkout@v4
       with:
@@ -35,27 +35,4 @@ runs:
         # Setup a spack mirror to store built packages. More info can be
         # found here:
         # https://spack.readthedocs.io/en/latest/binary_caches.html
-        #spack mirror add --autopush --unsigned thapi_cache ${{ inputs.cache-dir }}
-    - name: Fix Spack Package for yaml
-      shell: bash
-      run: |
-        # spack v1.0 stores both compilers and external packages in the
-        # same packages.yaml (compared to packages.yaml and compilers.yaml
-        # pre v1.0). So, even if we pass `--exclude llvm` to
-        # `spack external find`, packages.yaml will have an entry for llvm
-        # as `spack compiler find` finds it. Therefore, instead of adding
-        # a new llvm entry in packages.yaml, we have to change the
-        # existing one.
-        #
-        cp ~/.spack/packages.yaml ~/.spack/packages.yaml.old
-        # find the prefix where llvm is installed
-        llvm_prefix=$(llvm-config-18 --prefix)
-        # point spack to llvm+clang installed through apt-get
-        # Assume `spec` key come before `prefix` key in yaml
-        #  - spec: llvm@18.1.3
-        #    prefix: /usr/local/llvm
-        awk -v pkg="llvm@18" -v new_prefix=${llvm_prefix} '
-            match($0, "- spec: "pkg) {f=1} # Match spec context
-            f && /prefix:/ {sub($2, new_prefix); f=0} # Use new prefix if in correct spec
-            {print}
-        ' ~/.spack/packages.yaml.old > ~/.spack/packages.yaml
+        spack mirror add --autopush --unsigned thapi_cache ${{ inputs.cache-dir }}
