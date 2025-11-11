@@ -20,6 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Install ${{ matrix.version }}
     steps:
+      - uses: actions/checkout@v4
       - name: Download Spack Cache
         uses: ./.github/actions/cache-spack
         with:
