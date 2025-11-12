@@ -49,3 +49,6 @@ class PyLibclang(PythonPackage):
         output == Executable(llvm_config)("--libdir", output=str, error=str)
         lib_path = output.rstrip("\r\n")
         env.set("LIBCLANG_LIBRARY_FILE", find_libclang(lib_path))
+
+    def setup_test_environment(self, env):
+        self.setup_run_environment(env)
