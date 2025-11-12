@@ -4,12 +4,14 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack.package import *
+import re
 import os
 import sys
 
 
 def find_libclang(root):
-    regex = re.compile(r"libclang(?:-\d+)?.so(?:.\d+)?")
+    lib_ext = "dylib" if sys.platform == "darwin" else "so"
+    regex = re.compile(rf"libclang(?:-\d+)?.{lib_ext}(?:.\d+)?")
     for root, dirs, files in os.walk(root):
         for file in files:
             if regex.match(file):
@@ -46,8 +48,10 @@ class PyLibclang(PythonPackage):
         super().setup_run_environment(env)
         s = self.spec["llvm"]
         llvm_config = os.path.join(s.prefix.bin, "llvm-config-" + str(s.version[0]))
-        output == Executable(llvm_config)("--libdir", output=str, error=str)
-        lib_path = output.rstrip("\r\n")
+        if not os.path.exists(llvm_config):
+            llvm_config = os.path.join(s.prefix.bin, "llvm-config")
+        output = Executable(llvm_config)("--libdir", output=str, error=str, fail_on_error=False)
+        lib_path = output.rstrip()
         env.set("LIBCLANG_LIBRARY_FILE", find_libclang(lib_path))
 
     def setup_test_environment(self, env):
