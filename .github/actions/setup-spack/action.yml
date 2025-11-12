@@ -28,6 +28,7 @@ runs:
         . external/spack/share/spack/setup-env.sh
         spack repo add ./
         spack compiler find
+        spack external find --all
         # Setup a spack mirror to store built packages. More info can be
         # found here:
         # https://spack.readthedocs.io/en/latest/binary_caches.html
