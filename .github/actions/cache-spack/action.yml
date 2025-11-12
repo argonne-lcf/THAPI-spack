@@ -42,9 +42,6 @@ runs:
       if: ${{ inputs.mode == 'download' }}
       shell: bash
       run: |
-        # install llvm+clang
-        sudo apt-get install libllvm18 llvm-18 llvm-18-dev
-        sudo apt-get install libclang-18-dev
         # spack v1.0 stores both compilers and external packages in the
         # same packages.yaml (compared to packages.yaml and compilers.yaml
         # pre v1.0). So, even if we pass `--exclude llvm` to
