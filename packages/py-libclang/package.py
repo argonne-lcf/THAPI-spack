@@ -8,6 +8,14 @@ import os
 import sys
 
 
+def find_libclang(root):
+    regex = re.compile(r"libclang(?:-\d+)?.so(?:.\d+)?")
+    for root, dirs, files in os.walk(root):
+        for file in files:
+            if regex.match(file):
+                return file
+
+
 class PyLibclang(PythonPackage):
     """The repository contains code that taken from the LLVM project, to make
     it easier to install clang's python bindings."""
@@ -40,4 +48,4 @@ class PyLibclang(PythonPackage):
         llvm_config = os.path.join(s.prefix.bin, "llvm-config-" + str(s.version[0]))
         output == Executable(llvm_config)("--libdir", output=str, error=str)
         lib_path = output.rstrip("\r\n")
-        env.set("LIBCLANG_LIBRARY_FILE", libname)
+        env.set("LIBCLANG_LIBRARY_FILE", find_libclang(lib_path))
