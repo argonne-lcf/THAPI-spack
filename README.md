@@ -1,10 +1,12 @@
 # THAPI-spack
 
-This repository provides a [Spack](https://spack.io) environment for installing and managing [THAPI](https://github.com/argonne-lcf/THAPI).
+This repository provides a [Spack](https://spack.io) environment for installing and managing
+[THAPI](https://github.com/argonne-lcf/THAPI).
 
 ## How to Install THAPI
 
-✍️**Note**: This guide assumes `spack` is installed and available in your `PATH`. If it is not, see [How to Install Spack](#how-to-install-spack).
+✍️**Note**: This guide assumes `spack` is installed and available in your `PATH`. If it is not,
+see [How to Install Spack](#how-to-install-spack).
 
 ```bash
 # Clone the THAPI-spack repository and add it as a Spack repo
@@ -36,6 +38,7 @@ spack external find --all --exclude bzip2 --exclude xz --exclude curl
 ```
 
 #### `--concurrent-packages`
+
 One may also be able to reduce the time to install THAPI by using `--concurrent-packages` option in `spack install`
 as below:
 ```bash
@@ -45,7 +48,7 @@ Depending on the available number of CPU cores and how parallelizable the depend
 specification, one may be able to specify more concurrent packages (as compared to `2` in the above example).
 
 
-## Building THAPI from Source
+## Building THAPI manually
 
 You can use Spack to install the required dependencies and set up the environment to build THAPI from source:
 ```bash
@@ -53,12 +56,11 @@ spack build-env thapi bash
 ```
 This will spawn a new shell with the correct environment variables set for building THAPI manually.
 
+## Miscellaneous
 
-## Miscelanous
+### How to install Spack
 
-### How to Install Spack
-
-⚠️ **Important**: The default branch for Spack is `develop`, which is unstable. To ensure a reliable installation,
+**Important**: The default branch for Spack is `develop`, which is unstable. To ensure a reliable installation,
 use the latest release of Spack.
 
 To install spack:
