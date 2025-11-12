@@ -24,12 +24,16 @@ spack load thapi
 ### Tips for speeding up THAPI installation
 
 #### `spack external find`
+
 `spack external find` can be used to find existing packages on the system known to Spack. This way you can
 avoid building them when building THAPI. Use the following command before installing THAPI to find external
 packages available on the system:
 ```bash
 spack external find --all
 ```
+Make sure to `module load` the packages you want Spack to find (or set other environment variables like `PATH`)
+before running `spack external find --all`.
+
 Some packages when found using `spack external find` are known to cause build failures. If you run into such
 cases, use `spack external find --exclude <pkg>` so that Spack will build them instead of using the system
 installed versions. For example:
