@@ -15,7 +15,7 @@ def find_libclang(root):
     for root, dirs, files in os.walk(root):
         for file in files:
             if regex.match(file):
-                return file
+                return os.path.join(root, file)
 
 
 class PyLibclang(PythonPackage):
