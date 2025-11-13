@@ -38,7 +38,7 @@ class PyLibclang(PythonPackage):
 
     depends_on("python@2.7:2.8,3.3:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
-    patch("0001-Add-environment-variable-LIBCLANG_LIBRARY_FILE-to-se.patch", when="@13.0.0:16.0.6")
+    patch("0001-Add-environment-variable-LIBCLANG_LIBRARY_FILE-to-se.patch", when="@14.0.1:16.0.6")
     patch("0002-Add-environment-variable-LIBCLANG_LIBRARY_FILE-to-se.patch", when="@17.0.6:")
 
     for ver in ["14", "15", "16", "17", "18"]:
