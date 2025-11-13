@@ -60,6 +60,12 @@ spack build-env thapi bash
 ```
 This will spawn a new shell with the correct environment variables set for building THAPI manually.
 
+## Known issues
+
+THAPI spack package (and some of its dependencies) is known to run into build failures with NVHPC SDK
+(available on ALCF Polaris for example). Please make sure to use GNU programming environment whenever
+possible.
+
 ## Miscellaneous
 
 ### How to install Spack
