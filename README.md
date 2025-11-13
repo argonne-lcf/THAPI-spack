@@ -21,7 +21,7 @@ Once installed, you can load THAPI with:
 spack load thapi
 ```
 
-### Tips for speeding up THAPI installation
+### Tips For Speeding Up THAPI Installation
 
 #### `spack external find`
 
@@ -51,8 +51,7 @@ spack install --concurrent-packages 2 thapi
 Depending on the available number of CPU cores and how parallelizable the dependency graph is for the particular
 specification, one may be able to specify more concurrent packages (as compared to `2` in the above example).
 
-
-## Building THAPI manually
+## Building THAPI Manually
 
 You can use Spack to install the required dependencies and set up the environment to build THAPI from source:
 ```bash
@@ -60,7 +59,7 @@ spack build-env thapi bash
 ```
 This will spawn a new shell with the correct environment variables set for building THAPI manually.
 
-## Known issues
+## Known Issues
 
 THAPI spack package (and some of its dependencies) is known to run into build failures with NVHPC SDK
 (available on ALCF Polaris for example). Please make sure to use GNU programming environment whenever
@@ -68,9 +67,9 @@ possible.
 
 ## Miscellaneous
 
-### How to install Spack
+### How to Install Spack
 
-**Important**: The default branch for Spack is `develop`, which is unstable. To ensure a reliable installation,
+⚠️ **Important**: The default branch for Spack is `develop`, which is unstable. To ensure a reliable installation,
 use the latest release of Spack.
 
 To install spack:
