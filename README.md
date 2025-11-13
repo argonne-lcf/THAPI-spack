@@ -53,11 +53,13 @@ specification, one may be able to specify more concurrent packages (as compared 
 
 ## Building THAPI Manually
 
-You can use Spack to install the required dependencies and set up the environment to build THAPI from source:
+You can use Spack to install the required dependencies and set up the environment to build THAPI manually
+from source (without using Spack to build THAPI):
 ```bash
 spack build-env thapi bash
 ```
-This will spawn a new shell with the correct environment variables set for building THAPI manually.
+This will spawn a new shell with the correct environment variables and dependencies set for building THAPI
+manually. This is useful when building THAPI for your own development work.
 
 ## Known Issues
 
