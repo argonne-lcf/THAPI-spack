@@ -24,6 +24,7 @@ class Thapi(AutotoolsPackage):
     version("0.0.7", tag="v0.0.7")
 
     variant("strict", default=False, description="Enable -Werror during the build")
+    variant("test-dependencies", default=False, description="Install test dependencies (bats, clinfo, etc.) required for THAPI testing")
     variant("mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@:develop")
     variant("sync-daemon-mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@develop")
     variant("clang-parser", default=True, description="Enable Clang Parser", when="@develop")
@@ -77,6 +78,11 @@ class Thapi(AutotoolsPackage):
     depends_on("mpi", when="+mpi")
     depends_on("mpi", when="+sync-daemon-mpi")
     depends_on("h2yaml@0.3.1:", when="+clang-parser")
+
+    # Add dev tools required for THAPI development and testing.
+    depends_on("bats", when="+test-dependencies")
+    depends_on("clinfo", when="+test-dependencies")
+    depends_on("jq", when="+test-dependencies")
 
     # We add a Python dependency at buildtime, because `lttng-gen-tp` needs it.
     # We don't add Python as a runtime dependency of lttng to avoid python
