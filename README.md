@@ -41,6 +41,11 @@ installed versions. For example:
 spack external find --all --exclude bzip2 --exclude xz --exclude curl
 ```
 
+#### `spack install -j<core> <spec>`
+
+Depending on the number of available cores on your platform, you can specify number of parallel build
+processes to be used during the build of `spec` using `-j` option to `spack` (e.g., `-j16`).
+
 #### `--concurrent-packages`
 
 One may also be able to reduce the time to install THAPI by using `--concurrent-packages` option in `spack install`
@@ -63,9 +68,11 @@ manually. This is useful when building THAPI for your own development work.
 
 ## Known Issues
 
-THAPI spack package (and some of its dependencies) is known to run into build failures with NVHPC SDK
-(available on ALCF Polaris for example). Please make sure to use GNU programming environment whenever
-possible.
+- THAPI Spack package (and some of its dependencies) is known to run into build failures with NVHPC SDK
+  (available on ALCF Polaris for example). Please make sure to use GNU programming environment whenever
+  possible.
+- Users have noticed `spack` processes getting killed (due to timeout) on login nodes on both ALCF Aurora
+  and Polaris. Use a compute node whenever possible.
 
 ## Miscellaneous
 
@@ -74,7 +81,7 @@ possible.
 ⚠️ **Important**: The default branch for Spack is `develop`, which is unstable. To ensure a reliable installation,
 use the latest release of Spack.
 
-To install spack:
+To install Spack:
 ```bash
 git clone -c feature.manyFiles=true -b releases/latest https://github.com/spack/spack.git
 . spack/share/spack/setup-env.sh
