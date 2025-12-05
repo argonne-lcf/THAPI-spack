@@ -1,0 +1,53 @@
+variables:
+  SPACK_OPT: "--concurrent-packages 2 --show-log-on-error --fail-fast"
+  CACHE_DIR: "${{ github.workspace }}/thapi_cache_${{ github.run_id }}"
+  PROJ: "Performance"
+
+.site-id-token: &site-id-token
+  id_tokens:
+    CI_JOB_JWT:
+      aud: https://gitlab-ci.alcf.anl.gov
+
+.login:
+  <<: *site-id-token
+  tags:
+    - aurora
+    - login
+  before_script:
+    - module list
+
+.compute:
+  <<: *site-id-token
+  tags:
+    - aurora
+    - compute
+  variables:
+    ANL_AURORA_SCHEDULER_PARAMETERS: "-q debug -l select=1,walltime=1:00:00,filesystems=home -A $PROJ"
+
+# NOTE: uses default stages: .pre build test deploy .post
+stages:
+    - .pre
+    - build
+
+setup:
+  stage: .pre
+  extends: .login
+  script:
+    - mkdir -p ~/ci/thapi
+    - cd ~/ci/thapi
+    - git clone --depth=2 -b releases/latest https://github.com/spack/spack.git
+    - . spack/share/spack/setup-env.sh
+    - git clone https://github.com/argonne-lcf/THAPI-spack.git
+    - spack repo add ./THAPI-spack
+    - spack compiler find
+      # find external packages known to spack (avoid bzip2 and xz since
+      # they cause build failures in elfutils).
+    - spack external find --all --exclude bzip2 --exclude xz
+
+install_thapi:
+  stage: build
+  extends: .compute
+  script:
+    - cd ~/ci/thapi
+    - . spack/share/spack/setup-env.sh
+    - spack install $SPACK_OPT thapi@develop
