@@ -33,14 +33,16 @@ setup:
   stage: .pre
   extends: .shell
   script:
-    - mkdir -p ~/ci/thapi
-    - cd ~/ci/thapi
+    - mkdir -p ~/ci/thapi/${CI_COMMIT_SHA}
+    - cd ~/ci/thapi/${CI_COMMIT_SHA}
     - git clone --depth=2 -b releases/latest https://github.com/spack/spack.git
     - export SPACK_DISABLE_LOCAL_CONFIG=1
     - . spack/share/spack/setup-env.sh
     - spack bootstrap root .
     - git clone https://github.com/argonne-lcf/THAPI-spack.git
-    - spack repo add ./THAPI-spack
+    - cd ./THAPI-spack
+    - git checkout ${CI_COMMIT_SHA}
+    - spack repo add .
     - spack compiler find
       # find external packages known to spack (avoid bzip2 and xz since
       # they cause build failures in elfutils).
