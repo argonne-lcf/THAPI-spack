@@ -8,19 +8,19 @@ variables:
     CI_JOB_JWT:
       aud: https://gitlab-ci.alcf.anl.gov
 
-.login:
+.shell:
   <<: *site-id-token
   tags:
     - aurora
-    - login
+    - shell
   before_script:
     - module list
 
-.compute:
+.batch:
   <<: *site-id-token
   tags:
     - aurora
-    - compute
+    - batch
   variables:
     ANL_AURORA_SCHEDULER_PARAMETERS: "-q debug -l select=1,walltime=1:00:00,filesystems=home -A $PROJ"
 
@@ -31,7 +31,7 @@ stages:
 
 setup:
   stage: .pre
-  extends: .login
+  extends: .shell
   script:
     - mkdir -p ~/ci/thapi
     - cd ~/ci/thapi
@@ -46,7 +46,7 @@ setup:
 
 install_thapi:
   stage: build
-  extends: .compute
+  extends: .batch
   script:
     - cd ~/ci/thapi
     - . spack/share/spack/setup-env.sh
