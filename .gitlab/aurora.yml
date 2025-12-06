@@ -36,7 +36,9 @@ setup:
     - mkdir -p ~/ci/thapi
     - cd ~/ci/thapi
     - git clone --depth=2 -b releases/latest https://github.com/spack/spack.git
+    - export SPACK_DISABLE_LOCAL_CONFIG=1
     - . spack/share/spack/setup-env.sh
+    - spack bootstrap root .
     - git clone https://github.com/argonne-lcf/THAPI-spack.git
     - spack repo add ./THAPI-spack
     - spack compiler find
