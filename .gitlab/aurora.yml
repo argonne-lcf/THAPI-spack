@@ -33,6 +33,7 @@ setup:
   stage: .pre
   extends: .shell
   script:
+    - rm -rf ~/ci/thapi 2>/dev/null
     - mkdir -p ~/ci/thapi
     - cd ~/ci/thapi
     - git clone --depth=2 -b releases/latest https://github.com/spack/spack.git
