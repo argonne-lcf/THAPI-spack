@@ -25,3 +25,6 @@ class Ittapi(CMakePackage):
             args.append("-DITT_API_FORTRAN_SUPPORT=ON")
 
         return args
+
+    def setup_run_environment(self, env):
+        env.set("ITTAPI_ROOT", self.prefix)
