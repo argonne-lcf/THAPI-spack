@@ -52,6 +52,6 @@ install_thapi:
   stage: build
   extends: .batch
   script:
-    - cd ~/ci/thapi
+    - cd ~/ci/thapi/${CI_COMMIT_SHA}
     - . spack/share/spack/setup-env.sh
     - spack install $SPACK_OPT thapi@develop
