@@ -48,10 +48,10 @@ setup:
       # they cause build failures in elfutils).
     - spack external find --all --exclude bzip2 --exclude xz
 
-install_thapi:
+install:
   stage: build
   extends: .batch
   script:
     - cd ~/ci/thapi/${CI_COMMIT_SHA}
     - . spack/share/spack/setup-env.sh
-    - spack install $SPACK_OPT thapi@develop
+    - spack install $SPACK_OPT thapi@develop+archive+test-dependencies
