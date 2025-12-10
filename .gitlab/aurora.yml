@@ -57,7 +57,7 @@ install:
     - . spack/share/spack/setup-env.sh
     - spack install $SPACK_OPT $SPACK_SPEC
 
-integration_test:
+integration_tests:
   stage: test
   extends: .batch
   script:
