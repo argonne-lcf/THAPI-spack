@@ -54,6 +54,7 @@ install:
   extends: .batch
   script:
     - cd ~/ci/thapi/${CI_COMMIT_SHA}
+    - export SPACK_DISABLE_LOCAL_CONFIG=1
     - . spack/share/spack/setup-env.sh
     - spack install $SPACK_OPT $SPACK_SPEC
 
@@ -62,6 +63,7 @@ integration_tests:
   extends: .batch
   script:
     - cd ~/ci/thapi/${CI_COMMIT_SHA}
+    - export SPACK_DISABLE_LOCAL_CONFIG=1
     - . spack/share/spack/setup-env.sh
     - spack load $SPACK_SPEC
     - git clone https://github.com/argonne-lcf/THAPI.git -b devel
