@@ -28,6 +28,7 @@ variables:
 stages:
     - .pre
     - build
+    - test
 
 setup:
   stage: .pre
