@@ -1,6 +1,6 @@
 variables:
+  SPACK_SPEC: "thapi@develop+archive+test-dependencies"
   SPACK_OPT: "--concurrent-packages 2 --show-log-on-error --fail-fast"
-  CACHE_DIR: "${{ github.workspace }}/thapi_cache_${{ github.run_id }}"
   PROJ: "Performance"
 
 .site-id-token: &site-id-token
@@ -54,15 +54,15 @@ install:
   script:
     - cd ~/ci/thapi/${CI_COMMIT_SHA}
     - . spack/share/spack/setup-env.sh
-    - spack install $SPACK_OPT thapi@develop+archive+test-dependencies
+    - spack install $SPACK_OPT $SPACK_SPEC
 
-test:
+integration_test:
   stage: test
   extends: .batch
   script:
     - cd ~/ci/thapi/${CI_COMMIT_SHA}
     - . spack/share/spack/setup-env.sh
-    - spack load thapi@develop+archive+test-dependencies
+    - spack load $SPACK_SPEC
     - git clone https://github.com/argonne-lcf/THAPI.git -b devel
     - cd ./THAPI
     - bats ./integration_tests/
