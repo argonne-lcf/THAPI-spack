@@ -55,3 +55,14 @@ install:
     - cd ~/ci/thapi/${CI_COMMIT_SHA}
     - . spack/share/spack/setup-env.sh
     - spack install $SPACK_OPT thapi@develop+archive+test-dependencies
+
+test:
+  stage: test
+  extends: .batch
+  script:
+    - cd ~/ci/thapi/${CI_COMMIT_SHA}
+    - . spack/share/spack/setup-env.sh
+    - spack load thapi@develop+archive+test-dependencies
+    - git clone https://github.com/argonne-lcf/THAPI.git -b devel
+    - cd ./THAPI
+    - bats ./integration_tests/
