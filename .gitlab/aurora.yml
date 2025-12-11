@@ -2,27 +2,8 @@ variables:
   SPACK_SPEC: "thapi@develop+archive+test-dependencies"
   SPACK_OPT: "--concurrent-packages 2 --show-log-on-error --fail-fast"
   PROJ: "Performance"
-
-.site-id-token: &site-id-token
-  id_tokens:
-    CI_JOB_JWT:
-      aud: https://gitlab-ci.alcf.anl.gov
-
-.shell:
-  <<: *site-id-token
-  tags:
-    - aurora
-    - shell
-  before_script:
-    - module list
-
-.batch:
-  <<: *site-id-token
-  tags:
-    - aurora
-    - batch
-  variables:
-    ANL_AURORA_SCHEDULER_PARAMETERS: "-q debug -l select=1,walltime=1:00:00,filesystems=home -A $PROJ"
+  QUEUE: "prod"
+  ANL_AURORA_SCHEDULER_PARAMETERS: "-q $QUEUE -l select=1,walltime=2:00:00,filesystems=home -A $PROJ"
 
 # NOTE: uses default stages: .pre build test deploy .post
 stages:
@@ -32,7 +13,7 @@ stages:
 
 setup:
   stage: .pre
-  extends: .shell
+  extends: .aurora-shell-runner
   script:
     - mkdir -p ~/ci/thapi/${CI_COMMIT_SHA}
     - cd ~/ci/thapi/${CI_COMMIT_SHA}
@@ -51,7 +32,7 @@ setup:
 
 install:
   stage: build
-  extends: .batch
+  extends: .aurora-batch-runner
   script:
     - cd ~/ci/thapi/${CI_COMMIT_SHA}
     - export SPACK_DISABLE_LOCAL_CONFIG=1
@@ -60,7 +41,7 @@ install:
 
 integration_tests:
   stage: test
-  extends: .batch
+  extends: .aurora-batch-runner
   script:
     - cd ~/ci/thapi/${CI_COMMIT_SHA}
     - export SPACK_DISABLE_LOCAL_CONFIG=1
