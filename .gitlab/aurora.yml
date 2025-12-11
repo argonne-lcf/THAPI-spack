@@ -1,9 +1,10 @@
 variables:
-  SPACK_SPEC: "thapi@develop+archive+test-dependencies"
-  SPACK_OPT: "--concurrent-packages 2 --show-log-on-error --fail-fast"
+  SPEC: "thapi@develop+archive+test-dependencies"
+  OPTS: "--concurrent-packages 2 -j32 --show-log-on-error --fail-fast"
   PROJ: "Performance"
   QUEUE: "prod"
-  ANL_AURORA_SCHEDULER_PARAMETERS: "-q $QUEUE -l select=1,walltime=2:00:00,filesystems=home -A $PROJ"
+  TIME: "2:00:00"
+  ANL_AURORA_SCHEDULER_PARAMETERS: "-q ${QUEUE} -l select=1,walltime=${TIME},filesystems=home -A ${PROJ}"
 
 # NOTE: uses default stages: .pre build test deploy .post
 stages:
@@ -37,7 +38,7 @@ install:
     - cd ~/ci/thapi/${CI_COMMIT_SHA}
     - export SPACK_DISABLE_LOCAL_CONFIG=1
     - . spack/share/spack/setup-env.sh
-    - spack install $SPACK_OPT $SPACK_SPEC
+    - spack install ${OPTS} ${SPEC}
 
 integration_tests:
   stage: test
@@ -46,7 +47,7 @@ integration_tests:
     - cd ~/ci/thapi/${CI_COMMIT_SHA}
     - export SPACK_DISABLE_LOCAL_CONFIG=1
     - . spack/share/spack/setup-env.sh
-    - spack load $SPACK_SPEC
+    - spack load ${SPEC}
     - git clone https://github.com/argonne-lcf/THAPI.git -b devel
     - cd ./THAPI
     - bats ./integration_tests/
