@@ -18,20 +18,22 @@ setup:
   script:
     - mkdir -p ~/ci/thapi/${CI_COMMIT_SHA}
     - cd ~/ci/thapi/${CI_COMMIT_SHA}
-    - git clone https://github.com/argonne-lcf/THAPI-spack.git
-    - cd ./THAPI-spack
-    - git checkout ${CI_COMMIT_SHA}
+      # setup spack
     - git clone -c feature.manyFiles=true -b releases/latest https://github.com/spack/spack.git
     - . spack/share/spack/setup-env.sh
       # Isolate spack for CI (see below link):
       # https://spack.readthedocs.io/en/latest/configuration.html#overriding-local-configuration
     - export SPACK_DISABLE_LOCAL_CONFIG=true
     - export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
-    - spack repo add .
     - spack compiler find
       # find external packages known to spack (avoid bzip2 and xz since they cause
       # build failures in elfutils).
     - spack external find --all --exclude bzip2 --exclude xz
+      # setup THAPI-spack
+    - git clone https://github.com/argonne-lcf/THAPI-spack.git
+    - cd ./THAPI-spack
+    - git checkout ${CI_COMMIT_SHA}
+    - spack repo add .
 
 install:
   stage: build
