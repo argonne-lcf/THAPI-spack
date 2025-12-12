@@ -18,13 +18,13 @@ setup:
   script:
     - mkdir -p ~/ci/thapi/${CI_COMMIT_SHA}
     - cd ~/ci/thapi/${CI_COMMIT_SHA}
-    - git clone --depth=2 -b releases/latest https://github.com/spack/spack.git
-    - export SPACK_DISABLE_LOCAL_CONFIG=1
-    - . spack/share/spack/setup-env.sh
-    - spack bootstrap root .
     - git clone https://github.com/argonne-lcf/THAPI-spack.git
     - cd ./THAPI-spack
     - git checkout ${CI_COMMIT_SHA}
+    - git clone -c feature.manyFiles=true -b releases/latest https://github.com/spack/spack.git
+    - . spack/share/spack/setup-env.sh
+    - export SPACK_DISABLE_LOCAL_CONFIG=true
+    - export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
     - spack repo add .
     - spack compiler find
       # find external packages known to spack (avoid bzip2 and xz since
@@ -36,7 +36,8 @@ install:
   extends: .aurora-batch-runner
   script:
     - cd ~/ci/thapi/${CI_COMMIT_SHA}
-    - export SPACK_DISABLE_LOCAL_CONFIG=1
+    - export SPACK_DISABLE_LOCAL_CONFIG=true
+    - export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
     - . spack/share/spack/setup-env.sh
     - spack install ${OPTS} ${SPEC}
 
@@ -45,7 +46,8 @@ integration_tests:
   extends: .aurora-batch-runner
   script:
     - cd ~/ci/thapi/${CI_COMMIT_SHA}
-    - export SPACK_DISABLE_LOCAL_CONFIG=1
+    - export SPACK_DISABLE_LOCAL_CONFIG=true
+    - export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
     - . spack/share/spack/setup-env.sh
     - spack load ${SPEC}
     - git clone https://github.com/argonne-lcf/THAPI.git -b devel
