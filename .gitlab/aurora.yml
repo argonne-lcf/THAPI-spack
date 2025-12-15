@@ -4,6 +4,7 @@ variables:
   PROJ: "Performance"
   QUEUE: "prod"
   TIME: "2:00:00"
+  WRK_DIR: "/lus/flare/projects/Performance/gitlab_ci/thapi"
   ANL_AURORA_SCHEDULER_PARAMETERS: "-q ${QUEUE} -l select=1,walltime=${TIME},filesystems=home -A ${PROJ}"
 
 # NOTE: uses default stages: .pre build test deploy .post
@@ -16,7 +17,7 @@ setup:
   stage: .pre
   extends: .aurora-shell-runner
   script:
-    - mkdir -p ~/ci/thapi/${CI_COMMIT_SHA}
+    - mkdir -p ${WRK_DIR}/${CI_COMMIT_SHA}
     - cd ~/ci/thapi/${CI_COMMIT_SHA}
       # setup spack
     - git clone -c feature.manyFiles=true -b releases/latest https://github.com/spack/spack.git
@@ -39,7 +40,7 @@ install:
   stage: build
   extends: .aurora-batch-runner
   script:
-    - cd ~/ci/thapi/${CI_COMMIT_SHA}
+    - cd ${WRK_DIR}/${CI_COMMIT_SHA}
     - export SPACK_DISABLE_LOCAL_CONFIG=true
     - export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
     - . spack/share/spack/setup-env.sh
@@ -49,7 +50,7 @@ integration_tests:
   stage: test
   extends: .aurora-batch-runner
   script:
-    - cd ~/ci/thapi/${CI_COMMIT_SHA}
+    - cd ${WRK_DIR}/${CI_COMMIT_SHA}
     - export SPACK_DISABLE_LOCAL_CONFIG=true
     - export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
     - . spack/share/spack/setup-env.sh
