@@ -17,6 +17,7 @@ setup:
   stage: .pre
   extends: .aurora-shell-runner
   script:
+    - module load oneapi python ruby bzip2 cmake gmake
     - mkdir -p ${WRK_DIR}/${CI_COMMIT_SHA}
     - cd ${WRK_DIR}/${CI_COMMIT_SHA}
       # setup spack
@@ -40,6 +41,7 @@ install:
   stage: build
   extends: .aurora-batch-runner
   script:
+    - module load oneapi python ruby bzip2 cmake gmake
     - cd ${WRK_DIR}/${CI_COMMIT_SHA}
     - export SPACK_DISABLE_LOCAL_CONFIG=true
     - export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
@@ -50,6 +52,7 @@ integration_tests:
   stage: test
   extends: .aurora-batch-runner
   script:
+    - module load oneapi python ruby bzip2 cmake gmake
     - cd ${WRK_DIR}/${CI_COMMIT_SHA}
     - export SPACK_DISABLE_LOCAL_CONFIG=true
     - export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
