@@ -18,7 +18,7 @@ setup:
   extends: .aurora-shell-runner
   script:
     - mkdir -p ${WRK_DIR}/${CI_COMMIT_SHA}
-    - cd ~/ci/thapi/${CI_COMMIT_SHA}
+    - cd ${WRK_DIR}/${CI_COMMIT_SHA}
       # setup spack
     - git clone -c feature.manyFiles=true -b releases/latest https://github.com/spack/spack.git
     - . spack/share/spack/setup-env.sh
