@@ -1,4 +1,5 @@
 from spack.package import *
+import os
 
 
 class Ittapi(CMakePackage):
@@ -25,3 +26,8 @@ class Ittapi(CMakePackage):
             args.append("-DITT_API_FORTRAN_SUPPORT=ON")
 
         return args
+
+    def setup_run_environment(self, env):
+        env.set("ITTAPI_ROOT", self.prefix)
+        env.prepend_path("C_INCLUDE_PATH", self.prefix.include)
+        env.prepend_path("LD_LIBRARY_PATH", self.prefix.lib64 if os.path.isdir(self.prefix.lib64) else self.prefix.lib)
