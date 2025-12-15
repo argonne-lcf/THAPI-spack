@@ -4,7 +4,7 @@ variables:
   PROJ: "Performance"
   QUEUE: "prod"
   TIME: "2:00:00"
-  WRK_DIR: "/lus/flare/projects/Performance/gitlab_ci/thapi"
+  WRK_DIR: "/lus/flare/projects/Performance/thapi"
   ANL_AURORA_SCHEDULER_PARAMETERS: "-q ${QUEUE} -l select=1,walltime=${TIME},filesystems=home -A ${PROJ}"
 
 # NOTE: uses default stages: .pre build test deploy .post
