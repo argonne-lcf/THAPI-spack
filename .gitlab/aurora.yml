@@ -17,7 +17,6 @@ setup:
   stage: .pre
   extends: .aurora-shell-runner
   script:
-    - module load oneapi python protobuf bzip2 cmake gmake
     - mkdir -p ${WRK_DIR}/${CI_COMMIT_SHA}
     - cd ${WRK_DIR}/${CI_COMMIT_SHA}
       # setup spack
@@ -27,6 +26,7 @@ setup:
       # https://spack.readthedocs.io/en/latest/configuration.html#overriding-local-configuration
     - export SPACK_DISABLE_LOCAL_CONFIG=true
     - export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
+    - module load oneapi
     - spack compiler find
       # find external packages known to spack (avoid bzip2 and xz since they cause
       # build failures in elfutils).
@@ -41,7 +41,6 @@ install:
   stage: build
   extends: .aurora-batch-runner
   script:
-    - module load oneapi python protobuf bzip2 cmake gmake
     - cd ${WRK_DIR}/${CI_COMMIT_SHA}
     - export SPACK_DISABLE_LOCAL_CONFIG=true
     - export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
@@ -52,7 +51,6 @@ integration_tests:
   stage: test
   extends: .aurora-batch-runner
   script:
-    - module load oneapi python protobuf bzip2 cmake gmake
     - cd ${WRK_DIR}/${CI_COMMIT_SHA}
     - export SPACK_DISABLE_LOCAL_CONFIG=true
     - export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
@@ -60,4 +58,5 @@ integration_tests:
     - spack load ${SPEC}
     - git clone https://github.com/argonne-lcf/THAPI.git -b devel
     - cd ./THAPI
+    - module load oneapi
     - bats ./integration_tests/
