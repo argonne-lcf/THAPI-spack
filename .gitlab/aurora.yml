@@ -1,5 +1,5 @@
 variables:
-  SPEC: "thapi@develop+archive+test-dependencies"
+  SPEC: "thapi@develop+mpi+sync-daemon-mpi+archive+test-dependencies"
   OPTS: "--concurrent-packages 2 -j32 --show-log-on-error --fail-fast"
   PROJ: "Performance"
   QUEUE: "prod"
