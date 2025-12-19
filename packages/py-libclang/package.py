@@ -42,7 +42,7 @@ class PyLibclang(PythonPackage):
     patch("0002-Add-environment-variable-LIBCLANG_LIBRARY_FILE-to-se.patch", when="@17.0.6:")
 
     for ver in ["14", "15", "16", "17", "18"]:
-        depends_on("llvm+clang@" + ver, when="@" + ver, type="build")
+        depends_on(f"llvm~lldb~lld~polly~offload~libomptarget~gold~llvm_dylib~lua+clang@{ver} targets=none", when="@" + ver, type="build")
 
     def setup_run_environment(self, env):
         super().setup_run_environment(env)

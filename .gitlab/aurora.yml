@@ -1,53 +1,66 @@
 variables:
-  SPACK_OPT: "--concurrent-packages 2 --show-log-on-error --fail-fast"
-  CACHE_DIR: "${{ github.workspace }}/thapi_cache_${{ github.run_id }}"
+  SPEC: "thapi@develop+mpi+sync-daemon-mpi+archive+test-dependencies"
+  OPTS: "--concurrent-packages 2 -j32 --show-log-on-error --fail-fast"
   PROJ: "Performance"
-
-.site-id-token: &site-id-token
-  id_tokens:
-    CI_JOB_JWT:
-      aud: https://gitlab-ci.alcf.anl.gov
-
-.login:
-  <<: *site-id-token
-  tags:
-    - aurora
-    - login
-  before_script:
-    - module list
-
-.compute:
-  <<: *site-id-token
-  tags:
-    - aurora
-    - compute
-  variables:
-    ANL_AURORA_SCHEDULER_PARAMETERS: "-q debug -l select=1,walltime=1:00:00,filesystems=home -A $PROJ"
+  QUEUE: "prod"
+  TIME: "2:00:00"
+  WRK_DIR: "/lus/flare/projects/Performance/thapi"
+  ANL_AURORA_SCHEDULER_PARAMETERS: "-q ${QUEUE} -l select=1,walltime=${TIME},filesystems=home -A ${PROJ}"
 
 # NOTE: uses default stages: .pre build test deploy .post
 stages:
     - .pre
     - build
+    - test
 
 setup:
   stage: .pre
-  extends: .login
+  extends: .aurora-shell-runner
   script:
-    - mkdir -p ~/ci/thapi
-    - cd ~/ci/thapi
-    - git clone --depth=2 -b releases/latest https://github.com/spack/spack.git
+    # FIXME: For the time being we delete ${WRK_DIR}/${CI_COMMIT_SHA} if it exists.
+    - rm -rf ${WRK_DIR}/${CI_COMMIT_SHA}
+    - mkdir -p ${WRK_DIR}/${CI_COMMIT_SHA}
+    - cd ${WRK_DIR}/${CI_COMMIT_SHA}
+      # setup spack
+    - git clone -c feature.manyFiles=true -b releases/latest https://github.com/spack/spack.git
     - . spack/share/spack/setup-env.sh
-    - git clone https://github.com/argonne-lcf/THAPI-spack.git
-    - spack repo add ./THAPI-spack
+      # Isolate spack for CI (see below link):
+      # https://spack.readthedocs.io/en/latest/configuration.html#overriding-local-configuration
+    - export SPACK_DISABLE_LOCAL_CONFIG=true
+    - export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
+    - module load oneapi
     - spack compiler find
-      # find external packages known to spack (avoid bzip2 and xz since
-      # they cause build failures in elfutils).
+      # find external packages known to spack (avoid bzip2 and xz since they cause
+      # build failures in elfutils).
     - spack external find --all --exclude bzip2 --exclude xz
+      # setup THAPI-spack
+    - git clone https://github.com/argonne-lcf/THAPI-spack.git
+    - cd ./THAPI-spack
+    - git checkout ${CI_COMMIT_SHA}
+    - spack repo add .
 
-install_thapi:
+install:
   stage: build
-  extends: .compute
+  extends: .aurora-batch-runner
   script:
-    - cd ~/ci/thapi
+    - cd ${WRK_DIR}/${CI_COMMIT_SHA}
+    - export SPACK_DISABLE_LOCAL_CONFIG=true
+    - export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
     - . spack/share/spack/setup-env.sh
-    - spack install $SPACK_OPT thapi@develop
+    - spack install ${OPTS} ${SPEC}
+
+integration_tests:
+  stage: test
+  extends: .aurora-batch-runner
+  script:
+    - cd ${WRK_DIR}/${CI_COMMIT_SHA}
+    - export SPACK_DISABLE_LOCAL_CONFIG=true
+    - export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
+    - . spack/share/spack/setup-env.sh
+    - spack load ${SPEC}
+    - module load oneapi
+    # FIXME: For the time being we delete THAPI if it exists.
+    - rm -rf THAPI
+    - git clone https://github.com/argonne-lcf/THAPI.git -b devel
+    - cd ./THAPI
+    - bats ./integration_tests/
