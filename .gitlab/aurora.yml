@@ -1,8 +1,8 @@
 variables:
   PROJ: "Performance"
-  QUEUE: "prod"
-  TIME: "2:00:00"
-  WRK_DIR: "/lus/flare/projects/Performance/thapi/${CI_COMMIT_SHA}"
+  QUEUE: "debug"
+  TIME: "1:00:00"
+  WRK_DIR: "/lus/flare/projects/${PROJ}/thapi/${CI_COMMIT_SHA}"
   ANL_AURORA_SCHEDULER_PARAMETERS: "-q ${QUEUE} -l select=1,walltime=${TIME},filesystems=home -A ${PROJ}"
   SPEC: "thapi@develop+mpi+sync-daemon-mpi+archive+test-dependencies"
   OPTS: "--concurrent-packages 2 -j32 --show-log-on-error --fail-fast"
