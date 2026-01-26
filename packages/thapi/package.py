@@ -85,6 +85,7 @@ class Thapi(AutotoolsPackage):
     depends_on("jq", when="+test-dependencies")
     depends_on("ittapi", when="+test-dependencies")
     depends_on("py-ittapi", when="+test-dependencies")
+    depends_on("pkg-config", when="+test-dependencies")
 
     # We add a Python dependency at buildtime, because `lttng-gen-tp` needs it.
     # We don't add Python as a runtime dependency of lttng to avoid python
