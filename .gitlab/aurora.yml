@@ -68,6 +68,6 @@ integration_tests:
     - module load oneapi
     # FIXME: For the time being we delete THAPI if it exists.
     - rm -rf THAPI
-    - git clone https://github.com/argonne-lcf/THAPI.git -b devel
+    - git clone --depth 1 https://github.com/argonne-lcf/THAPI.git -b devel
     - cd ./THAPI
     - bats ./integration_tests/
