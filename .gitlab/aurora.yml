@@ -2,7 +2,7 @@ variables:
   PROJ: "Performance"
   QUEUE: "debug"
   TIME: "1:00:00"
-  WRK_DIR: "/lus/flare/projects/${PROJ}/thapi/${CI_COMMIT_SHA}"
+  WRK_DIR: "/lus/flare/projects/${PROJ}/thapi/"
   ANL_AURORA_SCHEDULER_PARAMETERS: "-q ${QUEUE} -l select=1,walltime=${TIME},filesystems=home -A ${PROJ}"
   SPEC: "thapi@develop+mpi+sync-daemon-mpi+archive+test-dependencies"
   OPTS: "--concurrent-packages 2 -j32 --show-log-on-error --fail-fast"
@@ -16,10 +16,12 @@ setup:
   stage: .pre
   extends: .aurora-shell-runner
   script:
-    # FIXME: For the time being we delete ${WRK_DIR} if it exists.
-    - rm -rf ${WRK_DIR}
-    - mkdir -p ${WRK_DIR}
-    - cd ${WRK_DIR}
+    # create ci directory
+    - |
+      cd ${WRK_DIR}
+      suffix=$(( $(find . -maxdepth 1 -type d -name "${CI_COMMIT_SHA}*" | wc -l) + 1 ))
+      mkdir -p ${CI_COMMIT_SHA}_${suffix}
+      cd ${CI_COMMIT_SHA}_${suffix}
       # setup spack
     - git clone -c feature.manyFiles=true -b releases/latest https://github.com/spack/spack.git
     - . spack/share/spack/setup-env.sh
@@ -42,7 +44,10 @@ install:
   stage: build
   extends: .aurora-batch-runner
   script:
-    - cd ${WRK_DIR}
+    - |
+      cd ${WRK_DIR}/
+      suffix=$(( $(find . -maxdepth 1 -type d -name "${CI_COMMIT_SHA}*" | wc -l) ))
+      cd ${CI_COMMIT_SHA}_${suffix}
     - export SPACK_DISABLE_LOCAL_CONFIG=true
     - export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
     - . spack/share/spack/setup-env.sh
@@ -52,7 +57,10 @@ integration_tests:
   stage: test
   extends: .aurora-batch-runner
   script:
-    - cd ${WRK_DIR}
+    - |
+      cd ${WRK_DIR}/
+      suffix=$(( $(find . -maxdepth 1 -type d -name "${CI_COMMIT_SHA}*" | wc -l) ))
+      cd ${CI_COMMIT_SHA}_${suffix}
     - export SPACK_DISABLE_LOCAL_CONFIG=true
     - export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
     - . spack/share/spack/setup-env.sh
