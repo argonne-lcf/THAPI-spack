@@ -8,61 +8,78 @@ variables:
   OPTS: "--concurrent-packages 2 -j32 --show-log-on-error --fail-fast"
 
 stages:
-    - .pre
-    - build
+    - setup
+    - install
     - test
 
-setup:
-  stage: .pre
+setup_spack:
+  stage: setup
   extends: .aurora-shell-runner
   script:
-    # create ci directory
+    # Create ci directory
     - |
       cd ${WRK_DIR}
       suffix=$(( $(find . -maxdepth 1 -type d -name "${CI_COMMIT_SHA}_*" | wc -l) ))
       run_dir=$(mktemp -d --tmpdir=${PWD} ${CI_COMMIT_SHA}_${suffix}_XXXXXXXXXX)
       cd ${run_dir}
-      echo "THAPI_RUN_DIR=${run_dir}" >> .pre.env
-      # setup spack
-    - git clone -c feature.manyFiles=true -b releases/latest https://github.com/spack/spack.git
-    - . spack/share/spack/setup-env.sh
-      # Isolate spack for CI (see below link):
-      # https://spack.readthedocs.io/en/latest/configuration.html#overriding-local-configuration
-    - export SPACK_DISABLE_LOCAL_CONFIG=true
-    - export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
-    - module load oneapi
-    - spack compiler find
-      # find external packages known to spack (avoid bzip2 and xz since they cause
-      # build failures in elfutils).
-    - spack external find --all --exclude bzip2 --exclude xz
-      # setup THAPI-spack
-    - git clone https://github.com/argonne-lcf/THAPI-spack.git
-    - cd ./THAPI-spack
-    - git checkout ${CI_COMMIT_SHA}
-    - spack repo add .
+      echo "THAPI_RUN_DIR=${run_dir}" | tee setup.env
+    # Load available modules so spack finds those packages
+    - |
+      module load oneapi
+    # Clone and Isolate spack for CI (see below link):
+    # https://spack.readthedocs.io/en/latest/configuration.html#overriding-local-configuration
+    - |
+      git clone -c feature.manyFiles=true -b releases/latest https://github.com/spack/spack.git
+      export SPACK_DISABLE_LOCAL_CONFIG=true
+      export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
+      . spack/share/spack/setup-env.sh
+    # find compilers and external packages known to spack (avoid bzip2 and xz since
+    # they cause build failures in elfutils).
+    - |
+      spack compiler find
+      spack external find --all --exclude bzip2 --exclude xz
+    # Add THAPI-spack as a repo
+    - |
+      git clone https://github.com/argonne-lcf/THAPI-spack.git
+      cd ./THAPI-spack
+      git checkout ${CI_COMMIT_SHA}
+      spack repo add .
+  artifacts:
+    reports:
+      dotenv: setup.env
 
-install:
-  stage: build
-  needs: ["setup"]
+install_thapi:
+  stage: install
+  needs: [setup_spack]
   extends: .aurora-batch-runner
   script:
-    - cd ${THAPI_RUN_DIR}
-    - export SPACK_DISABLE_LOCAL_CONFIG=true
-    - export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
-    - . spack/share/spack/setup-env.sh
-    - spack install ${OPTS} ${SPEC}
+    - |
+      echo "Changing directory to THAPI_RUN_DIR=${THAPI_RUN_DIR}"
+      cd ${THAPI_RUN_DIR}
+    # Install thapi
+    - |
+      export SPACK_DISABLE_LOCAL_CONFIG=true
+      export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
+      . spack/share/spack/setup-env.sh
+      spack install ${OPTS} ${SPEC}
 
-integration_tests:
+run_integration_tests:
   stage: test
-  needs: ["install"]
+  needs: [install_thapi]
   extends: .aurora-batch-runner
   script:
-    - cd ${THAPI_RUN_DIR}
-    - export SPACK_DISABLE_LOCAL_CONFIG=true
-    - export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
-    - . spack/share/spack/setup-env.sh
-    - spack load ${SPEC}
-    - module load oneapi
-    - git clone --depth 1 https://github.com/argonne-lcf/THAPI.git -b devel
-    - cd ./THAPI
-    - bats ./integration_tests/
+    - |
+      echo "Changing directory to THAPI_RUN_DIR=${THAPI_RUN_DIR}"
+      cd ${THAPI_RUN_DIR}
+    # Load spack
+    - |
+      export SPACK_DISABLE_LOCAL_CONFIG=true
+      export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
+      . spack/share/spack/setup-env.sh
+      spack load ${SPEC}
+    # Run tests
+    - |
+      git clone --depth 1 https://github.com/argonne-lcf/THAPI.git -b devel
+      cd ./THAPI
+      module load oneapi
+      bats ./integration_tests/
