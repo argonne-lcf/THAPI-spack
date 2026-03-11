@@ -43,7 +43,7 @@ setup:
 
 install:
   stage: build
-  needs: setup
+  needs: ["setup"]
   extends: .aurora-batch-runner
   script:
     - cd ${THAPI_RUN_DIR}
@@ -54,7 +54,7 @@ install:
 
 integration_tests:
   stage: test
-  needs: install
+  needs: ["install"]
   extends: .aurora-batch-runner
   script:
     - cd ${THAPI_RUN_DIR}
