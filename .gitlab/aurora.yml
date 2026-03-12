@@ -18,11 +18,9 @@ setup_spack:
   script:
     # Create ci directory
     - |
-      cd ${WRK_DIR}
-      suffix=$(( $(find . -maxdepth 1 -type d -name "${CI_COMMIT_SHA}_*" | wc -l) ))
-      run_dir=$(mktemp -d --tmpdir=${PWD} ${CI_COMMIT_SHA}_${suffix}_XXXXXXXXXX)
-      cd ${run_dir}
+      run_dir=$(mktemp -d --tmpdir=${WRK_DIR} ${CI_COMMIT_SHA}_XXXXXXXXXX)
       echo "THAPI_RUN_DIR=${run_dir}" | tee setup.env
+      cd ${run_dir}
     # Load available modules so spack finds those packages
     - |
       module load oneapi
