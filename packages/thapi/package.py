@@ -77,7 +77,7 @@ class Thapi(AutotoolsPackage):
     depends_on("libffi")
     depends_on("mpi", when="+mpi")
     depends_on("mpi", when="+sync-daemon-mpi")
-    depends_on("h2yaml@0.3.1:", when="+clang-parser")
+    depends_on("h2yaml@0.3.1:", type=("build"), when="+clang-parser")
 
     # Add dev tools required for THAPI development and testing.
     depends_on("bats", when="+test-dependencies")
