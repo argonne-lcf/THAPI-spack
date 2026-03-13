@@ -30,12 +30,14 @@ jobs:
 
   install_thapi_dependencies:
     needs: pre_job
-    if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
     runs-on: ubuntu-latest
     name: Install thapi dependencies
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: ${{ inputs.debug_enabled }}
     - name: Checkout Thapi Deps (spack,...)
       uses: ./.github/actions/setup-thapi-deps
       with:
@@ -51,6 +53,9 @@ jobs:
         include-hidden-files: true
         path: ${{ env.CACHE_DIR }}
         if-no-files-found: error
+    - name: Block to allow inspecting failures
+      run: sleep 30m
+      if: ${{ failure() && inputs.debug_enabled }}
 
   install_thapi:
     strategy:
@@ -64,6 +69,9 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: ${{ inputs.debug_enabled }}
     - name: Download thapi build cache
       uses: actions/download-artifact@v4
       with:
@@ -90,6 +98,9 @@ jobs:
       run: |
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT ${{ matrix.version }} || true
+    - name: Block to allow inspecting failures
+      run: sleep 30m
+      if: ${{ failure() && inputs.debug_enabled }}
 
   cleanup:
     needs: install_thapi
