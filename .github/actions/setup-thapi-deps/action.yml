@@ -30,4 +30,7 @@ runs:
         # found here:
         # https://spack.readthedocs.io/en/latest/binary_caches.html
         spack mirror add --autopush --unsigned thapi_cache ${{ inputs.cache-dir }}
-
+    - name: Add python variant to llvm-18
+      shell: bash
+      run: |
+        sed -i 's/llvm@18\.[0-9]\.[0-9]/&+python/' ~/.spack/packages.yaml
