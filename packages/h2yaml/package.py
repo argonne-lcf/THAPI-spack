@@ -2,6 +2,18 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from spack.package import *
+import re
+import os
+import sys
+
+
+def find_libclang(root):
+    lib_ext = "dylib" if sys.platform == "darwin" else "so"
+    regex = re.compile(rf"libclang(?:-\d+)?.{lib_ext}(?:.\d+)?")
+    for root, dirs, files in os.walk(root):
+        for file in files:
+            if regex.match(file):
+                return os.path.join(root, file)
 
 
 class H2yaml(PythonPackage):
@@ -33,6 +45,23 @@ class H2yaml(PythonPackage):
             # Workarround to some bug with pythonpath
             env.prepend_path("PYTHONPATH", self.stage.source_path)
             self.setup_test_environment(env)
+
+    def setup_run_environment(self, env):
+        if self.version < Version("0.4.1"):
+            return
+        super().setup_run_environment(env)
+        s = self.spec["llvm"]
+        llvm_config = os.path.join(s.prefix.bin, "llvm-config-" + str(s.version[0]))
+        if not os.path.exists(llvm_config):
+            llvm_config = os.path.join(s.prefix.bin, "llvm-config")
+        output = Executable(llvm_config)("--libdir", output=str, error=str, fail_on_error=False)
+        lib_path = output.rstrip()
+        env.set("LIBCLANG_LIBRARY_FILE", find_libclang(lib_path))
+
+    def setup_test_environment(self, env):
+        if self.version < Version("0.4.1"):
+            return
+        self.setup_run_environment(env)
 
     @run_after("install")
     @on_package_attributes(run_tests=True)
