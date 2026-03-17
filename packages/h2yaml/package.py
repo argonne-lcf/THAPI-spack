@@ -59,7 +59,7 @@ class H2yaml(PythonPackage):
         output = Executable(llvm_config)("--libdir", output=str, error=str, fail_on_error=False)
         lib_path = output.rstrip()
         env.set("LIBCLANG_LIBRARY_FILE", find_libclang(lib_path))
-        env.append_path("PYTHONPATH", join_path(self.spec["llvm"].prefix.lib, "python3", "dist-packages"))
+        env.append_path("PYTHONPATH", join_path(self.spec["llvm"].prefix.lib, f"python{self.spec['python'].version.up_to(2)}", "site-packages"))
 
     def setup_test_environment(self, env):
         if self.version < Version("0.4.1"):

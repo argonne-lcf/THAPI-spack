@@ -83,6 +83,11 @@ jobs:
         # install llvm+clang
         sudo apt-get install libllvm18 llvm-18 llvm-18-dev
         sudo apt-get install libclang-18-dev python3-clang-18
+
+        # Symlink python3-clang-18 package to site-packages so h2yaml won't fail on
+        # `import clang`. This way, our llvm+python trick will work without an issue.
+        SITE_PACKAGES=$(python3 -c "import site; print(site.getsitepackages()[0])")
+        sudo ln -s /usr/lib/python3/dist-packages/clang "$SITE_PACKAGES/clang"
     - name: Checkout Thapi Deps (spack,...)
       uses: ./.github/actions/setup-thapi-deps
       with:

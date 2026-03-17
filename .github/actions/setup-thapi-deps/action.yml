@@ -33,4 +33,5 @@ runs:
     - name: Add python variant to llvm-18
       shell: bash
       run: |
+        # Trick spack to think that llvm found in packages.yml has +python variant:
         sed -i 's/llvm@18\.[0-9]\.[0-9]/&+python/' ~/.spack/packages.yaml
