@@ -88,8 +88,11 @@ jobs:
         # Symlink python3-clang-${LLVM_VER} package to site-packages so h2yaml won't
         # fail on `import clang`. This way, our llvm+python trick will work without an
         # issue.
-        SITE_PACKAGES=$(python3 -c "import site; print(site.getsitepackages()[0])")
-        sudo ln -s /usr/lib/python3/dist-packages/clang "$SITE_PACKAGES/clang"
+        python_major=$(python -c "import sys; print(f'{sys.version_info.major}')")
+        python_minor=$(python -c "import sys; print(f'{sys.version_info.minor}')")
+        SITE_PACKAGES=/usr/lib/python${python_major}.${python_minor}/site-packages
+        sudo mkdir -p ${SITE_PACKAGES}
+        sudo ln -s /usr/lib/python${python_major}/dist-packages/clang ${SITE_PACKAGES}/clang
     - name: Checkout Thapi Deps (spack,...)
       uses: ./.github/actions/setup-thapi-deps
       with:
