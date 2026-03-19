@@ -62,7 +62,7 @@ jobs:
     strategy:
       matrix:
         version: ['thapi', 'thapi@0.0.7', 'thapi@0.0.8', 'thapi@0.0.9', 'thapi@0.0.10', 'thapi@0.0.11',
-          'thapi@0.0.12', 'thapi@master', 'thapi@develop', 'thapi@develop+archive',
+          'thapi@0.0.12', 'thapi@0.0.13', 'thapi@master', 'thapi@develop', 'thapi@develop+archive',
           'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master']
     needs: install_thapi_dependencies
     runs-on: ubuntu-latest
@@ -79,7 +79,7 @@ jobs:
         name: thapi_cache
         path: ${{ env.CACHE_DIR }}
     - name: Install clang for new parser
-      if: startsWith(matrix.version, 'thapi@develop')
+      if: startsWith(matrix.version, 'thapi@develop') || startsWith(matrix.version, 'thapi@master') || startsWith(matrix.version, 'thapi@0.0.13')
       run: |
         # install llvm+clang
         sudo apt-get install libllvm${LLVM_VER} llvm-${LLVM_VER} llvm-${LLVM_VER}-dev
