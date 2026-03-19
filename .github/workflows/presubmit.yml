@@ -80,7 +80,7 @@ jobs:
         path: ${{ env.CACHE_DIR }}
     - name: Install clang for new parser
       run: |
-        if [[ ${{ matrix.version }} =~ ^thapi@(develop|master|0\.0\.13)$ ]]; then
+        if [[ "${{ matrix.version }}" =~ ^thapi@(develop|master|0\.0\.13)* ]]; then
           # install llvm+clang
           sudo apt-get install libllvm${LLVM_VER} llvm-${LLVM_VER} llvm-${LLVM_VER}-dev
           sudo apt-get install libclang-${LLVM_VER}-dev python3-clang-${LLVM_VER}
