@@ -1,4 +1,4 @@
-name: Presubmit
+name: THAPI unit tests
 on:
   push:
   pull_request:
