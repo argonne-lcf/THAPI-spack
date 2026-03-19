@@ -16,6 +16,7 @@ class Thapi(AutotoolsPackage):
 
     version("master", branch="master", preferred=True)
     version("develop", branch="devel")
+    version("0.0.13", tag="v0.0.13")
     version("0.0.12", tag="v0.0.12")
     version("0.0.11", tag="v0.0.11")
     version("0.0.10", tag="v0.0.10")
@@ -25,10 +26,10 @@ class Thapi(AutotoolsPackage):
 
     variant("strict", default=False, description="Enable -Werror during the build")
     variant("test-dependencies", default=False, description="Install THAPI test dependencies (bats, clinfo, etc.)")
-    variant("mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@:develop")
-    variant("sync-daemon-mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@develop")
-    variant("clang-parser", default=True, description="Enable Clang Parser", when="@develop")
-    variant("archive", default=False, description="Enable archive mode of THAPI", when="@develop")
+    variant("mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@:0.0.12")
+    variant("sync-daemon-mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@0.0.13:")
+    variant("clang-parser", default=True, description="Enable Clang Parser", when="@0.0.13:")
+    variant("archive", default=False, description="Enable archive mode of THAPI", when="@0.0.13:")
 
     depends_on("c", type=("build"))
     depends_on("cxx", type=("build"))
@@ -71,7 +72,7 @@ class Thapi(AutotoolsPackage):
     depends_on("ruby-metababel@0.1.0:0.9", type=("build"), when="@:0.0.10")
     depends_on("ruby-metababel@1.0.0:", type=("build"), when="@0.0.11")
     depends_on("ruby-metababel@1.1.2:", type=("build"), when="@0.0.12:")
-    depends_on("ruby-metababel@1.1.4:", type=("build"), when="develop")
+    depends_on("ruby-metababel@1.1.4:", type=("build"), when="@0.0.13:")
 
     depends_on("libiberty+pic")
     depends_on("libffi")
@@ -95,7 +96,7 @@ class Thapi(AutotoolsPackage):
 
     def configure_args(self):
         args = []
-        if self.spec.version == Version("develop"):
+        if self.spec.version >= Version("0.0.13"):
             args.extend(self.enable_or_disable("sync-daemon-mpi"))
         else:
             args.extend(self.enable_or_disable("mpi"))
