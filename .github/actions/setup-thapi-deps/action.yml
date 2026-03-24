@@ -22,16 +22,44 @@ runs:
         . external/spack/share/spack/setup-env.sh
         spack repo add ./
         spack compiler find
-        # find external packages known to spack (avoid bzip2 and xz since
-        # they cause build failures in elfutils).
-        spack external find --all --exclude bzip2 --exclude xz
+    - name: Find llvm version required by thapi@develop+clang-parser
+      shell: bash
+      run: |
+        . external/spack/share/spack/setup-env.sh
+        LLVM_VER=`spack spec thapi@develop+clang-parser | grep 'llvm@' | awk '{ split($0,a,"[@+.]"); print a[2] }'`
+        echo "LLVM_VER=${LLVM_VER}" >> ${GITHUB_ENV}
+    - name: Install llvm/clang required for +clang-parser variant
+      shell: bash
+      run: |
+        # We only need llvm+clang when `+clang-parser` variant is enabled and thapi
+        # version >= 0.0.13. But we install it anyway to simplify the logic.
+        sudo apt-get install libllvm${LLVM_VER} llvm-${LLVM_VER} llvm-${LLVM_VER}-dev
+        sudo apt-get install libclang-${LLVM_VER}-dev python3-clang-${LLVM_VER}
 
-        # Setup a spack mirror to store built packages. More info can be
-        # found here:
-        # https://spack.readthedocs.io/en/latest/binary_caches.html
-        spack mirror add --autopush --unsigned thapi_cache ${{ inputs.cache-dir }}
-    - name: Add python variant to llvm-18
+        # Symlink python3-clang package to site-packages so h2yaml won't fail on
+        # `import clang`. This way, our llvm+python trick will work without an issue.
+        python_major=$(python -c "import sys; print(f'{sys.version_info.major}')")
+        python_minor=$(python -c "import sys; print(f'{sys.version_info.minor}')")
+        SITE_PACKAGES=/usr/lib/python${python_major}.${python_minor}/site-packages
+        sudo mkdir -p ${SITE_PACKAGES}
+        sudo ln -s /usr/lib/python${python_major}/dist-packages/clang ${SITE_PACKAGES}/clang
+    - name: Find external packages
+      shell: bash
+      run: |
+        # Find external packages known to spack (avoid bzip2 and xz since
+        # they cause build failures in elfutils).
+        . external/spack/share/spack/setup-env.sh
+        spack external find --all --exclude bzip2 --exclude xz
+    - name: Update packages.yaml
       shell: bash
       run: |
         # Trick spack to think that llvm found in packages.yml has +python variant:
-        sed -i 's/llvm@18\.[0-9]\.[0-9]/&+python/' ~/.spack/packages.yaml
+        sed -i 's/llvm@[0-9][0-9]\.[0-9]\.[0-9]/&+python/' ~/.spack/packages.yaml
+    - name: Setup spack mirror
+      shell: bash
+      run: |
+        # Setup a spack mirror to store built packages. More info can be
+        # found here:
+        # https://spack.readthedocs.io/en/latest/binary_caches.html
+        . external/spack/share/spack/setup-env.sh
+        spack mirror add --autopush --unsigned thapi_cache ${{ inputs.cache-dir }}

@@ -13,7 +13,6 @@ on:
 env:
   SPACK_OPT: "--concurrent-packages 2 --show-log-on-error --fail-fast"
   CACHE_DIR: "${{ github.workspace }}/thapi_cache_${{ github.run_id }}"
-  LLVM_VER: 18
 
 jobs:
   pre_job:
@@ -40,7 +39,7 @@ jobs:
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
       if: ${{ inputs.debug_enabled }}
-    - name: Checkout Thapi Deps (spack,...)
+    - name: Checkout thapi dependencies (spack,...)
       uses: ./.github/actions/setup-thapi-deps
       with:
         cache-dir: ${{ env.CACHE_DIR }}
@@ -79,23 +78,7 @@ jobs:
       with:
         name: thapi_cache
         path: ${{ env.CACHE_DIR }}
-    - name: Install clang for new parser
-      run: |
-        if [[ "${{ matrix.version }}" =~ ^thapi@(develop|master|0\.0\.13)* ]]; then
-          # install llvm+clang
-          sudo apt-get install libllvm${LLVM_VER} llvm-${LLVM_VER} llvm-${LLVM_VER}-dev
-          sudo apt-get install libclang-${LLVM_VER}-dev python3-clang-${LLVM_VER}
-
-          # Symlink python3-clang-${LLVM_VER} package to site-packages so h2yaml won't
-          # fail on `import clang`. This way, our llvm+python trick will work without an
-          # issue.
-          python_major=$(python -c "import sys; print(f'{sys.version_info.major}')")
-          python_minor=$(python -c "import sys; print(f'{sys.version_info.minor}')")
-          SITE_PACKAGES=/usr/lib/python${python_major}.${python_minor}/site-packages
-          sudo mkdir -p ${SITE_PACKAGES}
-          sudo ln -s /usr/lib/python${python_major}/dist-packages/clang ${SITE_PACKAGES}/clang
-        fi
-    - name: Checkout Thapi Deps (spack,...)
+    - name: Checkout thapi dependencies (spack,...)
       uses: ./.github/actions/setup-thapi-deps
       with:
         cache-dir: ${{ env.CACHE_DIR }}
