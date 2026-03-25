@@ -31,6 +31,12 @@ runs:
     - name: Install llvm/clang required for +clang-parser variant
       shell: bash
       run: |
+        # Add llvm to apt repository.
+        wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
+        REPO="deb http://apt.llvm.org/noble/ llvm-toolchain-noble-${LLVM_VER} main"
+        echo "$REPO" | sudo tee /etc/apt/sources.list.d/llvm.list
+        sudo apt-get update
+
         # We only need llvm+clang when `+clang-parser` variant is enabled and thapi
         # version >= 0.0.13. But we install it anyway to simplify the logic.
         sudo apt-get install libllvm${LLVM_VER} llvm-${LLVM_VER} llvm-${LLVM_VER}-dev
