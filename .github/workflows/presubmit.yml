@@ -19,21 +19,7 @@ env:
   CACHE_DIR: "${{ github.workspace }}/thapi_cache_${{ github.run_id }}"
 
 jobs:
-  pre_job:
-    runs-on: ubuntu-latest
-    outputs:
-      should_skip: ${{ steps.skip_check.outputs.should_skip }}
-    steps:
-      - id: skip_check
-        uses: fkirc/skip-duplicate-actions@master
-        with:
-          concurrent_skipping: 'same_content'
-          skip_after_successful_duplicate: 'true'
-          paths_ignore: '["**/README.md"]'
-          do_not_skip: '["pull_request"]'
-
   install_thapi_dependencies:
-    needs: pre_job
     runs-on: ubuntu-latest
     name: Install thapi dependencies
     steps:
