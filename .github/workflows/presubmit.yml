@@ -35,7 +35,7 @@ jobs:
     - name: Install thapi dependencies
       run: |
         . external/spack/share/spack/setup-env.sh
-        spack install --only dependencies $SPACK_OPT thapi ^ruby
+        spack install --only dependencies $SPACK_OPT thapi@develop+clang-parser
     - name: Upload thapi build cache
       uses: actions/upload-artifact@v4
       with:
