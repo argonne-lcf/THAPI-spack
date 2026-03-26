@@ -16,12 +16,11 @@ runs:
         repository: spack/spack
         ref: releases/latest
         path: external/spack
-    - name: Setup spack environment
+    - name: Add THAPI repo
       shell: bash
       run: |
         . external/spack/share/spack/setup-env.sh
         spack repo add ./
-        spack compiler find
     - name: Find llvm version required by thapi@develop+clang-parser
       shell: bash
       run: |
@@ -51,12 +50,13 @@ runs:
         SITE_PACKAGES=/usr/lib/python${python_major}.${python_minor}/site-packages
         sudo mkdir -p ${SITE_PACKAGES}
         sudo ln -s /usr/lib/python${python_major}/dist-packages/clang ${SITE_PACKAGES}/clang
-    - name: Find external packages
+    - name: Find compilers and external packages
       shell: bash
       run: |
         # Find external packages known to spack (avoid bzip2 and xz since
         # they cause build failures in elfutils).
         . external/spack/share/spack/setup-env.sh
+        spack compiler find
         spack external find --all --exclude bzip2 --exclude xz
     - name: Update packages.yaml
       shell: bash
