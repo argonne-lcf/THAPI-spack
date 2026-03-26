@@ -7,15 +7,6 @@ import os
 import sys
 
 
-def find_libclang(root):
-    lib_ext = "dylib" if sys.platform == "darwin" else "so"
-    regex = re.compile(rf"libclang(?:-\d+)?.{lib_ext}(?:.\d+)?")
-    for root, dirs, files in os.walk(root):
-        for file in files:
-            if regex.match(file):
-                return os.path.join(root, file)
-
-
 class H2yaml(PythonPackage):
     """Matrices describing affine transformation of the plane."""
 
@@ -58,7 +49,10 @@ class H2yaml(PythonPackage):
             llvm_config = os.path.join(s.prefix.bin, "llvm-config")
         output = Executable(llvm_config)("--libdir", output=str, error=str, fail_on_error=False)
         lib_path = output.rstrip()
-        env.set("LIBCLANG_LIBRARY_FILE", find_libclang(lib_path))
+
+        lib_ext = "dylib" if sys.platform == "darwin" else "so"
+        env.set("LIBCLANG_LIBRARY_PATH", self.spec["llvm"].prefix.lib)
+        env.set("LIBCLANG_LIBRARY_FILE", join_path(self.spec["llvm"].prefix.lib, f"libclang.{lib_ext}"))
 
         # Set PYTHONPATH so that `import clang` will work without an issue.
         env.append_path("PYTHONPATH", join_path(self.spec["llvm"].prefix.lib, f"python{self.spec['python'].version.up_to(2)}", "site-packages"))
