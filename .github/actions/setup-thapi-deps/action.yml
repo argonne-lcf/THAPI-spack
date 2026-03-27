@@ -29,11 +29,6 @@ runs:
         . external/spack/share/spack/setup-env.sh
         spack compiler find
         spack external find --all --exclude bzip2 --exclude xz
-    - name: Update packages.yaml
-      shell: bash
-      run: |
-        # Trick spack to think that llvm found in packages.yml has +python variant:
-        sed -i 's/llvm@[0-9][0-9]\.[0-9]\.[0-9]/&+python/' ~/.spack/packages.yaml
     - name: Setup spack mirror
       shell: bash
       run: |
