@@ -43,12 +43,6 @@ runs:
         sudo apt-get install libllvm${LLVM_VER} llvm-${LLVM_VER} llvm-${LLVM_VER}-dev
         sudo apt-get install clang-${LLVM_VER} libclang-${LLVM_VER}-dev python3-clang-${LLVM_VER}
 
-        # Update alternatives so spack will now find this version.
-        LLVM_PREFIX=`llvm-config-${LLVM_VER} --prefix`
-        sudo update-alternatives --install /usr/bin/clang clang ${LLVM_PREFIX}/bin/clang 200
-        sudo update-alternatives --install /usr/bin/clang++ clang++ ${LLVM_PREFIX}/bin/clang++ 200
-        sudo update-alternatives --install /usr/bin/llvm-config llvm-config /usr/bin/llvm-config-${LLVM_VER} 200
-
         # Symlink python3-clang package to site-packages so h2yaml won't fail on
         # `import clang`. This way, our llvm+python trick will work without an issue.
         python_major=$(python -c "import sys; print(f'{sys.version_info.major}')")
