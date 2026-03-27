@@ -44,7 +44,7 @@ jobs:
         path: ${{ env.CACHE_DIR }}
         if-no-files-found: error
     - name: Block to allow inspecting failures
-      run: sleep 30m
+      run: sleep 120m
       if: ${{ failure() && inputs.debug_enabled }}
 
   install_thapi:
@@ -83,7 +83,7 @@ jobs:
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT ${{ matrix.version }} || true
     - name: Block to allow inspecting failures
-      run: sleep 30m
+      run: sleep 120m
       if: ${{ failure() && inputs.debug_enabled }}
 
   cleanup:
