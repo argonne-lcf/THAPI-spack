@@ -113,7 +113,7 @@ jobs:
         sudo apt-get install libllvm${LLVM_VER} llvm-${LLVM_VER} llvm-${LLVM_VER}-dev
         sudo apt-get install clang-${LLVM_VER} libclang-${LLVM_VER}-dev python3-clang-${LLVM_VER}
 
-        # Let spack find newly install llvm/clang
+        # Let spack find newly installed llvm/clang.
         spack compiler find
         spack external find --all --exclude bzip2 --exclude xz
 
@@ -177,13 +177,13 @@ jobs:
       if: ${{ matrix.version != 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master' }}
       run: |
         . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT ${{ matrix.version }}
+        spack install $SPACK_OPT ${{ matrix.version }} ^llvm@${LLVM_FULL_VER}
     - name: Install thapi@develop with master versions of dependencies
       if: ${{ matrix.version == 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master' }}
       continue-on-error: true
       run: |
         . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT ${{ matrix.version }} || true
+        spack install $SPACK_OPT ${{ matrix.version }} ^llvm@${LLVM_FULL_VER} || true
     - name: Block to allow inspecting failures
       run: sleep 120m
       if: ${{ failure() && inputs.debug_enabled }}
