@@ -1,4 +1,4 @@
-name: 'Setup thapi dependencies'
+name: 'Setup THAPI dependencies'
 inputs:
   cache-dir:
     description: 'Directory for spack cache'
