@@ -1,0 +1,164 @@
+name: THAPI unit tests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+        required: false
+        default: false
+env:
+  SPACK_OPT: "--concurrent-packages 2 --show-log-on-error --fail-fast"
+  CACHE_DIR: "${{ github.workspace }}/thapi_cache_${{ github.run_id }}"
+  CACHE_DIR_LEGACY: "${{ github.workspace }}/thapi_cache_legacy_${{ github.run_id }}"
+jobs:
+  install_legacy_dependencies:
+    runs-on: ubuntu-latest
+    name: Install dependencies (legacy)
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: ${{ inputs.debug_enabled }}
+    - name: Checkout dependencies (spack,...)
+      uses: ./.github/actions/setup-thapi-deps
+      with:
+        cache-dir: ${{ env.CACHE_DIR_LEGACY }}
+        install-llvm: 'false'
+    - name: Install dependencies
+      run: |
+        # Install the dependencies of the latest legacy version.
+        . external/spack/share/spack/setup-env.sh
+        spack install --only dependencies $SPACK_OPT thapi@0.0.12
+    - name: Upload THAPI build cache
+      uses: actions/upload-artifact@v6
+      with:
+        name: thapi_cache_legacy
+        include-hidden-files: true
+        path: ${{ env.CACHE_DIR_LEGACY }}
+        if-no-files-found: error
+    - name: Block to allow inspecting failures
+      run: sleep 120m
+      if: ${{ failure() && inputs.debug_enabled }}
+  install_legacy:
+    strategy:
+      matrix:
+        version: ['thapi@0.0.7', 'thapi@0.0.8', 'thapi@0.0.9', 'thapi@0.0.10', 'thapi@0.0.11', 'thapi@0.0.12']
+    needs: install_legacy_dependencies
+    runs-on: ubuntu-latest
+    name: Install ${{ matrix.version }} (legacy)
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: ${{ inputs.debug_enabled }}
+    - name: Download THAPI build cache
+      uses: actions/download-artifact@v6
+      with:
+        name: thapi_cache_legacy
+        path: ${{ env.CACHE_DIR_LEGACY }}
+    - name: Checkout dependencies (spack,...)
+      uses: ./.github/actions/setup-thapi-deps
+      with:
+        cache-dir: ${{ env.CACHE_DIR_LEGACY }}
+        install-llvm: 'false'
+    - name: Install ${{ matrix.version }}
+      if: ${{ matrix.version != 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master' }}
+      run: |
+        . external/spack/share/spack/setup-env.sh
+        spack install $SPACK_OPT ${{ matrix.version }}
+    - name: Block to allow inspecting failures
+      run: sleep 120m
+      if: ${{ failure() && inputs.debug_enabled }}
+  install_dependencies:
+    runs-on: ubuntu-latest
+    name: Install dependencies
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: ${{ inputs.debug_enabled }}
+    - name: Checkout dependencies (spack,...)
+      uses: ./.github/actions/setup-thapi-deps
+      with:
+        cache-dir: ${{ env.CACHE_DIR }}
+        install-llvm: 'true'
+    - name: Install dependencies
+      run: |
+        . external/spack/share/spack/setup-env.sh
+        # We have to use the exact llvm version from apt package as a direct dependency
+        # as the versions in apt and spack doesn't agree to the patch version. The
+        # latter will force spack to build llvm from scratch.
+        spack install --only dependencies $SPACK_OPT thapi@develop ^llvm@${LLVM_FULL_VER}
+    - name: Upload THAPI build cache
+      uses: actions/upload-artifact@v6
+      with:
+        name: thapi_cache
+        include-hidden-files: true
+        path: ${{ env.CACHE_DIR }}
+        if-no-files-found: error
+    - name: Block to allow inspecting failures
+      run: sleep 120m
+      if: ${{ failure() && inputs.debug_enabled }}
+  install:
+    strategy:
+      matrix:
+        version: ['thapi@0.0.13', 'thapi@master', 'thapi@develop', 'thapi@develop+archive',
+        'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master']
+    needs: install_dependencies
+    runs-on: ubuntu-latest
+    name: Install ${{ matrix.version }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: ${{ inputs.debug_enabled }}
+    - name: Download THAPI build cache
+      uses: actions/download-artifact@v6
+      with:
+        name: thapi_cache
+        path: ${{ env.CACHE_DIR }}
+    - name: Checkout dependencies (spack,...)
+      uses: ./.github/actions/setup-thapi-deps
+      with:
+        cache-dir: ${{ env.CACHE_DIR }}
+        install-llvm: 'true'
+    - name: Install ${{ matrix.version }}
+      if: ${{ matrix.version != 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master' }}
+      run: |
+        . external/spack/share/spack/setup-env.sh
+        spack install $SPACK_OPT ${{ matrix.version }} ^llvm@${LLVM_FULL_VER}
+    - name: Install thapi@develop with master versions of dependencies
+      if: ${{ matrix.version == 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master' }}
+      continue-on-error: true
+      run: |
+        # This is an allowed failure. We don't care if this test failed
+        # (Building thapi@develop with unstable lttng@master versions).
+        . external/spack/share/spack/setup-env.sh
+        spack install $SPACK_OPT ${{ matrix.version }} ^llvm@${LLVM_FULL_VER} || true
+    - name: Block to allow inspecting failures
+      run: sleep 120m
+      if: ${{ failure() && inputs.debug_enabled }}
+  cleanup:
+    needs: [install, install_legacy]
+    if: always()
+    runs-on: ubuntu-latest
+    name: Cleanup the build cache
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - uses: geekyeggo/delete-artifact@v5
+      with:
+        name: |
+          thapi_cache_legacy
+          thapi_cache
