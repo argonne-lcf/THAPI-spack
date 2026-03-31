@@ -34,6 +34,7 @@ jobs:
         install-llvm: 'false'
     - name: Install dependencies
       run: |
+        # Install the dependencies of the latest legacy version.
         . external/spack/share/spack/setup-env.sh
         spack install --only dependencies $SPACK_OPT thapi@0.0.12
     - name: Upload THAPI build cache
@@ -141,6 +142,8 @@ jobs:
       if: ${{ matrix.version == 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master' }}
       continue-on-error: true
       run: |
+        # This is an allowed failure. We don't care if this test failed
+        # (Building thapi@develop with unstable lttng@master versions).
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT ${{ matrix.version }} ^llvm@${LLVM_FULL_VER} || true
     - name: Block to allow inspecting failures
