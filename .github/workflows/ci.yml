@@ -16,11 +16,11 @@ on:
 env:
   SPACK_OPT: "--concurrent-packages 2 --show-log-on-error --fail-fast"
   CACHE_DIR: "${{ github.workspace }}/thapi_cache_${{ github.run_id }}"
-  DEPRECATED_CACHE_DIR: "${{ github.workspace }}/thapi_cache_deprecated_${{ github.run_id }}"
+  CACHE_DIR_LEGACY: "${{ github.workspace }}/thapi_cache_legacy_${{ github.run_id }}"
 jobs:
-  install_deprecated_dependencies:
+  install_legacy_dependencies:
     runs-on: ubuntu-latest
-    name: Install dependencies (deprecated)
+    name: Install dependencies (legacy)
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -30,7 +30,7 @@ jobs:
     - name: Checkout dependencies (spack,...)
       uses: ./.github/actions/setup-thapi-deps
       with:
-        cache-dir: ${{ env.DEPRECATED_CACHE_DIR }}
+        cache-dir: ${{ env.CACHE_DIR_LEGACY }}
         install-llvm: 'false'
     - name: Install dependencies
       run: |
@@ -39,20 +39,20 @@ jobs:
     - name: Upload THAPI build cache
       uses: actions/upload-artifact@v4
       with:
-        name: thapi_cache_deprecated
+        name: thapi_cache_legacy
         include-hidden-files: true
-        path: ${{ env.DEPRECATED_CACHE_DIR }}
+        path: ${{ env.CACHE_DIR_LEGACY }}
         if-no-files-found: error
     - name: Block to allow inspecting failures
       run: sleep 120m
       if: ${{ failure() && inputs.debug_enabled }}
-  install_deprecated:
+  install_legacy:
     strategy:
       matrix:
         version: ['thapi@0.0.7', 'thapi@0.0.8', 'thapi@0.0.9', 'thapi@0.0.10', 'thapi@0.0.11', 'thapi@0.0.12']
-    needs: install_deprecated_dependencies
+    needs: install_legacy_dependencies
     runs-on: ubuntu-latest
-    name: Install ${{ matrix.version }} (deprecated)
+    name: Install ${{ matrix.version }} (legacy)
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -62,12 +62,12 @@ jobs:
     - name: Download THAPI build cache
       uses: actions/download-artifact@v4
       with:
-        name: thapi_cache_deprecated
-        path: ${{ env.DEPRECATED_CACHE_DIR }}
+        name: thapi_cache_legacy
+        path: ${{ env.CACHE_DIR_LEGACY }}
     - name: Checkout dependencies (spack,...)
       uses: ./.github/actions/setup-thapi-deps
       with:
-        cache-dir: ${{ env.DEPRECATED_CACHE_DIR }}
+        cache-dir: ${{ env.CACHE_DIR_LEGACY }}
         install-llvm: 'false'
     - name: Install ${{ matrix.version }}
       if: ${{ matrix.version != 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master' }}
@@ -147,7 +147,7 @@ jobs:
       run: sleep 120m
       if: ${{ failure() && inputs.debug_enabled }}
   cleanup:
-    needs: [install, install_deprecated]
+    needs: [install, install_legacy]
     if: always()
     runs-on: ubuntu-latest
     name: Cleanup the build cache
@@ -156,7 +156,7 @@ jobs:
       uses: actions/checkout@v4
     - uses: geekyeggo/delete-artifact@v5
       with:
-        name: thapi_cache_deprecated
+        name: thapi_cache_legacy
     - uses: geekyeggo/delete-artifact@v5
       with:
         name: thapi_cache
