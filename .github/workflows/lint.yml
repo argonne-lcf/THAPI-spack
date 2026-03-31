@@ -20,7 +20,7 @@ jobs:
     name: Check formatting with ruff
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
     - name: ruff format check
       uses: astral-sh/ruff-action@v3
       with:

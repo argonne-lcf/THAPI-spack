@@ -14,7 +14,7 @@ runs:
       with:
         packages: libnuma-dev
     - name: Checkout Spack
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: spack/spack
         ref: releases/latest
