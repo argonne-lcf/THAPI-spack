@@ -12,38 +12,42 @@ variables:
   POLARIS_OPTS: "--concurrent-packages 2 -j16 --show-log-on-error --fail-fast"
 stages:
     - test
-
+.common-steps:
+  # Create ci directory
+  - &create-ci-dir |
+    run_dir=$(mktemp -d --tmpdir=${AURORA_WRKDIR} ${CI_COMMIT_SHA}_XXXXXXXXXX)
+    echo "THAPI_RUN_DIR=${run_dir}"
+    cd ${run_dir}
+  # Clone and isolate spack for CI (see below link):
+  # https://spack.readthedocs.io/en/latest/configuration.html#overriding-local-configuration
+  - &clone-spack |
+    git clone -c feature.manyFiles=true -b releases/latest https://github.com/spack/spack.git
+    export SPACK_DISABLE_LOCAL_CONFIG=true
+    export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
+    . spack/share/spack/setup-env.sh
+  # Find compilers and external packages known to spack (avoid bzip2 and xz since
+  # they cause build failures in elfutils).
+  - &spack-find |
+    spack compiler find
+    spack external find --all --exclude bzip2 --exclude xz
+  # Add THAPI-spack as a repo
+  - &add-thapi-spack-repo |
+    git clone https://github.com/argonne-lcf/THAPI-spack.git
+    cd ./THAPI-spack
+    git checkout ${CI_COMMIT_SHA}
+    spack repo add .
+    cd ..
 aurora:
   stage: test
   extends: .aurora-batch-runner
   script:
-    # Create ci directory
-    - |
-      run_dir=$(mktemp -d --tmpdir=${AURORA_WRKDIR} ${CI_COMMIT_SHA}_XXXXXXXXXX)
-      echo "THAPI_RUN_DIR=${run_dir}"
-      cd ${run_dir}
     # Load available modules so spack finds those packages
     - |
       module load oneapi
-    # Clone and isolate spack for CI (see below link):
-    # https://spack.readthedocs.io/en/latest/configuration.html#overriding-local-configuration
-    - |
-      git clone -c feature.manyFiles=true -b releases/latest https://github.com/spack/spack.git
-      export SPACK_DISABLE_LOCAL_CONFIG=true
-      export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
-      . spack/share/spack/setup-env.sh
-    # Find compilers and external packages known to spack (avoid bzip2 and xz since
-    # they cause build failures in elfutils).
-    - |
-      spack compiler find
-      spack external find --all --exclude bzip2 --exclude xz
-    # Add THAPI-spack as a repo
-    - |
-      git clone https://github.com/argonne-lcf/THAPI-spack.git
-      cd ./THAPI-spack
-      git checkout ${CI_COMMIT_SHA}
-      spack repo add .
-      cd ..
+    - *create-ci-dir
+    - *clone-spack
+    - *spack-find
+    - *add-thapi-spack-repo
     # Install thapi
     - |
       . spack/share/spack/setup-env.sh
@@ -57,40 +61,19 @@ aurora:
       git clone --depth 1 https://github.com/argonne-lcf/THAPI.git -b devel
       cd ./THAPI
       bats ./integration_tests/
-
 polaris:
   stage: test
   extends: .polaris-batch-runner
   script:
-    # Create ci directory
-    - |
-      run_dir=$(mktemp -d --tmpdir=${AURORA_WRKDIR} ${CI_COMMIT_SHA}_XXXXXXXXXX)
-      echo "THAPI_RUN_DIR=${run_dir}"
-      cd ${run_dir}
     # Load available modules so spack finds those packages
     - |
       module use /soft/modulefiles
       module load PrgEnv-gnu
       module load spack-pe-base cmake protobuf python
-    # Clone and isolate spack for CI (see below link):
-    # https://spack.readthedocs.io/en/latest/configuration.html#overriding-local-configuration
-    - |
-      git clone -c feature.manyFiles=true -b releases/latest https://github.com/spack/spack.git
-      export SPACK_DISABLE_LOCAL_CONFIG=true
-      export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
-      . spack/share/spack/setup-env.sh
-    # Find compilers and external packages known to spack (avoid bzip2 and xz since
-    # they cause build failures in elfutils).
-    - |
-      spack compiler find
-      spack external find --all --exclude bzip2 --exclude xz
-    # Add THAPI-spack as a repo
-    - |
-      git clone https://github.com/argonne-lcf/THAPI-spack.git
-      cd ./THAPI-spack
-      git checkout ${CI_COMMIT_SHA}
-      spack repo add .
-      cd ..
+    - *create-ci-dir
+    - *clone-spack
+    - *spack-find
+    - *add-thapi-spack-repo
     # Install thapi
     - |
       . spack/share/spack/setup-env.sh
