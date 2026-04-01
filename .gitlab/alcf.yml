@@ -1,25 +1,23 @@
 variables:
   PROJ: "Performance"
   QUEUE: "capacity"
-  TIME: "2:00:00"
-  WRK_DIR: "/lus/flare/projects/${PROJ}/thapi/"
+  TIME: "3:00:00"
   ANL_AURORA_SCHEDULER_PARAMETERS: "-q ${QUEUE} -l select=1,walltime=${TIME},filesystems=home -A ${PROJ}"
   SPEC: "thapi@develop+sync-daemon-mpi+archive+test-dependencies"
+  AURORA_WRKDIR: "/lus/flare/projects/${PROJ}/thapi/"
   OPTS: "--concurrent-packages 2 -j32 --show-log-on-error --fail-fast"
 
 stages:
-    - setup
-    - install
     - test
 
-setup_spack:
-  stage: setup
-  extends: .aurora-shell-runner
+aurora:
+  stage: test
+  extends: .aurora-batch-runner
   script:
     # Create ci directory
     - |
-      run_dir=$(mktemp -d --tmpdir=${WRK_DIR} ${CI_COMMIT_SHA}_XXXXXXXXXX)
-      echo "THAPI_RUN_DIR=${run_dir}" | tee setup.env
+      run_dir=$(mktemp -d --tmpdir=${AURORA_WRKDIR} ${CI_COMMIT_SHA}_XXXXXXXXXX)
+      echo "THAPI_RUN_DIR=${run_dir}"
       cd ${run_dir}
     # Load available modules so spack finds those packages
     - |
@@ -42,42 +40,17 @@ setup_spack:
       cd ./THAPI-spack
       git checkout ${CI_COMMIT_SHA}
       spack repo add .
-  artifacts:
-    reports:
-      dotenv: setup.env
-
-install_thapi:
-  stage: install
-  needs: [setup_spack]
-  extends: .aurora-batch-runner
-  script:
-    - |
-      echo "Changing directory to THAPI_RUN_DIR=${THAPI_RUN_DIR}"
-      cd ${THAPI_RUN_DIR}
+      cd ..
     # Install thapi
     - |
-      export SPACK_DISABLE_LOCAL_CONFIG=true
-      export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
       . spack/share/spack/setup-env.sh
       spack install ${OPTS} ${SPEC}
-
-run_integration_tests:
-  stage: test
-  needs: [setup_spack, install_thapi]
-  extends: .aurora-batch-runner
-  script:
-    - |
-      echo "Changing directory to THAPI_RUN_DIR=${THAPI_RUN_DIR}"
-      cd ${THAPI_RUN_DIR}
     # Load spack
     - |
-      export SPACK_DISABLE_LOCAL_CONFIG=true
-      export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
       . spack/share/spack/setup-env.sh
       spack load ${SPEC}
     # Run tests
     - |
       git clone --depth 1 https://github.com/argonne-lcf/THAPI.git -b devel
       cd ./THAPI
-      module load oneapi
       bats ./integration_tests/
