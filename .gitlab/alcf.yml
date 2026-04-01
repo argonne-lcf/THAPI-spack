@@ -3,10 +3,13 @@ variables:
   QUEUE: "capacity"
   TIME: "3:00:00"
   ANL_AURORA_SCHEDULER_PARAMETERS: "-q ${QUEUE} -l select=1,walltime=${TIME},filesystems=home -A ${PROJ}"
-  SPEC: "thapi@develop+sync-daemon-mpi+archive+test-dependencies"
   AURORA_WRKDIR: "/lus/flare/projects/${PROJ}/thapi/"
-  OPTS: "--concurrent-packages 2 -j32 --show-log-on-error --fail-fast"
-
+  AURORA_SPEC: "thapi@develop+sync-daemon-mpi+archive+test-dependencies"
+  AURORA_OPTS: "--concurrent-packages 2 -j32 --show-log-on-error --fail-fast"
+  ANL_POLARIS_SCHEDULER_PARAMETERS: "-q ${QUEUE} -l select=1,walltime=${TIME},filesystems=home -A ${PROJ}"
+  POLARIS_WRKDIR: "/lus/eagle/projects/${PROJ}/thapi/"
+  POLARIS_SPEC: "thapi@develop+archive"
+  POLARIS_OPTS: "--concurrent-packages 2 -j16 --show-log-on-error --fail-fast"
 stages:
     - test
 
@@ -44,13 +47,55 @@ aurora:
     # Install thapi
     - |
       . spack/share/spack/setup-env.sh
-      spack install ${OPTS} ${SPEC}
+      spack install ${AURORA_OPTS} ${AURORA_SPEC}
     # Load spack
     - |
       . spack/share/spack/setup-env.sh
-      spack load ${SPEC}
+      spack load ${AURORA_SPEC}
     # Run tests
     - |
       git clone --depth 1 https://github.com/argonne-lcf/THAPI.git -b devel
       cd ./THAPI
       bats ./integration_tests/
+
+polaris:
+  stage: test
+  extends: .polaris-batch-runner
+  script:
+    # Create ci directory
+    - |
+      run_dir=$(mktemp -d --tmpdir=${AURORA_WRKDIR} ${CI_COMMIT_SHA}_XXXXXXXXXX)
+      echo "THAPI_RUN_DIR=${run_dir}"
+      cd ${run_dir}
+    # Load available modules so spack finds those packages
+    - |
+      module use /soft/modulefiles
+      module load PrgEnv-gnu
+      module load spack-pe-base cmake protobuf python
+    # Clone and isolate spack for CI (see below link):
+    # https://spack.readthedocs.io/en/latest/configuration.html#overriding-local-configuration
+    - |
+      git clone -c feature.manyFiles=true -b releases/latest https://github.com/spack/spack.git
+      export SPACK_DISABLE_LOCAL_CONFIG=true
+      export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
+      . spack/share/spack/setup-env.sh
+    # Find compilers and external packages known to spack (avoid bzip2 and xz since
+    # they cause build failures in elfutils).
+    - |
+      spack compiler find
+      spack external find --all --exclude bzip2 --exclude xz
+    # Add THAPI-spack as a repo
+    - |
+      git clone https://github.com/argonne-lcf/THAPI-spack.git
+      cd ./THAPI-spack
+      git checkout ${CI_COMMIT_SHA}
+      spack repo add .
+      cd ..
+    # Install thapi
+    - |
+      . spack/share/spack/setup-env.sh
+      spack install ${POLARIS_OPTS} ${POLARIS_SPEC}
+    # Load spack
+    - |
+      . spack/share/spack/setup-env.sh
+      spack load ${POLARIS_SPEC}
