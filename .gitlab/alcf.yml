@@ -4,7 +4,7 @@ variables:
   TIME: "3:00:00"
   ANL_AURORA_SCHEDULER_PARAMETERS: "-q ${QUEUE} -l select=1,walltime=${TIME},filesystems=home -A ${PROJ}"
   AURORA_WRKDIR: "/lus/flare/projects/${PROJ}/thapi/"
-  AURORA_SPEC: "thapi@develop+sync-daemon-mpi+archive+test-dependencies"
+  AURORA_SPEC: "thapi@develop+sync-daemon-mpi+archive"
   AURORA_OPTS: "--concurrent-packages 2 -j32 --show-log-on-error --fail-fast"
   ANL_POLARIS_SCHEDULER_PARAMETERS: "-q ${QUEUE} -l select=1,walltime=${TIME},filesystems=home -A ${PROJ}"
   POLARIS_WRKDIR: "/lus/eagle/projects/${PROJ}/thapi/"
