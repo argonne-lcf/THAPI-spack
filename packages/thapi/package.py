@@ -29,7 +29,6 @@ class Thapi(AutotoolsPackage):
     variant("mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@:0.0.12")
     variant("sync-daemon-mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@0.0.13:")
     variant("clang-parser", default=True, description="Enable Clang Parser", when="@0.0.13:master")
-    
     variant("archive", default=False, description="Enable archive mode of THAPI", when="@0.0.13:")
 
     depends_on("c", type=("build"))
