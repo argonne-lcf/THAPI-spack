@@ -50,13 +50,11 @@ aurora:
     - *add-thapi-spack-repo
     # Install thapi, bats and ittapi (latter two for tests)
     - |
-      . spack/share/spack/setup-env.sh
       spack install ${AURORA_OPTS} ${AURORA_SPEC}
       spack install bats
       spack install ittapi
     # Load spack
     - |
-      . spack/share/spack/setup-env.sh
       spack load ${AURORA_SPEC} bats ittapi
     # Run tests
     - |
@@ -78,9 +76,7 @@ polaris:
     - *add-thapi-spack-repo
     # Install thapi
     - |
-      . spack/share/spack/setup-env.sh
       spack install ${POLARIS_OPTS} ${POLARIS_SPEC}
     # Load spack
     - |
-      . spack/share/spack/setup-env.sh
       spack load ${POLARIS_SPEC}
