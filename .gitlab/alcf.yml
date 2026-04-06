@@ -48,14 +48,16 @@ aurora:
     - *clone-spack
     - *spack-find
     - *add-thapi-spack-repo
-    # Install thapi
+    # Install thapi, bats and ittapi (latter two for tests)
     - |
       . spack/share/spack/setup-env.sh
       spack install ${AURORA_OPTS} ${AURORA_SPEC}
+      spack install bats
+      spack install ittapi
     # Load spack
     - |
       . spack/share/spack/setup-env.sh
-      spack load ${AURORA_SPEC}
+      spack load ${AURORA_SPEC} bats ittapi
     # Run tests
     - |
       git clone --depth 1 https://github.com/argonne-lcf/THAPI.git -b devel
