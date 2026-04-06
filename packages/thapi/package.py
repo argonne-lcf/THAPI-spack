@@ -28,7 +28,7 @@ class Thapi(AutotoolsPackage):
     variant("test-dependencies", default=False, description="Install THAPI test dependencies (bats, clinfo, etc.)")
     variant("mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@:0.0.12")
     variant("sync-daemon-mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@0.0.13:")
-    variant("clang-parser", default=True, description="Enable Clang Parser", when="@0.0.13:")
+    variant("clang-parser", default=True, description="Enable Clang Parser", when="@0.0.13:master")
     variant("archive", default=False, description="Enable archive mode of THAPI", when="@0.0.13:")
 
     depends_on("c", type=("build"))
@@ -79,7 +79,8 @@ class Thapi(AutotoolsPackage):
     depends_on("mpi", when="+mpi")
     depends_on("mpi", when="+sync-daemon-mpi")
     depends_on("h2yaml@0.3.1:0.4.0", type=("build"), when="@:0.0.12 +clang-parser")
-    depends_on("h2yaml@0.4.1:", type=("build"), when="@0.0.13: +clang-parser")
+    depends_on("h2yaml@0.4.1:0.4.2", type=("build"), when="@0.0.13:master +clang-parser")
+    depends_on("h2yaml@0.4.3:", type=("build"), when="@develop")
 
     # Add dev tools required for THAPI development and testing.
     depends_on("bats", when="+test-dependencies")
@@ -102,6 +103,12 @@ class Thapi(AutotoolsPackage):
         else:
             args.extend(self.enable_or_disable("mpi"))
         args.extend(self.enable_or_disable("strict"))
+
+        # No clang-variant for develop, you always need it
+        if self.spec.version >= Version("develop"):
+            return args
+
+        # Before develop, `--disable-clang-parser` was an option
         if not self.spec.satisfies("+clang-parser"):
             args.append("--disable-clang-parser")
         return args
