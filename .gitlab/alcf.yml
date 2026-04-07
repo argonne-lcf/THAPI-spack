@@ -3,19 +3,21 @@ variables:
   QUEUE: "capacity"
   TIME: "3:00:00"
   ANL_AURORA_SCHEDULER_PARAMETERS: "-q ${QUEUE} -l select=1,walltime=${TIME},filesystems=home -A ${PROJ}"
-  AURORA_WRKDIR: "/lus/flare/projects/${PROJ}/thapi/"
+  AURORA_WORKDIR: "/lus/flare/projects/${PROJ}/thapi/"
   AURORA_SPEC: "thapi@develop+sync-daemon-mpi+archive"
   AURORA_OPTS: "--concurrent-packages 2 -j32 --show-log-on-error --fail-fast"
+  AURORA_TOOLS: "bats ittapi py-ittapi"
   ANL_POLARIS_SCHEDULER_PARAMETERS: "-q ${QUEUE} -l select=1,walltime=${TIME},filesystems=home -A ${PROJ}"
-  POLARIS_WRKDIR: "/lus/eagle/projects/${PROJ}/thapi/"
+  POLARIS_WORKDIR: "/lus/eagle/projects/${PROJ}/thapi/"
   POLARIS_SPEC: "thapi@develop+archive"
   POLARIS_OPTS: "--concurrent-packages 2 -j16 --show-log-on-error --fail-fast"
+  POLARIS_TOOLS: "bats ittapi py-ittapi clinfo"
 stages:
     - test
 .common-steps:
   # Create ci directory
   - &create-ci-dir |
-    run_dir=$(mktemp -d --tmpdir=${AURORA_WRKDIR} ${CI_COMMIT_SHA}_XXXXXXXXXX)
+    run_dir=$(mktemp -d --tmpdir=${WORKDIR} ${CI_COMMIT_SHA}_XXXXXXXXXX)
     echo "THAPI_RUN_DIR=${run_dir}"
     cd ${run_dir}
   # Clone and isolate spack for CI (see below link):
@@ -37,10 +39,27 @@ stages:
     git checkout ${CI_COMMIT_SHA}
     spack repo add .
     cd ..
+  # Install and load thapi
+  - &install-and-load-thapi |
+    spack install ${OPTS} ${SPEC}
+    spack load ${SPEC}
+    # Install and load test tools
+  - &install-and-load-test-tools |
+    spack install ${OPTS} ${TOOLS}
+    spack load ${TOOLS}
+  # Run tests
+  - &run-tests |
+    git clone --depth 1 https://github.com/argonne-lcf/THAPI.git -b devel
+    cd ./THAPI
+    bats ./integration_tests/
 aurora:
   stage: test
   extends: .aurora-batch-runner
   script:
+    # Set variables nedded by the workflow: WORKDIR, SPEC and OPT
+    - |
+      export WORKDIR=${AURORA_WORKDIR} SPEC=${AURORA_SPEC} OPTS=${AURORA_OPTS} \
+        TOOLS=${AURORA_TOOLS}
     # Load available modules so spack finds those packages
     - |
       module load oneapi
@@ -48,23 +67,17 @@ aurora:
     - *clone-spack
     - *spack-find
     - *add-thapi-spack-repo
-    # Install thapi, bats and ittapi (latter two for tests)
-    - |
-      spack install ${AURORA_OPTS} ${AURORA_SPEC}
-      spack install bats
-      spack install ittapi
-    # Load spack
-    - |
-      spack load ${AURORA_SPEC} bats ittapi
-    # Run tests
-    - |
-      git clone --depth 1 https://github.com/argonne-lcf/THAPI.git -b devel
-      cd ./THAPI
-      bats ./integration_tests/
+    - *install-and-load-thapi
+    - *install-and-load-test-tools
+    - *run-tests
 polaris:
   stage: test
   extends: .polaris-batch-runner
   script:
+    # Set variables nedded by the workflow: WORKDIR, SPEC and OPT
+    - |
+      export WORKDIR=${POLARIS_WORKDIR} SPEC=${POLARIS_SPEC} OPTS=${POLARIS_OPTS} \
+        TOOLS=${AURORA_TOOLS}
     # Load available modules so spack finds those packages
     - |
       module use /soft/modulefiles
@@ -74,9 +87,4 @@ polaris:
     - *clone-spack
     - *spack-find
     - *add-thapi-spack-repo
-    # Install thapi
-    - |
-      spack install ${POLARIS_OPTS} ${POLARIS_SPEC}
-    # Load spack
-    - |
-      spack load ${POLARIS_SPEC}
+    - *install-and-load-thapi
