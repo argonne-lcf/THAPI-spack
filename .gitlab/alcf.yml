@@ -9,7 +9,7 @@ variables:
   AURORA_TOOLS: "bats ittapi py-ittapi"
   ANL_POLARIS_SCHEDULER_PARAMETERS: "-q ${QUEUE} -l select=1,walltime=${TIME},filesystems=home -A ${PROJ}"
   POLARIS_WORKDIR: "/lus/grand/projects/${PROJ}/thapi/"
-  POLARIS_SPEC: "thapi@develop+archive"
+  POLARIS_SPEC: "thapi@develop+archive ^llvm@19.1.7 %gcc"
   POLARIS_OPTS: "--concurrent-packages 2 -j16 --show-log-on-error --fail-fast"
   POLARIS_TOOLS: "bats ittapi py-ittapi clinfo"
 stages:
@@ -82,7 +82,7 @@ polaris:
     - |
       module use /soft/modulefiles
       module load PrgEnv-gnu
-      module load spack-pe-base cmake protobuf python
+      module load spack-pe-base cmake protobuf python llvm
     - *create-ci-dir
     - *clone-spack
     - *spack-find
