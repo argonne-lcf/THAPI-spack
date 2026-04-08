@@ -8,7 +8,7 @@ variables:
   AURORA_OPTS: "--concurrent-packages 2 -j32 --show-log-on-error --fail-fast"
   AURORA_TOOLS: "bats ittapi py-ittapi"
   ANL_POLARIS_SCHEDULER_PARAMETERS: "-q ${QUEUE} -l select=1,walltime=${TIME},filesystems=home -A ${PROJ}"
-  POLARIS_WORKDIR: "/lus/eagle/projects/${PROJ}/thapi/"
+  POLARIS_WORKDIR: "/lus/grand/projects/${PROJ}/thapi/"
   POLARIS_SPEC: "thapi@develop+archive"
   POLARIS_OPTS: "--concurrent-packages 2 -j16 --show-log-on-error --fail-fast"
   POLARIS_TOOLS: "bats ittapi py-ittapi clinfo"
