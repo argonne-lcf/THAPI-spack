@@ -15,7 +15,6 @@ variables:
 stages:
     - test
 .common-steps:
-  # Create ci directory
   - &create-ci-dir |
     run_dir=$(mktemp -d --tmpdir=${WORKDIR} ${CI_COMMIT_SHA}_XXXXXXXXXX)
     echo "THAPI_RUN_DIR=${run_dir}"
@@ -32,22 +31,18 @@ stages:
   - &spack-find |
     spack compiler find
     spack external find --all --exclude bzip2 --exclude xz
-  # Add THAPI-spack as a repo
   - &add-thapi-spack-repo |
     git clone https://github.com/argonne-lcf/THAPI-spack.git
     cd ./THAPI-spack
     git checkout ${CI_COMMIT_SHA}
     spack repo add .
     cd ..
-  # Install and load thapi
   - &install-and-load-thapi |
     spack install ${OPTS} ${SPEC}
     spack load ${SPEC}
-    # Install and load test tools
   - &install-and-load-test-tools |
     spack install ${OPTS} ${TOOLS}
     spack load ${TOOLS}
-  # Run tests
   - &run-tests |
     git clone --depth 1 https://github.com/argonne-lcf/THAPI.git -b devel
     cd ./THAPI
@@ -88,3 +83,5 @@ polaris:
     - *spack-find
     - *add-thapi-spack-repo
     - *install-and-load-thapi
+    - *install-and-load-test-tools
+    - *run-tests
