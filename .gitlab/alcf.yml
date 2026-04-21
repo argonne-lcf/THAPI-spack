@@ -7,13 +7,13 @@ variables:
   AURORA_SPEC: "thapi@develop+sync-daemon-mpi+archive"
   AURORA_OPTS: "--concurrent-packages 2 -j32 --show-log-on-error --fail-fast"
   AURORA_TOOLS: "bats ittapi py-ittapi"
-  AURORA_EXCLUSIONS: "--filter-tags '!todo'"
+  AURORA_EXCLUSIONS: '!todo'
   ANL_POLARIS_SCHEDULER_PARAMETERS: "-q ${QUEUE} -l select=1,walltime=${TIME},filesystems=home -A ${PROJ}"
   POLARIS_WORKDIR: "/lus/grand/projects/${PROJ}/thapi/"
   POLARIS_SPEC: "thapi@develop+archive ^llvm@19.1.7 %gcc"
   POLARIS_OPTS: "--concurrent-packages 2 -j16 --show-log-on-error --fail-fast"
   POLARIS_TOOLS: "bats ittapi py-ittapi clinfo"
-  POLARIS_EXCLUSIONS: "--filter-tags '!issue_489,!todo,!mpi_sync_daemon'"
+  POLARIS_EXCLUSIONS: '!issue_489,!todo,!mpi_sync_daemon'
 stages:
     - test
 .common-steps:
@@ -48,7 +48,7 @@ stages:
   - &run-tests |
     git clone --depth 1 https://github.com/argonne-lcf/THAPI.git -b devel
     cd ./THAPI
-    bats ${EXCLUSIONS} ./integration_tests/
+    bats --filter-tags ${EXCLUSIONS} ./integration_tests/
 aurora:
   stage: test
   extends: .aurora-batch-runner
