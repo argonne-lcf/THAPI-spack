@@ -48,6 +48,8 @@ stages:
   - &run-tests |
     git clone --depth 1 https://github.com/argonne-lcf/THAPI.git -b devel
     cd ./THAPI
+    # Run tests twice to make sure that we do proper cleanup.
+    bats --filter-tags ${EXCLUSIONS} ./integration_tests/
     bats --filter-tags ${EXCLUSIONS} ./integration_tests/
 aurora:
   stage: test
