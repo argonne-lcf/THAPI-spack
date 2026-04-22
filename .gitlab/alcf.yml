@@ -7,15 +7,16 @@ variables:
   AURORA_SPEC: "thapi@develop+sync-daemon-mpi+archive"
   AURORA_OPTS: "--concurrent-packages 2 -j32 --show-log-on-error --fail-fast"
   AURORA_TOOLS: "bats ittapi py-ittapi"
+  AURORA_EXCLUSIONS: '!todo'
   ANL_POLARIS_SCHEDULER_PARAMETERS: "-q ${QUEUE} -l select=1,walltime=${TIME},filesystems=home -A ${PROJ}"
   POLARIS_WORKDIR: "/lus/grand/projects/${PROJ}/thapi/"
   POLARIS_SPEC: "thapi@develop+archive ^llvm@19.1.7 %gcc"
   POLARIS_OPTS: "--concurrent-packages 2 -j16 --show-log-on-error --fail-fast"
   POLARIS_TOOLS: "bats ittapi py-ittapi clinfo"
+  POLARIS_EXCLUSIONS: '!issue_489,!todo,!mpi_sync_daemon'
 stages:
     - test
 .common-steps:
-  # Create ci directory
   - &create-ci-dir |
     run_dir=$(mktemp -d --tmpdir=${WORKDIR} ${CI_COMMIT_SHA}_XXXXXXXXXX)
     echo "THAPI_RUN_DIR=${run_dir}"
@@ -32,26 +33,24 @@ stages:
   - &spack-find |
     spack compiler find
     spack external find --all --exclude bzip2 --exclude xz
-  # Add THAPI-spack as a repo
   - &add-thapi-spack-repo |
     git clone https://github.com/argonne-lcf/THAPI-spack.git
     cd ./THAPI-spack
     git checkout ${CI_COMMIT_SHA}
     spack repo add .
     cd ..
-  # Install and load thapi
   - &install-and-load-thapi |
     spack install ${OPTS} ${SPEC}
     spack load ${SPEC}
-    # Install and load test tools
   - &install-and-load-test-tools |
     spack install ${OPTS} ${TOOLS}
     spack load ${TOOLS}
-  # Run tests
   - &run-tests |
     git clone --depth 1 https://github.com/argonne-lcf/THAPI.git -b devel
     cd ./THAPI
-    bats ./integration_tests/
+    # Run tests twice to make sure that we do proper cleanup.
+    bats --filter-tags ${EXCLUSIONS} ./integration_tests/
+    bats --filter-tags ${EXCLUSIONS} ./integration_tests/
 aurora:
   stage: test
   extends: .aurora-batch-runner
@@ -59,7 +58,7 @@ aurora:
     # Set variables nedded by the workflow: WORKDIR, SPEC and OPT
     - |
       export WORKDIR=${AURORA_WORKDIR} SPEC=${AURORA_SPEC} OPTS=${AURORA_OPTS} \
-        TOOLS=${AURORA_TOOLS}
+        TOOLS=${AURORA_TOOLS} EXCLUSIONS=${AURORA_EXCLUSIONS}
     # Load available modules so spack finds those packages
     - |
       module load oneapi
@@ -77,7 +76,7 @@ polaris:
     # Set variables nedded by the workflow: WORKDIR, SPEC and OPT
     - |
       export WORKDIR=${POLARIS_WORKDIR} SPEC=${POLARIS_SPEC} OPTS=${POLARIS_OPTS} \
-        TOOLS=${AURORA_TOOLS}
+        TOOLS=${POLARIS_TOOLS} EXCLUSIONS=${POLARIS_EXCLUSIONS}
     # Load available modules so spack finds those packages
     - |
       module use /soft/modulefiles
@@ -88,3 +87,5 @@ polaris:
     - *spack-find
     - *add-thapi-spack-repo
     - *install-and-load-thapi
+    - *install-and-load-test-tools
+    - *run-tests
