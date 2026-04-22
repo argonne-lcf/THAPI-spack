@@ -114,7 +114,7 @@ jobs:
     strategy:
       matrix:
         version: ['thapi@0.0.13+sync-daemon-mpi', 'thapi@master+sync-daemon-mpi',
-        'thapi@develop+sync-daemon-mpi', 'thapi@develop+archive+sync-daemon-mpi',
+        'thapi@develop+sync-daemon-mpi', 'thapi@develop+sync-daemon-mpi+archive',
         'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master']
     needs: install_dependencies
     runs-on: ubuntu-latest
@@ -149,7 +149,7 @@ jobs:
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT ${{ matrix.version }} ^llvm@${LLVM_FULL_VER} || true
     - name: Install dependencies for unit tests
-      if: ${{ matrix.version != 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master' }}
+      if: ${{ matrix.version == 'thapi@develop+sync-daemon-mpi+archive' }}
       run: |
         # Use apt for some tools
         sudo apt update
@@ -159,7 +159,7 @@ jobs:
         . external/spack/share/spack/setup-env.sh
         spack install ittapi py-ittapi
     - name: Run unit tests
-      if: ${{ matrix.version != 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master' }}
+      if: ${{ matrix.version == 'thapi@develop+sync-daemon-mpi+archive' }}
       run: |
         . external/spack/share/spack/setup-env.sh
         spack load ${{ matrix.version }} ittapi py-ittapi
