@@ -150,15 +150,18 @@ jobs:
     - name: Install dependencies for unit tests
       if: ${{ matrix.version != 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master' }}
       run: |
+        # Use apt for some tools
         sudo apt update
-        sudo apt install -y bats
-        sudo apt install -y clinfo
-        sudo apt install -y openmpi-bin libopenmpi-dev
+        sudo apt install -y bats clinfo openmpi-bin libopenmpi-dev
+
+        # and install ittapi and py-ittapi from spack
+        . external/spack/share/spack/setup-env.sh
+        spack install ittapi py-ittapi
     - name: Run unit tests
       if: ${{ matrix.version != 'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master' }}
       run: |
         . external/spack/share/spack/setup-env.sh
-        spack load ${{ matrix.version }}
+        spack load ${{ matrix.version }} ittapi py-ittapi
 
         git clone --depth 1 https://github.com/argonne-lcf/THAPI.git -b devel
         cd ./THAPI
