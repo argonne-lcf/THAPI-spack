@@ -2,6 +2,7 @@ variables:
   PROJ: "Performance"
   QUEUE: "capacity"
   TIME: "3:00:00"
+  NAME_PREFIX: "thapi_run_"
   ANL_AURORA_SCHEDULER_PARAMETERS: "-q ${QUEUE} -l select=1,walltime=${TIME},filesystems=home -A ${PROJ}"
   AURORA_WORKDIR: "/lus/flare/projects/${PROJ}/thapi/"
   AURORA_SPEC: "thapi@develop+sync-daemon-mpi+archive"
@@ -17,8 +18,11 @@ variables:
 stages:
     - test
 .common-steps:
+  # Remove pipeline directories older than 7 days
+  - &cleanup-old-runs |
+    find ${WORKDIR} -maxdepth 1 -name "${NAME_PREFIX}*" -mtime +7 -exec rm -rf {} \;
   - &create-ci-dir |
-    run_dir=$(mktemp -d --tmpdir=${WORKDIR} ${CI_COMMIT_SHA}_XXXXXXXXXX)
+    run_dir=$(mktemp -d --tmpdir=${WORKDIR} ${NAME_PREFIX}_${CI_COMMIT_SHA}_XXXXXXXXXX)
     echo "THAPI_RUN_DIR=${run_dir}"
     cd ${run_dir}
   # Clone and isolate spack for CI (see below link):
@@ -62,6 +66,7 @@ aurora:
     # Load available modules so spack finds those packages
     - |
       module load oneapi
+    - *cleanup-old-runs
     - *create-ci-dir
     - *clone-spack
     - *spack-find
@@ -82,6 +87,7 @@ polaris:
       module use /soft/modulefiles
       module load PrgEnv-gnu
       module load spack-pe-base cmake protobuf python llvm
+    - *cleanup-old-runs
     - *create-ci-dir
     - *clone-spack
     - *spack-find
