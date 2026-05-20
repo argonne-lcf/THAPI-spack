@@ -16,6 +16,7 @@ class Thapi(AutotoolsPackage):
 
     version("master", branch="master", preferred=True)
     version("develop", branch="devel")
+    version("0.0.14", tag="v0.0.14")
     version("0.0.13", tag="v0.0.13")
     version("0.0.12", tag="v0.0.12")
     version("0.0.11", tag="v0.0.11")
