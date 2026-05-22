@@ -32,11 +32,9 @@ stages:
     export SPACK_DISABLE_LOCAL_CONFIG=true
     export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
     . spack/share/spack/setup-env.sh
-  # Find compilers and external packages known to spack (avoid bzip2 and xz since
-  # they cause build failures in elfutils).
-  - &spack-find |
+  # Find compilers
+  - &spack-compiler-find |
     spack compiler find
-    spack external find --all --exclude bzip2 --exclude xz
   - &add-thapi-spack-repo |
     git clone https://github.com/argonne-lcf/THAPI-spack.git
     cd ./THAPI-spack
@@ -69,7 +67,7 @@ aurora:
     - *cleanup-old-runs
     - *create-ci-dir
     - *clone-spack
-    - *spack-find
+    - *spack-compiler-find
     - *add-thapi-spack-repo
     - *install-and-load-thapi
     - *install-and-load-test-tools
@@ -90,7 +88,7 @@ polaris:
     - *cleanup-old-runs
     - *create-ci-dir
     - *clone-spack
-    - *spack-find
+    - *spack-compiler-find
     - *add-thapi-spack-repo
     - *install-and-load-thapi
     - *install-and-load-test-tools
