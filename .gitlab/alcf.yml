@@ -84,7 +84,6 @@ polaris:
     - |
       module use /soft/modulefiles
       module load PrgEnv-gnu
-      module load spack-pe-base cmake protobuf python llvm
     - *cleanup-old-runs
     - *create-ci-dir
     - *clone-spack
