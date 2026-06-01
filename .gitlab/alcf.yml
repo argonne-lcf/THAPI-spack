@@ -2,23 +2,29 @@ variables:
   PROJ: "Performance"
   QUEUE: "capacity"
   TIME: "3:00:00"
+  NAME_PREFIX: "thapi_run_"
   ANL_AURORA_SCHEDULER_PARAMETERS: "-q ${QUEUE} -l select=1,walltime=${TIME},filesystems=home -A ${PROJ}"
   AURORA_WORKDIR: "/lus/flare/projects/${PROJ}/thapi/"
   AURORA_SPEC: "thapi@develop+sync-daemon-mpi+archive"
   AURORA_OPTS: "--concurrent-packages 2 -j32 --show-log-on-error --fail-fast"
   AURORA_TOOLS: "bats ittapi py-ittapi"
-  AURORA_EXCLUSIONS: '!todo'
+  AURORA_EXCLUSIONS: '!need_patchelf,!todo'
+  AURORA_EXTERNAL: "mpich"
   ANL_POLARIS_SCHEDULER_PARAMETERS: "-q ${QUEUE} -l select=1,walltime=${TIME},filesystems=home -A ${PROJ}"
   POLARIS_WORKDIR: "/lus/grand/projects/${PROJ}/thapi/"
   POLARIS_SPEC: "thapi@develop+archive ^llvm@19.1.7 %gcc"
   POLARIS_OPTS: "--concurrent-packages 2 -j16 --show-log-on-error --fail-fast"
   POLARIS_TOOLS: "bats ittapi py-ittapi clinfo"
-  POLARIS_EXCLUSIONS: '!issue_489,!todo,!mpi_sync_daemon'
+  POLARIS_EXCLUSIONS: '!mpi_sync_daemon,!need_patchelf,!todo'
+  POLARIS_EXTERNAL: ""
 stages:
     - test
 .common-steps:
+  # Remove pipeline directories older than 7 days
+  - &cleanup-old-runs |
+    find ${WORKDIR} -maxdepth 1 -name "${NAME_PREFIX}*" -mtime +7 -exec rm -rf {} \;
   - &create-ci-dir |
-    run_dir=$(mktemp -d --tmpdir=${WORKDIR} ${CI_COMMIT_SHA}_XXXXXXXXXX)
+    run_dir=$(mktemp -d --tmpdir=${WORKDIR} ${NAME_PREFIX}_${CI_COMMIT_SHA}_XXXXXXXXXX)
     echo "THAPI_RUN_DIR=${run_dir}"
     cd ${run_dir}
   # Clone and isolate spack for CI (see below link):
@@ -28,11 +34,14 @@ stages:
     export SPACK_DISABLE_LOCAL_CONFIG=true
     export SPACK_USER_CACHE_PATH=/tmp/spack-${CI_COMMIT_SHA}
     . spack/share/spack/setup-env.sh
-  # Find compilers and external packages known to spack (avoid bzip2 and xz since
-  # they cause build failures in elfutils).
-  - &spack-find |
+  # Find compilers
+  - &spack-compiler-find |
     spack compiler find
-    spack external find --all --exclude bzip2 --exclude xz
+  # Find external packages
+  - &spack-external-find |
+    if [ "${EXTERNAL}" != "" ]; then
+      spack external find ${EXTERNAL}
+    fi
   - &add-thapi-spack-repo |
     git clone https://github.com/argonne-lcf/THAPI-spack.git
     cd ./THAPI-spack
@@ -58,13 +67,16 @@ aurora:
     # Set variables nedded by the workflow: WORKDIR, SPEC and OPT
     - |
       export WORKDIR=${AURORA_WORKDIR} SPEC=${AURORA_SPEC} OPTS=${AURORA_OPTS} \
-        TOOLS=${AURORA_TOOLS} EXCLUSIONS=${AURORA_EXCLUSIONS}
+        TOOLS=${AURORA_TOOLS} EXCLUSIONS=${AURORA_EXCLUSIONS} \
+        EXTERNAL=${AURORA_EXTERNAL}
     # Load available modules so spack finds those packages
     - |
-      module load oneapi
+      module load oneapi mpich
+    - *cleanup-old-runs
     - *create-ci-dir
     - *clone-spack
-    - *spack-find
+    - *spack-compiler-find
+    - *spack-external-find
     - *add-thapi-spack-repo
     - *install-and-load-thapi
     - *install-and-load-test-tools
@@ -76,15 +88,17 @@ polaris:
     # Set variables nedded by the workflow: WORKDIR, SPEC and OPT
     - |
       export WORKDIR=${POLARIS_WORKDIR} SPEC=${POLARIS_SPEC} OPTS=${POLARIS_OPTS} \
-        TOOLS=${POLARIS_TOOLS} EXCLUSIONS=${POLARIS_EXCLUSIONS}
+        TOOLS=${POLARIS_TOOLS} EXCLUSIONS=${POLARIS_EXCLUSIONS} \
+        EXTERNAL=${POLARIS_EXTERNAL}
     # Load available modules so spack finds those packages
     - |
       module use /soft/modulefiles
       module load PrgEnv-gnu
-      module load spack-pe-base cmake protobuf python llvm
+    - *cleanup-old-runs
     - *create-ci-dir
     - *clone-spack
-    - *spack-find
+    - *spack-compiler-find
+    - *spack-external-find
     - *add-thapi-spack-repo
     - *install-and-load-thapi
     - *install-and-load-test-tools
