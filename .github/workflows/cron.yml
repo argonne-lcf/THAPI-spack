@@ -1,4 +1,4 @@
-name: Install Thapi master and develop every week
+name: THAPI@master and THAPI@develop weekly build
 on:
   schedule:
     # At 00:00 on Sunday.”
