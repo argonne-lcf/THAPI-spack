@@ -31,7 +31,6 @@ runs:
         # they cause build failures in elfutils).
         . external/spack/share/spack/setup-env.sh
         spack compiler find
-        spack external find --all --exclude bzip2 --exclude xz
     - name: Setup spack mirror
       shell: bash
       run: |
@@ -66,7 +65,7 @@ runs:
 
         # Let spack find newly installed llvm/clang.
         spack compiler find
-        spack external find --all --exclude bzip2 --exclude xz
+        spack external find llvm
 
         LLVM_FULL_VER=`llvm-config-${LLVM_VER} --version`
         echo "LLVM_FULL_VER=${LLVM_FULL_VER}" >> ${GITHUB_ENV}
