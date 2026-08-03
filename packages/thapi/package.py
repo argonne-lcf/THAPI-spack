@@ -80,7 +80,13 @@ class Thapi(AutotoolsPackage):
     depends_on("ruby-metababel@1.1.2:", type=("build"), when="@0.0.12:")
     depends_on("ruby-metababel@1.1.4:", type=("build"), when="@0.0.13:")
 
-    depends_on("libiberty+pic")
+    # Demangling: thapi <= 0.0.15 used libiberty; later versions switched to
+    # llvm::demangle (a tiny standalone extraction of LLVM's demangler) for the
+    # symbols __cxa_demangle can't handle. +pic so the static lib links into the
+    # shared babeltrace plugins. (master/develop are > any numbered version, so
+    # @0.0.16: covers the dev branches too.)
+    depends_on("libiberty+pic", when="@:0.0.15")
+    depends_on("llvm-demangle+pic", when="@0.0.16:")
     depends_on("libffi")
     depends_on("mpi", when="+mpi")
     depends_on("mpi", when="+sync-daemon-mpi")
