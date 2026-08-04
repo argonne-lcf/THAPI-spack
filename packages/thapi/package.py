@@ -42,7 +42,10 @@ class Thapi(AutotoolsPackage):
 
     # 4.3+ for grouped target
     depends_on("gmake@4.3:", type=("build"))
-    depends_on("protobuf@3.12.4:", type=("build", "link", "run"))
+    # Capped at 29: protobuf@30: needs abseil-cpp@20250127.0:, whose span.h
+    # `#include <version>` picks up our utils/version data file. Lift the cap
+    # once THAPI generates that file off the include path.
+    depends_on("protobuf@3.12.4:29", type=("build", "link", "run"))
 
     depends_on("babeltrace2", type=("build", "link", "run"))
     depends_on("babeltrace2@2.1.0-archive", type=("build", "link", "run"), when="+archive")
