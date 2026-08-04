@@ -15,3 +15,6 @@ class RubyNarrayOld(RubyPackage):
     version("0.6.1.2", sha256="73bf101929a1570e8034058e1296fec58d6c3386c26bf26810d33f70dd4236b7", expand=False)
 
     depends_on("ruby", type=("build", "run"))
+    # Native extension: gem builds via make. Declaring gmake lets Spack detect the
+    # concrete make version and pick a jobserver protocol it understands.
+    depends_on("gmake", type="build")

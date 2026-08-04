@@ -17,3 +17,6 @@ class RubyRacc(RubyPackage):
     version("1.8.1", sha256="4a7f6929691dbec8b5209a0b373bc2614882b55fc5d2e447a21aaa691303d62f", expand=False)
 
     depends_on("ruby@2.5.0:", type=("build", "run"))
+    # Native extension: gem builds via make. Declaring gmake lets Spack detect the
+    # concrete make version and pick a jobserver protocol it understands.
+    depends_on("gmake", type="build")

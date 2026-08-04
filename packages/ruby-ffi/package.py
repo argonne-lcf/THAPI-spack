@@ -20,3 +20,6 @@ class RubyFfi(RubyPackage):
     version("1.15.4", sha256="56cfca5261ead48688241236adfefb07a000a6d17184d7a4eed48d55b9675d6b", expand=False)
 
     depends_on("ruby@2.3.0:", type=("build", "run"))
+    # Native extension: gem builds via make. Declaring gmake lets Spack detect the
+    # concrete make version and pick a jobserver protocol it understands.
+    depends_on("gmake", type="build")
