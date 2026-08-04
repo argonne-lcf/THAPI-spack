@@ -21,6 +21,9 @@ class RubyNokogiri(RubyPackage):
     version("1.12.5", sha256="2b20905942acc580697c8c496d0d1672ab617facb9d30d156b3c7676e67902ec", expand=False)
 
     depends_on("ruby-racc@1.4.0:", type=("build", "run"))
+    # Native extension: gem builds via make. Declaring gmake lets Spack detect the
+    # concrete make version and pick a jobserver protocol it understands.
+    depends_on("gmake", type="build")
 
     with when("@1.12.5"):
         depends_on("ruby@2.5.0:2.7.999", type=("build", "run"))

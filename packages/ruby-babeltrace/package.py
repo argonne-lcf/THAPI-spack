@@ -16,6 +16,9 @@ class RubyBabeltrace(RubyPackage):
     version("0.1.3", sha256="bce6133637c18d503efb6b88ebffcbbdef8561310366b5c5d32751f6ae4b055c", expand=False)
 
     depends_on("ruby@2.3.0:", type=("build", "run"))
+    # Native extension: gem builds via make. Declaring gmake lets Spack detect the
+    # concrete make version and pick a jobserver protocol it understands.
+    depends_on("gmake", type="build")
     depends_on("ruby-walk", type=("build", "run"))
     depends_on("ruby-ffi", type=("build", "run"))
     depends_on("babeltrace@1.5.8:", type=("build", "link", "run"))
