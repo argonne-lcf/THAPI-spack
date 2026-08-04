@@ -28,10 +28,11 @@ runs:
       shell: bash
       run: |
         # Find external packages known to spack (avoid bzip2 and xz since
-        # they cause build failures in elfutils).
+        # they cause build failures in elfutils, and libxml2 since externals
+        # in system paths don't get added to PKG_CONFIG_PATH).
         . external/spack/share/spack/setup-env.sh
         spack compiler find
-        spack external find --all --exclude bzip2 --exclude xz
+        spack external find --all --exclude bzip2 --exclude xz --exclude libxml2
     - name: Setup spack mirror
       shell: bash
       run: |
@@ -64,9 +65,10 @@ runs:
         sudo apt-get install libllvm${LLVM_VER} llvm-${LLVM_VER} llvm-${LLVM_VER}-dev
         sudo apt-get install clang-${LLVM_VER} libclang-${LLVM_VER}-dev python3-clang-${LLVM_VER}
 
-        # Let spack find newly installed llvm/clang.
+        # Let spack find newly installed llvm/clang. Keep the same exclusions,
+        # otherwise this run re-adds them as externals.
         spack compiler find
-        spack external find --all --exclude bzip2 --exclude xz
+        spack external find --all --exclude bzip2 --exclude xz --exclude libxml2
 
         LLVM_FULL_VER=`llvm-config-${LLVM_VER} --version`
         echo "LLVM_FULL_VER=${LLVM_FULL_VER}" >> ${GITHUB_ENV}
