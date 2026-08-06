@@ -112,7 +112,7 @@ jobs:
   install:
     strategy:
       matrix:
-        version: ['thapi@0.0.13', 'thapi@0.0.14', 'thapi@0.0.15',
+        version: ['thapi@0.0.13', 'thapi@0.0.14', 'thapi@0.0.15', 'thapi@0.0.16',
         'thapi@master', 'thapi@develop', 'thapi@develop+archive',
         'thapi@develop ^lttng-tools@master ^lttng-ust@master ^babeltrace2@master']
     needs: install_dependencies

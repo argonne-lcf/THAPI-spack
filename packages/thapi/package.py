@@ -16,6 +16,7 @@ class Thapi(AutotoolsPackage):
 
     version("master", branch="master", preferred=True)
     version("develop", branch="devel")
+    version("0.0.16", tag="v0.0.16")
     version("0.0.15", tag="v0.0.15")
     version("0.0.14", tag="v0.0.14")
     version("0.0.13", tag="v0.0.13")
@@ -44,11 +45,11 @@ class Thapi(AutotoolsPackage):
     depends_on("gmake@4.3:", type=("build"))
     depends_on("protobuf@3.12.4:", type=("build", "link", "run"))
     # abseil-cpp@20250127.0: has an unguarded `#include <version>` in span.h that
-    # picks up our utils/version data file. devel renamed it to thapi_version;
-    # narrow to @:0.0.15 once master follows. protobuf@30: needs those abseil
+    # picks up our utils/version data file. 0.0.16 renamed it to thapi_version,
+    # so the cap only applies through 0.0.15. protobuf@30: needs those abseil
     # versions, so both are capped together.
-    depends_on("protobuf@:29", type=("build", "link", "run"), when="@:master")
-    depends_on("abseil-cpp@:20240722", type=("build", "link", "run"), when="@:master")
+    depends_on("protobuf@:29", type=("build", "link", "run"), when="@:0.0.15")
+    depends_on("abseil-cpp@:20240722", type=("build", "link", "run"), when="@:0.0.15")
 
     depends_on("babeltrace2", type=("build", "link", "run"))
     depends_on("babeltrace2@2.1.0-archive", type=("build", "link", "run"), when="+archive")
@@ -82,12 +83,12 @@ class Thapi(AutotoolsPackage):
     depends_on("ruby-metababel@1.1.2:", type=("build"), when="@0.0.12:")
     depends_on("ruby-metababel@1.1.4:", type=("build"), when="@0.0.13:")
 
-    # Demangling: devel switched from libiberty to llvm::demangle (a tiny
+    # Demangling: 0.0.16 switched from libiberty to llvm::demangle (a tiny
     # standalone extraction of LLVM's demangler) for the symbols
     # __cxa_demangle can't handle. +pic so the static lib links into the
-    # shared babeltrace plugins. Move master over once it picks up the switch.
-    depends_on("libiberty+pic", when="@:master")
-    depends_on("llvm-demangle+pic", when="@develop")
+    # shared babeltrace plugins.
+    depends_on("libiberty+pic", when="@:0.0.15")
+    depends_on("llvm-demangle+pic", when="@0.0.16:")
     depends_on("libffi")
     depends_on("mpi", when="+mpi")
     depends_on("mpi", when="+sync-daemon-mpi")
