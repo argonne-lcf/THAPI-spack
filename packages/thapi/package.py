@@ -30,7 +30,7 @@ class Thapi(AutotoolsPackage):
     variant("test-dependencies", default=False, description="Install THAPI test dependencies (bats, clinfo, etc.)")
     variant("mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@:0.0.12")
     variant("sync-daemon-mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@0.0.13:")
-    variant("clang-parser", default=True, description="Enable Clang Parser", when="@0.0.13:master")
+    variant("clang-parser", default=True, description="Enable Clang Parser", when="@0.0.13")
     variant("archive", default=False, description="Enable archive mode of THAPI", when="@0.0.13:")
 
     depends_on("c", type=("build"))
@@ -91,9 +91,10 @@ class Thapi(AutotoolsPackage):
     depends_on("libffi")
     depends_on("mpi", when="+mpi")
     depends_on("mpi", when="+sync-daemon-mpi")
-    depends_on("h2yaml@0.3.1:0.4.0", type=("build"), when="@:0.0.12 +clang-parser")
-    depends_on("h2yaml@0.4.3:", type=("build"), when="@0.0.13:master +clang-parser")
-    depends_on("h2yaml@0.4.3:", type=("build"), when="@develop")
+    # 0.0.14 dropped --disable-clang-parser: configure now hard-errors without
+    # h2yaml, so from there on it is an unconditional build dep.
+    depends_on("h2yaml@0.4.3:", type=("build"), when="@0.0.13 +clang-parser")
+    depends_on("h2yaml@0.4.3:", type=("build"), when="@0.0.14:")
 
     # Add dev tools required for THAPI development and testing.
     depends_on("bats", when="+test-dependencies")
@@ -117,11 +118,8 @@ class Thapi(AutotoolsPackage):
             args.extend(self.enable_or_disable("mpi"))
         args.extend(self.enable_or_disable("strict"))
 
-        # No clang-variant for develop, you always need it
-        if self.spec.version >= Version("develop"):
-            return args
-
-        # Before develop, `--disable-clang-parser` was an option
-        if not self.spec.satisfies("+clang-parser"):
+        # `--disable-clang-parser` only ever existed in 0.0.13; the clang
+        # parser is mandatory from 0.0.14 on.
+        if self.spec.satisfies("@0.0.13 ~clang-parser"):
             args.append("--disable-clang-parser")
         return args
