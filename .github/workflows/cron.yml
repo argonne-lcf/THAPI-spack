@@ -4,9 +4,19 @@ on:
     # At 00:00 on Sunday.”
     - cron: "0 0 * * 0"
   workflow_dispatch:
+env:
+  SPACK_OPT: "--concurrent-packages 2 --show-log-on-error --fail-fast"
+  CACHE_DIR: "${{ github.workspace }}/thapi_cache_${{ github.run_id }}"
 jobs:
-  myJob:
+  # Install with nothing pre-arranged: no `spack external find`, no system llvm,
+  # no build cache. Checks that THAPI installs on a bare machine.
+  from_scratch:
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ['thapi@master', 'thapi@develop']
     runs-on: ubuntu-latest
+    name: Install ${{ matrix.version }} (from scratch)
     steps:
     - name: Checkout
       uses: actions/checkout@v6
@@ -20,11 +30,33 @@ jobs:
       run: |
         . external/spack/share/spack/setup-env.sh
         spack repo add ./
-    - name: Install thapi master
+    - name: Install ${{ matrix.version }}
       run: |
         . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@master
-    - name: Install thapi develop
+        spack install $SPACK_OPT ${{ matrix.version }}
+
+  # Exercise the same fast path the PR CI uses (external find + apt llvm +
+  # hand-declared +python external). PR CI only runs when someone opens a PR, so
+  # without this the fast path can rot unnoticed during a quiet week.
+  fast_path:
+    runs-on: ubuntu-latest
+    name: Install thapi@develop (fast path)
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Checkout dependencies (spack,...)
+      uses: ./.github/actions/setup-thapi-deps
+      with:
+        cache-dir: ${{ env.CACHE_DIR }}
+        install-llvm: 'true'
+    - name: Install thapi@develop
       run: |
         . external/spack/share/spack/setup-env.sh
-        spack install $SPACK_OPT thapi@develop
+        spack install $SPACK_OPT thapi@develop ^llvm@${LLVM_FULL_VER}
+    - name: Check llvm was reused, not rebuilt
+      run: |
+        # The point of the fast path: llvm must resolve to the external ([e]),
+        # not be built. `spack find` lists externals too, so match on the marker.
+        . external/spack/share/spack/setup-env.sh
+        spack spec -I thapi@develop ^llvm@${LLVM_FULL_VER} | grep -E '^\s*\[e\].*\^llvm@' \
+          || { echo "llvm did not resolve to the external"; exit 1; }
