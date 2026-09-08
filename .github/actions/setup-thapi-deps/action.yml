@@ -72,17 +72,22 @@ runs:
 
         LLVM_FULL_VER=`llvm-config-${LLVM_VER} --version`
         echo "LLVM_FULL_VER=${LLVM_FULL_VER}" >> ${GITHUB_ENV}
-    - name: Workaround for providing llvm+python in GitHub CI runners
+        # The next step needs the major version too.
+        echo "LLVM_VER=${LLVM_VER}" >> ${GITHUB_ENV}
+    - name: Declare the apt llvm as an external with +python
       shell: bash
       if: ${{ inputs.install-llvm == 'true' }}
       run: |
-        # Symlink python3-clang package to site-packages so h2yaml won't fail on
-        # `import clang`. This way, our llvm+python trick will work without an issue.
-        python_major=$(python -c "import sys; print(f'{sys.version_info.major}')")
-        python_minor=$(python -c "import sys; print(f'{sys.version_info.minor}')")
-        SITE_PACKAGES=/usr/lib/python${python_major}.${python_minor}/site-packages
-        sudo mkdir -p ${SITE_PACKAGES}
-        sudo ln -s /usr/lib/python${python_major}/dist-packages/clang ${SITE_PACKAGES}/clang
-
-        # Trick spack to think that llvm found in packages.yml has +python variant:
-        sed -i 's/llvm@[0-9][0-9]\.[0-9]\.[0-9]/&+python/' ~/.spack/packages.yaml
+        # `spack external find` never records +python (it picks variants from
+        # executables and never looks for clang's python bindings), so h2yaml's
+        # llvm@18:+clang+python would go unsatisfied and Spack would rebuild LLVM.
+        # The helper below declares the external properly; apt splits the bindings
+        # into /usr/lib/python3/dist-packages, which it finds and links in.
+        # Same script the README tells users to run.
+        . external/spack/share/spack/setup-env.sh
+        PYVER=$(spack spec h2yaml | sed -n 's/.*\^python@\([0-9][0-9]*\.[0-9][0-9]*\).*/\1/p' | head -1)
+        python3 scripts/gen-llvm-external.py /usr/lib/llvm-${LLVM_VER} \
+          --python-version "${PYVER}" \
+          --overlay-dir ${{ github.workspace }} \
+          > ${{ github.workspace }}/llvm-external.yaml
+        spack config add -f ${{ github.workspace }}/llvm-external.yaml

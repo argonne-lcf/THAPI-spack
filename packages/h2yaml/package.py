@@ -15,6 +15,27 @@ def find_libclang(root, lib_ext):
                 return os.path.join(root, file)
 
 
+def find_clang_bindings(root):
+    """Return the site-packages dir holding clang's python bindings (clang/cindex.py).
+
+    LLVM installs these under lib/python<X.Y>/site-packages, but the python
+    version in that path is whichever python LLVM was built against, which need
+    not be the one h2yaml runs with. External installs vary further: lib64 on
+    RHEL-likes, dist-packages on Debian/Ubuntu. So search instead of guessing.
+    """
+    for libdir in ("lib", "lib64"):
+        base = os.path.join(root, libdir)
+        if not os.path.isdir(base):
+            continue
+        for entry in sorted(os.listdir(base)):
+            if not entry.startswith("python"):
+                continue
+            for pkgs in ("site-packages", "dist-packages"):
+                sp = os.path.join(base, entry, pkgs)
+                if os.path.isfile(os.path.join(sp, "clang", "cindex.py")):
+                    return sp
+
+
 class H2yaml(PythonPackage):
     """Matrices describing affine transformation of the plane."""
 
@@ -63,10 +84,25 @@ class H2yaml(PythonPackage):
         lib_so = join_path(self.spec["llvm"].prefix.lib, f"libclang.{lib_ext}")
         if not os.path.isfile(lib_so):
             lib_so = find_libclang(lib_path, lib_ext)
-        env.set("LIBCLANG_LIBRARY_FILE", join_path(self.spec["llvm"].prefix.lib, lib_so))
+        if not lib_so:
+            raise InstallError(
+                f"h2yaml needs libclang.{lib_ext}, but none was found under "
+                f"{self.spec['llvm'].prefix}. If this is an external llvm, check that "
+                "its prefix really contains a libclang shared library."
+            )
+        # lib_so is already absolute; do not re-join it onto prefix.lib.
+        env.set("LIBCLANG_LIBRARY_FILE", lib_so)
 
         # Set PYTHONPATH so that `import clang` will work without an issue.
-        env.append_path("PYTHONPATH", join_path(self.spec["llvm"].prefix.lib, f"python{self.spec['python'].version.up_to(2)}", "site-packages"))
+        site_packages = find_clang_bindings(self.spec["llvm"].prefix)
+        if not site_packages:
+            raise InstallError(
+                "h2yaml needs clang's python bindings (clang/cindex.py), but none were "
+                f"found under {self.spec['llvm'].prefix}. Note that external LLVM installs "
+                "frequently omit them even though they ship libclang. See the "
+                "'Reusing a system LLVM' section of the THAPI-spack README."
+            )
+        env.append_path("PYTHONPATH", site_packages)
 
     def setup_test_environment(self, env):
         if self.version < Version("0.4.1"):
