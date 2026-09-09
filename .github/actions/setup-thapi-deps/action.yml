@@ -39,6 +39,15 @@ runs:
         spack compiler find
         spack compiler rm -a llvm || true
         spack external find --all --exclude llvm --exclude bzip2 --exclude xz --exclude libxml2
+    - name: Concretize for a generic target
+      shell: bash
+      run: |
+        # Spack puts the microarchitecture in the dag hash, and the runner pool
+        # is a mix of cpu generations, so a package built on one runner does not
+        # match the same package on another and the build cache never hits.
+        # Targeting x86_64_v3 instead keeps the hashes stable across the pool.
+        . external/spack/share/spack/setup-env.sh
+        spack config add concretizer:targets:granularity:generic
     - name: Setup spack mirror
       shell: bash
       run: |

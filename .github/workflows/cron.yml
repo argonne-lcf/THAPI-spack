@@ -5,7 +5,7 @@ on:
     - cron: "0 0 * * 0"
   workflow_dispatch:
 env:
-  SPACK_OPT: "--concurrent-packages 2 --show-log-on-error --fail-fast"
+  SPACK_OPT: "--show-log-on-error --fail-fast"
   CACHE_DIR: "${{ github.workspace }}/thapi_cache_${{ github.run_id }}"
 jobs:
   # Install with nothing pre-arranged: no `spack external find`, no system llvm,

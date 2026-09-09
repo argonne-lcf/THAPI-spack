@@ -91,13 +91,15 @@ processes to be used during the build of `spec` using `-j` option to `spack` (e.
 
 #### `--concurrent-packages`
 
-One may also be able to reduce the time to install THAPI by using `--concurrent-packages` option in `spack install`
-as below:
+Spack's current installer builds independent packages concurrently on its own, bounded by the
+number of available cores, so there is normally nothing to set. `--concurrent-packages N` caps how
+many it will run at once; leaving it unset means no cap beyond that core count.
+
+Lowering it is useful when a build is memory-hungry rather than CPU-hungry, or on a shared node
+where a full-width build would crowd out others:
 ```bash
 spack install --concurrent-packages 2 thapi
 ```
-Depending on the available number of CPU cores and how parallelizable the dependency graph is for the particular
-specification, one may be able to specify more concurrent packages (as compared to `2` in the above example).
 
 ## Building THAPI Manually
 
