@@ -12,7 +12,7 @@ runs:
     - name: Install apt-get packages
       uses: awalsh128/cache-apt-pkgs-action@latest
       with:
-        packages: libnuma-dev re2c protobuf-compiler libprotobuf-dev
+        packages: libnuma-dev re2c protobuf-compiler libprotobuf-dev elfutils libelf-dev libdw-dev
     - name: Checkout Spack
       uses: actions/checkout@v6
       with:
@@ -57,18 +57,19 @@ runs:
         # solve fail loudly rather than emit illegal instructions.
         . external/spack/share/spack/setup-env.sh
         spack config add "packages:all:require:target=x86_64_v3"
-    - name: Declare the apt re2c and protobuf as externals
+    - name: Declare the apt re2c, protobuf and elfutils as externals
       shell: bash
       run: |
-        # These two cost ~17 min each in the dependency jobs and are both in
-        # apt. `spack external find` cannot see them -- neither recipe
-        # declares `executables` or `libraries` -- so declare them by hand.
+        # The three most expensive packages in the dependency jobs (~17, ~17
+        # and ~6 min) that apt already ships. `spack external find` cannot see
+        # them -- no recipe declares `executables` or `libraries` -- so declare
+        # them by hand.
         #
-        # This does pin PR CI to Noble's old protobuf; the weekly cron
-        # `from_scratch` job installs with no externals and covers the
-        # current one.
+        # This does pin PR CI to Noble's older protobuf and elfutils; the
+        # weekly cron `from_scratch` job installs with no externals and covers
+        # the current ones.
         . external/spack/share/spack/setup-env.sh
-        for pkg_tool in re2c:re2c protobuf:protoc; do
+        for pkg_tool in re2c:re2c protobuf:protoc elfutils:eu-readelf; do
           pkg=${pkg_tool%:*}
           tool=${pkg_tool#*:}
           python3 scripts/gen-external.py "${pkg}" --version-from "${tool}" \
