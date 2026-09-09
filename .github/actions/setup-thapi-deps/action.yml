@@ -57,8 +57,17 @@ runs:
         # The llvm major version thapi@develop wants. `spack spec -j` writes its
         # status lines ("==> Using cached archive: ...") to stdout alongside the
         # json, so they have to be stripped before jq sees them.
+        #
+        # A spec can hold several llvm nodes (same version, different variants),
+        # so collapse them to the distinct majors and insist on exactly one --
+        # two would otherwise be concatenated into an unusable "22\n22".
         LLVM_VER=$( spack spec -j thapi@develop | grep -v '^==>' \
-          | jq -r '.spec.nodes[] | select(.name == "llvm") | .version | split(".")[0]' )
+          | jq -r '[.spec.nodes[] | select(.name == "llvm") | .version | split(".")[0]]
+                   | unique | join(" ")' )
+        if [ "$( echo "${LLVM_VER}" | wc -w )" -ne 1 ]; then
+          echo "expected exactly one llvm major version, got: '${LLVM_VER}'"
+          exit 1
+        fi
 
         # Add llvm to apt repository.
         wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
@@ -91,7 +100,12 @@ runs:
         # Same script the README tells users to run.
         . external/spack/share/spack/setup-env.sh
         PYVER=$( spack spec -j h2yaml | grep -v '^==>' \
-          | jq -r '.spec.nodes[] | select(.name == "python") | .version | split(".")[:2] | join(".")' )
+          | jq -r '[.spec.nodes[] | select(.name == "python") | .version | split(".")[:2] | join(".")]
+                   | unique | join(" ")' )
+        if [ "$( echo "${PYVER}" | wc -w )" -ne 1 ]; then
+          echo "expected exactly one python version, got: '${PYVER}'"
+          exit 1
+        fi
         python3 scripts/gen-llvm-external.py /usr/lib/llvm-${LLVM_VER} \
           --python-version "${PYVER}" \
           --overlay-dir ${{ github.workspace }} \
