@@ -47,9 +47,7 @@ def version_from_tool(tool):
     "libprotoc 3.21.12", "cmake version 3.28.3".
     """
     try:
-        out = subprocess.check_output(
-            [tool, "--version"], universal_newlines=True, stderr=subprocess.STDOUT
-        )
+        out = subprocess.check_output([tool, "--version"], universal_newlines=True, stderr=subprocess.STDOUT)
     except OSError as e:
         die(f"cannot run {tool} --version ({e}) -- is it installed and on PATH?")
     except subprocess.CalledProcessError as e:
@@ -61,9 +59,7 @@ def version_from_tool(tool):
 
 
 def main():
-    p = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
-    )
+    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("package", help="Spack package name, e.g. re2c")
     g = p.add_mutually_exclusive_group(required=True)
     g.add_argument("--version-from", metavar="TOOL", help="read the version from `TOOL --version`")
