@@ -49,14 +49,14 @@ jobs:
       with:
         cache-dir: ${{ env.CACHE_DIR }}
         install-llvm: 'true'
+    - name: Check llvm resolves to the external, not a build
+      run: |
+        # Concretization alone shows whether llvm is external ([e]). Checking it
+        # here fails in seconds; after the install it costs an llvm build.
+        . external/spack/share/spack/setup-env.sh
+        spack spec -I thapi@develop ^llvm@${LLVM_FULL_VER} | grep -E '^\s*\[e\].*\^llvm@' \
+          || { echo "llvm did not resolve to the external"; exit 1; }
     - name: Install thapi@develop
       run: |
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT thapi@develop ^llvm@${LLVM_FULL_VER}
-    - name: Check llvm was reused, not rebuilt
-      run: |
-        # The point of the fast path: llvm must resolve to the external ([e]),
-        # not be built. `spack find` lists externals too, so match on the marker.
-        . external/spack/share/spack/setup-env.sh
-        spack spec -I thapi@develop ^llvm@${LLVM_FULL_VER} | grep -E '^\s*\[e\].*\^llvm@' \
-          || { echo "llvm did not resolve to the external"; exit 1; }
