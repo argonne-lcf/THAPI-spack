@@ -39,15 +39,24 @@ runs:
         spack compiler find
         spack compiler rm -a llvm || true
         spack external find --all --exclude llvm --exclude bzip2 --exclude xz --exclude libxml2
-    - name: Concretize for a generic target
+    - name: Pin the target microarchitecture
       shell: bash
       run: |
         # Spack puts the microarchitecture in the dag hash, and the runner pool
         # is a mix of cpu generations, so a package built on one runner does not
         # match the same package on another and the build cache never hits.
-        # Targeting x86_64_v3 instead keeps the hashes stable across the pool.
+        #
+        # `targets:granularity:generic` is not enough: it still picks the *best*
+        # generic target the host supports, so an avx512 runner (icelake,
+        # sapphire rapids) concretizes to x86_64_v4 while a zen2/zen3 one gets
+        # x86_64_v3 -- the pool just splits two ways instead of five. Requiring
+        # an explicit target is what actually makes the hashes stable.
+        #
+        # x86_64_v3 (avx2) is the highest level every runner in the pool
+        # supports. If one ever does not, `host_compatible: true` makes the
+        # solve fail loudly rather than emit illegal instructions.
         . external/spack/share/spack/setup-env.sh
-        spack config add concretizer:targets:granularity:generic
+        spack config add "packages:all:require:target=x86_64_v3"
     - name: Setup spack mirror
       shell: bash
       run: |

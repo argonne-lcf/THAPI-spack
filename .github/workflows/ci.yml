@@ -35,8 +35,14 @@ jobs:
     - name: Install dependencies
       run: |
         # Install the dependencies of the latest legacy version.
+        # --include-build-deps: with a mirror configured, the installer keeps
+        # build deps out of the graph and only pulls them in after a package
+        # misses the cache. `--only dependencies` never installs thapi itself,
+        # so that miss never happens and thapi's build-only deps (re2c,
+        # ruby-metababel, ruby-nokogiri, ...) are never built nor pushed --
+        # leaving every downstream job to build them from source.
         . external/spack/share/spack/setup-env.sh
-        spack install --only dependencies $SPACK_OPT thapi@0.0.12
+        spack install --only dependencies --include-build-deps $SPACK_OPT thapi@0.0.12
     - name: Index the build cache
       run: |
         # `--autopush` uploads packages but writes no index, and a mirror
@@ -105,7 +111,13 @@ jobs:
         # We have to use the exact llvm version from apt package as a direct dependency
         # as the versions in apt and spack doesn't agree to the patch version. The
         # latter will force spack to build llvm from scratch.
-        spack install --only dependencies $SPACK_OPT thapi@develop ^llvm@${LLVM_FULL_VER}
+        # --include-build-deps: with a mirror configured, the installer keeps
+        # build deps out of the graph and only pulls them in after a package
+        # misses the cache. `--only dependencies` never installs thapi itself,
+        # so that miss never happens and thapi's build-only deps (re2c,
+        # ruby-metababel, ruby-nokogiri, ...) are never built nor pushed --
+        # leaving every downstream job to build them from source.
+        spack install --only dependencies --include-build-deps $SPACK_OPT thapi@develop ^llvm@${LLVM_FULL_VER}
     - name: Index the build cache
       run: |
         # `--autopush` uploads packages but writes no index, and a mirror
