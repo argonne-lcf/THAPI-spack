@@ -52,7 +52,7 @@ jobs:
     - name: Check llvm resolves to the external
       run: |
         . external/spack/share/spack/setup-env.sh
-        spack spec -j thapi@develop ^llvm@${LLVM_FULL_VER} | grep -v '==>' \
+        spack spec -j thapi@develop ^llvm@${LLVM_FULL_VER} | grep -v '^==>' \
           | jq -e '.spec.nodes[] | select(.name == "llvm") | .external.path' \
           || { echo "llvm did not resolve to the external"; exit 1; }
     - name: Install thapi@develop

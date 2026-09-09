@@ -54,9 +54,10 @@ runs:
         # Source spack
         . external/spack/share/spack/setup-env.sh
 
-        # The llvm major version thapi@develop wants. `spack spec` prefixes its
-        # json with `==>` fetch lines the first time it runs, hence the grep.
-        LLVM_VER=$( spack spec -j thapi@develop | grep -v '==>' \
+        # The llvm major version thapi@develop wants. `spack spec -j` writes its
+        # status lines ("==> Using cached archive: ...") to stdout alongside the
+        # json, so they have to be stripped before jq sees them.
+        LLVM_VER=$( spack spec -j thapi@develop | grep -v '^==>' \
           | jq -r '.spec.nodes[] | select(.name == "llvm") | .version | split(".")[0]' )
 
         # Add llvm to apt repository.
@@ -89,7 +90,7 @@ runs:
         # into /usr/lib/python3/dist-packages, which it finds and links in.
         # Same script the README tells users to run.
         . external/spack/share/spack/setup-env.sh
-        PYVER=$( spack spec -j h2yaml | grep -v '==>' \
+        PYVER=$( spack spec -j h2yaml | grep -v '^==>' \
           | jq -r '.spec.nodes[] | select(.name == "python") | .version | split(".")[:2] | join(".")' )
         python3 scripts/gen-llvm-external.py /usr/lib/llvm-${LLVM_VER} \
           --python-version "${PYVER}" \

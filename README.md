@@ -55,7 +55,7 @@ Point the helper at any LLVM 18+ on the system (`module avail llvm`, `/usr/lib/l
 
 ```bash
 # The python Spack will run h2yaml with, so the overlay is laid out to match.
-PYVER=$(spack spec -j h2yaml | grep -v '==>' \
+PYVER=$(spack spec -j h2yaml | grep -v '^==>' \
   | jq -r '.spec.nodes[] | select(.name == "python") | .version | split(".")[:2] | join(".")')
 
 python3 scripts/gen-llvm-external.py /path/to/system/llvm --python-version $PYVER > llvm-external.yaml
