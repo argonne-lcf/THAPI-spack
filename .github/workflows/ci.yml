@@ -37,8 +37,15 @@ jobs:
         # Install the dependencies of the latest legacy version.
         . external/spack/share/spack/setup-env.sh
         spack install --only dependencies $SPACK_OPT thapi@0.0.12
+    - name: Index the build cache
+      run: |
+        # `--autopush` uploads packages but writes no index, and a mirror
+        # without one is skipped during concretization ("no index found"),
+        # leaving the downstream jobs to rebuild what is already here.
+        . external/spack/share/spack/setup-env.sh
+        spack buildcache update-index ${{ env.CACHE_DIR_LEGACY }}
     - name: Upload THAPI build cache
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: thapi_cache_legacy
         include-hidden-files: true
@@ -61,7 +68,7 @@ jobs:
       uses: mxschmitt/action-tmate@v3
       if: ${{ inputs.debug_enabled }}
     - name: Download THAPI build cache
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         name: thapi_cache_legacy
         path: ${{ env.CACHE_DIR_LEGACY }}
@@ -99,8 +106,15 @@ jobs:
         # as the versions in apt and spack doesn't agree to the patch version. The
         # latter will force spack to build llvm from scratch.
         spack install --only dependencies $SPACK_OPT thapi@develop ^llvm@${LLVM_FULL_VER}
+    - name: Index the build cache
+      run: |
+        # `--autopush` uploads packages but writes no index, and a mirror
+        # without one is skipped during concretization ("no index found"),
+        # leaving the downstream jobs to rebuild what is already here.
+        . external/spack/share/spack/setup-env.sh
+        spack buildcache update-index ${{ env.CACHE_DIR }}
     - name: Upload THAPI build cache
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: thapi_cache
         include-hidden-files: true
@@ -125,7 +139,7 @@ jobs:
       uses: mxschmitt/action-tmate@v3
       if: ${{ inputs.debug_enabled }}
     - name: Download THAPI build cache
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         name: thapi_cache
         path: ${{ env.CACHE_DIR }}
@@ -158,7 +172,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v6
-    - uses: geekyeggo/delete-artifact@v5
+    - uses: geekyeggo/delete-artifact@v6
       with:
         name: |
           thapi_cache_legacy
