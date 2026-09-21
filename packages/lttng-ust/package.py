@@ -17,6 +17,7 @@ class LttngUst(AutotoolsPackage):
     maintainers = ["Kerilk"]
 
     version("master", branch="master")
+    version("2.16.0", sha256="1e84e02fa1fc1261eb6cf3d14d64006506a29f7c605ac85de02180318c6aa38a")
     version("2.14.0", sha256="82cdfd304bbb2b2b7d17cc951a6756b37a9f73868ec0ba7db448a0d5ca51b763")
     version("2.13.9", sha256="2ad6d69a54a1d924c18a4aa7a233db104e3cc332bcdd240e196bf7adbed3f712")
     version("2.13.8", sha256="d4ef98dab9a37ad4f524ccafdfd50af4f266039b528dd5afabce78e49024d937")
@@ -27,7 +28,10 @@ class LttngUst(AutotoolsPackage):
     version("2.10.7", sha256="a9c651eea8a33f50c07a6e69e3e4094e4897340c97eb0166e6dde0e80668742b")
 
     patch("1f41dc0.diff", when="@2.13.4:2.13.6")
-    patch("55cca69.diff", when="@2.13.4:")
+    # Records an array/sequence of text in full rather than stopping at the first
+    # NUL -- the work-around for tracing raw bytes as text. 2.16 has first-class
+    # BLOB fields for that, so the patch stops at the last release without them.
+    patch("55cca69.diff", when="@2.13.4:2.15")
 
     variant("examples", default=False, description="Build examples")
     variant("api-doc", default=False, description="Build HTML API documentation")
