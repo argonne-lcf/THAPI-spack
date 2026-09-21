@@ -32,7 +32,10 @@ class Thapi(AutotoolsPackage):
     variant("mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@:0.0.12")
     variant("sync-daemon-mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@0.0.13:")
     variant("clang-parser", default=True, description="Enable Clang Parser", when="@0.0.13")
-    variant("archive", default=False, description="Enable archive mode of THAPI", when="@0.0.13:")
+    variant("archive", default=False, description="Enable archive mode of THAPI", when="@0.0.13:0.0.16")
+    # On by default from the BLOB port on: reading archives on the fly is what
+    # the pause/resume back-pressure loop exists for. Disable with ~archive.
+    variant("archive", default=True, description="Enable archive mode of THAPI", when="@0.0.17:")
 
     depends_on("c", type=("build"))
     depends_on("cxx", type=("build"))
@@ -51,15 +54,28 @@ class Thapi(AutotoolsPackage):
     depends_on("protobuf@:29", type=("build", "link", "run"), when="@:0.0.15")
     depends_on("abseil-cpp@:20240722", type=("build", "link", "run"), when="@:0.0.15")
 
+    # THAPI records raw bytes as lttng-ust 2.16 BLOB fields since 0.0.17. Before
+    # that it traced them as text, and needed both halves of a work-around to
+    # read them back: a patched lttng-ust that wrote the field in full, and a
+    # babeltrace that read it past its first NUL. So an older THAPI is held to
+    # lttng-ust/lttng-tools 2.15 and asks babeltrace for +text-as-bytes, while
+    # devel and master take a stock 2.16 stack.
     depends_on("babeltrace2", type=("build", "link", "run"))
-    depends_on("babeltrace2@2.1.0-archive", type=("build", "link", "run"), when="+archive")
+    depends_on("babeltrace2 +text-as-bytes", type=("build", "link", "run"), when="@:0.0.16")
+    depends_on("babeltrace2@2.1.0-archive", type=("build", "link", "run"), when="@:0.0.16 +archive")
+    depends_on("babeltrace2@2.1.2-archive", type=("build", "link", "run"), when="@0.0.17: +archive")
 
     depends_on("lttng-ust", type=("build", "link", "run"), when="@0.0.8:")
+    depends_on("lttng-ust@:2.15", type=("build", "link", "run"), when="@0.0.8:0.0.16")
     depends_on("lttng-ust@:2.12.999", type=("build", "link", "run"), when="@:0.0.7")
 
     depends_on("lttng-tools", type=("build", "link", "run"), when="@0.0.8:")
+    depends_on("lttng-tools@:2.15", type=("build", "link", "run"), when="@0.0.8:0.0.16")
     depends_on("lttng-tools@:2.12.999", type=("build", "link", "run"), when="@:0.0.7")
-    depends_on("lttng-tools@2.14.0-archive ~bin-lttng-crash", type=("build", "link", "run"), when="+archive")
+    depends_on("lttng-tools@2.14.0-archive ~bin-lttng-crash", type=("build", "link", "run"),
+               when="@:0.0.16 +archive")
+    depends_on("lttng-tools@2.16.0-archive ~bin-lttng-crash", type=("build", "link", "run"),
+               when="@0.0.17: +archive")
 
     # Check compilers and versions. Version checks are mainly for magic_enum:
     # https://github.com/Neargye/magic_enum?tab=readme-ov-file#compiler-compatibility

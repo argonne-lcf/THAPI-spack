@@ -17,7 +17,9 @@ class LttngTools(AutotoolsPackage):
     maintainers = ["Kerilk"]
 
     version("master", branch="master")
+    version("2.16.0-archive", git="https://github.com/argonne-lcf/lttng-tools.git", branch="anl-v2.16.0")
     version("2.14.0-archive", git="https://github.com/argonne-lcf/lttng-tools.git", branch="anl-v2.14.0")
+    version("2.16.0", sha256="b8b3244894e49e773d4942b8899f768057974edf75c18dbb48b65bb123c7b2c7")
     version("2.14.0", sha256="d8c39c26cec13b7bd82551cd52a22efc358b888e36ebcf9c1b60ef1c3a3c2fd3")
     version("2.13.15", sha256="edfcf924d86054178b286b50e151a440eee9ad79b7e08d7d12c84dc006ca151f")
     version("2.13.14", sha256="6213d9ed0d24b791c074f39b439ff85670eeaefc483d2b73c19fcf79ec1621d4")
@@ -67,7 +69,10 @@ class LttngTools(AutotoolsPackage):
     depends_on("libxml2@2.7.6:2.13", when="@:2.13")
     depends_on("libxml2@2.7.6:", when="@2.14:")
 
+    # lttng-crash reads buffers with babeltrace2, and the -archive babeltrace2
+    # depends on lttng-tools: building both closes a dependency cycle.
     conflicts("+bin-lttng-crash", when="@2.14.0-archive")
+    conflicts("+bin-lttng-crash", when="@2.16.0-archive")
 
     patch("popt_include_fixes.patch", when="@:2.12.999")
     # `--disable-test` is not available on lttng-tools v2.12 and below. Even though we have the

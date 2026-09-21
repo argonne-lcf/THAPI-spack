@@ -73,7 +73,20 @@ class Babeltrace2(AutotoolsPackage):
 
     # Add varient pour esam
     patch("d2d2e6cc.patch", when="@:2.0.999")
-    patch("0001-Prevent-null-character-from-stopping-string-decoding.patch", when="@2.1:")
+    # Lets a string field be read past its first NUL, so raw bytes traced as
+    # text survive the read. Wanted only by a THAPI old enough to trace raw
+    # bytes that way, which is why it is a variant rather than a version
+    # range: the same babeltrace release serves both eras.
+    variant(
+        "text-as-bytes",
+        default=False,
+        description="Read a string field past its first NUL (for THAPI older than the BLOB port)",
+        when="@2.1:",
+    )
+    patch(
+        "0001-Prevent-null-character-from-stopping-string-decoding.patch",
+        when="@2.1: +text-as-bytes",
+    )
 
     patch("0db1832.patch", when="@:2.0.4")
     patch("3079913.patch", when="@:2.0.999")
