@@ -91,6 +91,9 @@ class Thapi(AutotoolsPackage):
         depends_on("ruby@2.7.0:", type=("build", "run"))
 
     depends_on("ruby-babeltrace2", type=("build", "run"))
+    # Reading a blob-era trace needs the BLOB field support that no
+    # ruby-babeltrace2 release carries yet.
+    depends_on("ruby-babeltrace2@main", type=("build", "run"), when="@0.0.17:")
     depends_on("ruby-opencl", type=("build", "run"))
     depends_on("ruby-nokogiri", type=("build"))
     depends_on("ruby-cast-to-yaml", type=("build"))
