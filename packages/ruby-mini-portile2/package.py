@@ -20,3 +20,4 @@ class RubyMiniPortile2(RubyPackage):
     version("2.6.1", sha256="385fd7a2f3cda0ea5a0cb85551a936da941d7580fc9037a75dea820843aa7dd3", expand=False)
 
     depends_on("ruby@2.3.0:", type=("build", "run"))
+    depends_on("gmake", type="build")

@@ -18,3 +18,4 @@ class RubyRitual(RubyPackage):
     depends_on("ruby@2.3.0:", type=("build", "run"))
     depends_on("ruby-thor", type=("build", "run"))
     depends_on("ruby-rake", type=("build", "run"))
+    depends_on("gmake", type="build")

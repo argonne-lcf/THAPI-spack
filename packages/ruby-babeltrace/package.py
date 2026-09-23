@@ -22,6 +22,7 @@ class RubyBabeltrace(RubyPackage):
     depends_on("ruby-walk", type=("build", "run"))
     depends_on("ruby-ffi", type=("build", "run"))
     depends_on("babeltrace@1.5.8:", type=("build", "link", "run"))
+    depends_on("gmake", type="build")
 
     def setup_run_environment(self, env):
         super().setup_run_environment(env)

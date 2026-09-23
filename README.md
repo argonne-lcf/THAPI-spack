@@ -119,3 +119,13 @@ To install Spack:
 git clone -c feature.manyFiles=true -b releases/latest https://github.com/spack/spack.git
 . spack/share/spack/setup-env.sh
 ```
+
+### How to use spack to develop
+
+```bash
+spack env create thapi-dev
+spack env activate thapi-dev
+spack add thapi@develop
+spack develop --no-clone -p /path/to/local/clone/of/THAPI thapi@develop
+spack install
+```

@@ -33,6 +33,7 @@ class Thapi(AutotoolsPackage):
     variant("sync-daemon-mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@0.0.13:")
     variant("clang-parser", default=True, description="Enable Clang Parser", when="@0.0.13")
     variant("archive", default=False, description="Enable archive mode of THAPI", when="@0.0.13:")
+    variant("ze-validator", default=False, description="Build and install ze_validator, the Level Zero trace validator")
 
     depends_on("c", type=("build"))
     depends_on("cxx", type=("build"))
@@ -83,6 +84,9 @@ class Thapi(AutotoolsPackage):
     depends_on("ruby-metababel@1.1.2:", type=("build"), when="@0.0.12:")
     depends_on("ruby-metababel@1.1.4:", type=("build"), when="@0.0.13:")
 
+    # ze_validator dependencies.
+    depends_on("ruby-rbtree3@1.1.0:", type=("build", "run"), when="+ze-validator")
+
     # Demangling: 0.0.16 switched from libiberty to llvm::demangle (a tiny
     # standalone extraction of LLVM's demangler) for the symbols
     # __cxa_demangle can't handle. +pic so the static lib links into the
@@ -113,11 +117,16 @@ class Thapi(AutotoolsPackage):
 
     def configure_args(self):
         args = []
+
         if self.spec.version >= Version("0.0.13"):
             args.extend(self.enable_or_disable("sync-daemon-mpi"))
         else:
             args.extend(self.enable_or_disable("mpi"))
         args.extend(self.enable_or_disable("strict"))
+
+        # Only emit the flag when asked for. `--disable-ze-validator` is the default.
+        if self.spec.satisfies("+ze-validator"):
+            args.append("--enable-ze-validator")
 
         # `--disable-clang-parser` only ever existed in 0.0.13; the clang
         # parser is mandatory from 0.0.14 on.
