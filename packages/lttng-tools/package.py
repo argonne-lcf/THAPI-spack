@@ -35,9 +35,6 @@ class LttngTools(AutotoolsPackage):
     variant("bin-lttng-crash", default=True, description="Enable lttng components related to crash tracing")
 
     depends_on("lttng-ust@master", when="@master")
-    # 2.16's configure asks for `lttng-ust >= 2.16 lttng-ust < 2.17` and stops
-    # there, so the pin is not just good practice: without it spack reuses an
-    # installed 2.14 and the build dies in configure.
     depends_on("lttng-ust@2.16.0:2.16.999", when="@2.16.0:2.16.999")
     depends_on("lttng-ust@2.14.0:2.14.999", when="@2.14.0:2.14.999")
     depends_on("lttng-ust@2.13.8:2.13.999", when="@2.13.13:2.13.999")
