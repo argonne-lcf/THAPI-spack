@@ -7,6 +7,11 @@
 import spack.version
 from spack.package import *
 
+# When 0.0.17 is released and master is fast-forwarded past it,
+# we can inline PRE_BLOB to "@:0.0.16" and BLOB to `@0.0.17:99`
+PRE_BLOB = "@:0.0.16,master"
+BLOB = "@0.0.17:99,develop"
+
 
 class Thapi(AutotoolsPackage):
     """A tracing infrastructure for heterogeneous computing applications."""
@@ -35,7 +40,7 @@ class Thapi(AutotoolsPackage):
     variant("archive", default=False, description="Enable archive mode of THAPI", when="@0.0.13:0.0.16")
     # On by default from the BLOB port on: reading archives on the fly is what
     # the pause/resume back-pressure loop exists for. Disable with ~archive.
-    variant("archive", default=True, description="Enable archive mode of THAPI", when="@0.0.17:")
+    variant("archive", default=True, description="Enable archive mode of THAPI", when=BLOB)
 
     depends_on("c", type=("build"))
     depends_on("cxx", type=("build"))
@@ -54,28 +59,33 @@ class Thapi(AutotoolsPackage):
     depends_on("protobuf@:29", type=("build", "link", "run"), when="@:0.0.15")
     depends_on("abseil-cpp@:20240722", type=("build", "link", "run"), when="@:0.0.15")
 
-    # THAPI records raw bytes as lttng-ust 2.16 BLOB fields since 0.0.17. Before
-    # that it traced them as text, and needed both halves of a work-around to
-    # read them back: a patched lttng-ust that wrote the field in full, and a
-    # babeltrace that read it past its first NUL. So an older THAPI is held to
-    # lttng-ust/lttng-tools 2.15 and asks babeltrace for +text-as-bytes, while
-    # devel and master take a stock 2.16 stack.
+    # THAPI records raw bytes as BLOB fields since 0.0.17, which bounds both
+    # halves of the round trip: lttng-ust 2.16 writes the field, babeltrace2 2.1
+    # reads it. Before that it traced them as text and needed both halves of a
+    # work-around instead -- a patched lttng-ust that wrote the field in full,
+    # and a babeltrace that read it past its first NUL. So an older THAPI is
+    # held to lttng-ust/lttng-tools 2.15 and asks babeltrace for
+    # +text-as-bytes, while the blob era takes a stock 2.16 stack.
     depends_on("babeltrace2", type=("build", "link", "run"))
-    depends_on("babeltrace2 +text-as-bytes", type=("build", "link", "run"), when="@:0.0.16")
-    depends_on("babeltrace2@2.1.0-archive", type=("build", "link", "run"), when="@:0.0.16 +archive")
-    depends_on("babeltrace2@2.1.2-archive", type=("build", "link", "run"), when="@0.0.17: +archive")
+    depends_on("babeltrace2 +text-as-bytes", type=("build", "link", "run"), when=PRE_BLOB)
+    depends_on("babeltrace2@2.1.0-archive", type=("build", "link", "run"), when=PRE_BLOB + " +archive")
+    depends_on("babeltrace2@2.1.2-archive", type=("build", "link", "run"), when=BLOB + " +archive")
+    # The bt_field_class_blob_* API is 2.1, so it bounds ~archive builds too --
+    # the -archive versions above already satisfy it.
+    depends_on("babeltrace2@2.1:", type=("build", "link", "run"), when=BLOB)
 
     depends_on("lttng-ust", type=("build", "link", "run"), when="@0.0.8:")
     depends_on("lttng-ust@:2.15", type=("build", "link", "run"), when="@0.0.8:0.0.16")
     depends_on("lttng-ust@:2.12.999", type=("build", "link", "run"), when="@:0.0.7")
+    depends_on("lttng-ust@2.16.0:", type=("build", "link", "run"), when=BLOB)
 
     depends_on("lttng-tools", type=("build", "link", "run"), when="@0.0.8:")
     depends_on("lttng-tools@:2.15", type=("build", "link", "run"), when="@0.0.8:0.0.16")
     depends_on("lttng-tools@:2.12.999", type=("build", "link", "run"), when="@:0.0.7")
     depends_on("lttng-tools@2.14.0-archive ~bin-lttng-crash", type=("build", "link", "run"),
-               when="@:0.0.16 +archive")
+               when=PRE_BLOB + " +archive")
     depends_on("lttng-tools@2.16.0-archive ~bin-lttng-crash", type=("build", "link", "run"),
-               when="@0.0.17: +archive")
+               when=BLOB + " +archive")
 
     # Check compilers and versions. Version checks are mainly for magic_enum:
     # https://github.com/Neargye/magic_enum?tab=readme-ov-file#compiler-compatibility
@@ -93,7 +103,7 @@ class Thapi(AutotoolsPackage):
     depends_on("ruby-babeltrace2", type=("build", "run"))
     # Reading a blob-era trace needs the BLOB field support that no
     # ruby-babeltrace2 release carries yet.
-    depends_on("ruby-babeltrace2@main", type=("build", "run"), when="@0.0.17:")
+    depends_on("ruby-babeltrace2@main", type=("build", "run"), when=BLOB)
     depends_on("ruby-opencl", type=("build", "run"))
     depends_on("ruby-nokogiri", type=("build"))
     depends_on("ruby-cast-to-yaml", type=("build"))
@@ -101,6 +111,10 @@ class Thapi(AutotoolsPackage):
     depends_on("ruby-metababel@1.0.0:", type=("build"), when="@0.0.11")
     depends_on("ruby-metababel@1.1.2:", type=("build"), when="@0.0.12:")
     depends_on("ruby-metababel@1.1.4:", type=("build"), when="@0.0.13:")
+    # BLOB codegen, and the MIP-1 field locations it emits, are 2.0.0. Older
+    # metababel dies on the generated yaml with `unknown keyword:
+    # :length_field_location`. configure.ac requires >= 2.0.0 to match.
+    depends_on("ruby-metababel@2.0.0:", type=("build"), when=BLOB)
 
     # Demangling: 0.0.16 switched from libiberty to llvm::demangle (a tiny
     # standalone extraction of LLVM's demangler) for the symbols
