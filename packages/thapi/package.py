@@ -82,10 +82,8 @@ class Thapi(AutotoolsPackage):
     depends_on("lttng-tools", type=("build", "link", "run"), when="@0.0.8:")
     depends_on("lttng-tools@:2.15", type=("build", "link", "run"), when="@0.0.8:0.0.16")
     depends_on("lttng-tools@:2.12.999", type=("build", "link", "run"), when="@:0.0.7")
-    depends_on("lttng-tools@2.14.0-archive ~bin-lttng-crash", type=("build", "link", "run"),
-               when=PRE_BLOB + " +archive")
-    depends_on("lttng-tools@2.16.0-archive ~bin-lttng-crash", type=("build", "link", "run"),
-               when=BLOB + " +archive")
+    depends_on("lttng-tools@2.14.0-archive ~bin-lttng-crash", type=("build", "link", "run"), when=PRE_BLOB + " +archive")
+    depends_on("lttng-tools@2.16.0-archive ~bin-lttng-crash", type=("build", "link", "run"), when=BLOB + " +archive")
 
     # Check compilers and versions. Version checks are mainly for magic_enum:
     # https://github.com/Neargye/magic_enum?tab=readme-ov-file#compiler-compatibility
