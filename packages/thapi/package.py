@@ -11,6 +11,13 @@ from spack.package import *
 # we can inline PRE_BLOB to "@:0.0.16" and BLOB to `@0.0.17:99`
 PRE_BLOB = "@:0.0.16,master"
 BLOB = "@0.0.17:99,develop"
+# Same era, narrowed to the versions that have the feature: lttng became a
+# dependency in 0.0.8, archive mode arrived in 0.0.13. Spelled out rather than
+# PRE_BLOB + "@0.0.8:", which spack rejects as two version constraints on one
+# spec; the point of naming them is that each hand-intersected range keeps the
+# `master` PRE_BLOB names.
+PRE_BLOB_TRACED = "@0.0.8:0.0.16,master"
+PRE_BLOB_ARCHIVE = "@0.0.13:0.0.16,master"
 
 
 class Thapi(AutotoolsPackage):
@@ -37,7 +44,7 @@ class Thapi(AutotoolsPackage):
     variant("mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@:0.0.12")
     variant("sync-daemon-mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@0.0.13:")
     variant("clang-parser", default=True, description="Enable Clang Parser", when="@0.0.13")
-    variant("archive", default=False, description="Enable archive mode of THAPI", when="@0.0.13:0.0.16")
+    variant("archive", default=False, description="Enable archive mode of THAPI", when=PRE_BLOB_ARCHIVE)
     # On by default from the BLOB port on: reading archives on the fly is what
     # the pause/resume back-pressure loop exists for. Disable with ~archive.
     variant("archive", default=True, description="Enable archive mode of THAPI", when=BLOB)
@@ -75,12 +82,12 @@ class Thapi(AutotoolsPackage):
     depends_on("babeltrace2@2.1:", type=("build", "link", "run"), when=BLOB)
 
     depends_on("lttng-ust", type=("build", "link", "run"), when="@0.0.8:")
-    depends_on("lttng-ust@:2.15", type=("build", "link", "run"), when="@0.0.8:0.0.16")
+    depends_on("lttng-ust@:2.15", type=("build", "link", "run"), when=PRE_BLOB_TRACED)
     depends_on("lttng-ust@:2.12.999", type=("build", "link", "run"), when="@:0.0.7")
     depends_on("lttng-ust@2.16.0:", type=("build", "link", "run"), when=BLOB)
 
     depends_on("lttng-tools", type=("build", "link", "run"), when="@0.0.8:")
-    depends_on("lttng-tools@:2.15", type=("build", "link", "run"), when="@0.0.8:0.0.16")
+    depends_on("lttng-tools@:2.15", type=("build", "link", "run"), when=PRE_BLOB_TRACED)
     depends_on("lttng-tools@:2.12.999", type=("build", "link", "run"), when="@:0.0.7")
     depends_on("lttng-tools@2.14.0-archive ~bin-lttng-crash", type=("build", "link", "run"), when=PRE_BLOB + " +archive")
     depends_on("lttng-tools@2.16.0-archive ~bin-lttng-crash", type=("build", "link", "run"), when=BLOB + " +archive")
@@ -109,6 +116,12 @@ class Thapi(AutotoolsPackage):
     depends_on("ruby-metababel@1.0.0:", type=("build"), when="@0.0.11")
     depends_on("ruby-metababel@1.1.2:", type=("build"), when="@0.0.12:")
     depends_on("ruby-metababel@1.1.4:", type=("build"), when="@0.0.13:")
+    # metababel 2.0.0 is a breaking change: a dynamic length is named by a
+    # structured length_field_location, and the length_field_path these models
+    # emit is no longer a keyword it accepts -- codegen dies with
+    # `unknown keyword: length_field_path`. The floors above are open-ended, so
+    # without this cap concretization hands 2.0.0 to a pre-blob THAPI.
+    depends_on("ruby-metababel@:1", type=("build"), when=PRE_BLOB)
     # BLOB codegen, and the MIP-1 field locations it emits, are 2.0.0. Older
     # metababel dies on the generated yaml with `unknown keyword:
     # :length_field_location`. configure.ac requires >= 2.0.0 to match.
