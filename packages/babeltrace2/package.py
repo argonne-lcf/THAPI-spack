@@ -38,6 +38,11 @@ class Babeltrace2(AutotoolsPackage):
     variant("man-pages", default=False, description="Build man pages")
     variant("asan", default=False, description="Build with AddressSanitizer", when="@2.1:")
     variant("ubsan", default=False, description="Build with UndefinedBehaviorSanitizer", when="@2.1:")
+    # Which era of THAPI is being built decides this, not the babeltrace
+    # release: 2.1.2 serves both, so a version range would have forced an older
+    # THAPI off it for no reason. A THAPI older than the BLOB port traced raw
+    # bytes as text and needs them read back whole.
+    variant("text-as-bytes", default=False, description="Read a string field past its first NUL", when="@2.1:")
     variant("Werror", default=False, description="Enable -Werror")
 
     depends_on("c", type="build")
@@ -73,21 +78,7 @@ class Babeltrace2(AutotoolsPackage):
 
     # Add varient pour esam
     patch("d2d2e6cc.patch", when="@:2.0.999")
-    # Lets a string field be read past its first NUL, so raw bytes traced as
-    # text survive the read. Wanted only by a THAPI old enough to trace raw
-    # bytes that way, which is why it is a variant rather than a version
-    # range: the same babeltrace release serves both eras.
-    variant(
-        "text-as-bytes",
-        default=False,
-        description="Read a string field past its first NUL (for THAPI older than the BLOB port)",
-        when="@2.1:",
-    )
-    patch(
-        "0001-Prevent-null-character-from-stopping-string-decoding.patch",
-        when="@2.1: +text-as-bytes",
-    )
-
+    patch("0001-Prevent-null-character-from-stopping-string-decoding.patch", when="@2.1: +text-as-bytes")
     patch("0db1832.patch", when="@:2.0.4")
     patch("3079913.patch", when="@:2.0.999")
     patch("0001-ctf-grow-stored_values-array-when-necessary.patch", when="@:2.0.999")

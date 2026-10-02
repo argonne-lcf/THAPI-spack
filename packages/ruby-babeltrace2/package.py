@@ -15,9 +15,7 @@ class RubyBabeltrace2(RubyPackage):
     git = "https://github.com/argonne-lcf/babeltrace2-ruby.git"
 
     # BLOB field support and the MIP-1 field locations landed after 0.1.5 and
-    # have not been released. A THAPI that records raw bytes as blobs cannot
-    # read its own traces without them, so build from the branch until a
-    # release carries those commits.
+    # have not been released yet.
     version("main", branch="main")
     version("0.1.5", sha256="9b8f7d14ad333be568cf4be1a52573af77f3047200c11f1c05d85b85ffd86a6d", expand=False)
     version("0.1.4", sha256="7d45e79f18ec2c9e24fc303924d48bd375667f06748eec83d60f7cc3b4ca4db2", expand=False)

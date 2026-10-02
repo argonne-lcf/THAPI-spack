@@ -72,8 +72,7 @@ class LttngTools(AutotoolsPackage):
 
     # lttng-crash reads buffers with babeltrace2, and the -archive babeltrace2
     # depends on lttng-tools: building both closes a dependency cycle.
-    conflicts("+bin-lttng-crash", when="@2.14.0-archive")
-    conflicts("+bin-lttng-crash", when="@2.16.0-archive")
+    conflicts("+bin-lttng-crash", when="@2.14.0-archive,2.16.0-archive")
 
     patch("popt_include_fixes.patch", when="@:2.12.999")
     # `--disable-test` is not available on lttng-tools v2.12 and below. Even though we have the
