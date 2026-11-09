@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
-import spack.version
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack.package import *
 
@@ -105,11 +104,7 @@ class Thapi(AutotoolsPackage):
     conflicts("%oneapi@:2023", msg="OneAPI >= 2024.0.0 is required.")
     conflicts("%msvc", msg="MSVC is not supported.")
 
-    # Restricting to ruby <= 3.1 when spack is less than 0.23
-    if Version(spack.spack_version) < Version("0.23"):
-        depends_on("ruby@2.7.0:3.1", type=("build", "run"))
-    else:
-        depends_on("ruby@2.7.0:", type=("build", "run"))
+    depends_on("ruby@2.7.0:", type=("build", "run"))
 
     depends_on("ruby-babeltrace2", type=("build", "run"))
     # Reading a blob-era trace needs BLOB field support, which is on the branch
