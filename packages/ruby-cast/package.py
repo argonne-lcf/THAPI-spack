@@ -33,3 +33,5 @@ class RubyCast(RubyPackage):
 
     patch("fix_import.patch")
     patch("fix_race_condition.patch")
+    # GCC 15 defaults to C23; legacy THAPI parses system headers through cast.
+    patch("cpp_std_gnu17.patch")

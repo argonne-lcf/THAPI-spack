@@ -1,0 +1,15 @@
+diff --git a/lib/cast/preprocessor.rb b/lib/cast/preprocessor.rb
+index 9134423..2002392 100644
+--- a/lib/cast/preprocessor.rb
++++ b/lib/cast/preprocessor.rb
+@@ -18,7 +18,9 @@ module C
+     class << self
+       attr_accessor :command
+     end
+-    self.command = (defined?(RbConfig) ? RbConfig : Config)::CONFIG['CPP']
++    # Pin the C dialect: from GCC 15 the default is C23, whose headers use
++    # constructs this parser predates (e.g. stddef.h's nullptr_t typedef).
++    self.command = (defined?(RbConfig) ? RbConfig : Config)::CONFIG['CPP'] + ' -std=gnu17'
+ 
+     attr_accessor :pwd, :include_path, :macros
+ 
