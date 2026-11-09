@@ -29,7 +29,7 @@ jobs:
     - name: Activate
       run: |
         . external/spack/share/spack/setup-env.sh
-        spack repo add ./
+        spack repo add ./spack_repo/thapi
     - name: Install ${{ matrix.version }}
       run: |
         . external/spack/share/spack/setup-env.sh

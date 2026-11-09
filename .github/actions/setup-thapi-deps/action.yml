@@ -23,7 +23,7 @@ runs:
       shell: bash
       run: |
         . external/spack/share/spack/setup-env.sh
-        spack repo add ./
+        spack repo add ./spack_repo/thapi
     - name: Find compilers and external packages
       shell: bash
       run: |

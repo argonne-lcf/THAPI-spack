@@ -1,0 +1,183 @@
+# Copyright 2013-2021 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
+#
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
+
+import spack.version
+from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack.package import *
+
+# THAPI records raw bytes as BLOB fields from 0.0.17 on, which bounds both
+# halves of the round trip: lttng-ust 2.16 writes the field, babeltrace2 2.1
+# reads it, and metababel 2.0.0 generates the code for it. Before that it
+# traced those bytes as text and needed a work-around at each end instead -- a
+# patched lttng-ust that wrote the field in full, and a babeltrace that read it
+# past its first NUL. So the two eras want different stacks, and each is named
+# once here rather than re-spelled at every constraint below.
+#
+# Spack orders `master` and `develop` as infinity versions, greater than any
+# number, so `@0.0.17:` would catch `master` too. The `99` caps the numeric
+# side, leaving `develop` as the only infinity version the blob era admits.
+# master is 0.0.16 code today; move it to BLOB when 0.0.17 is released, and
+# these can collapse to "@:0.0.16" and "@0.0.17:".
+PRE_BLOB = "@:0.0.16,master"
+BLOB = "@0.0.17:99,develop"
+# The same era narrowed to the versions that have the feature: lttng became a
+# dependency in 0.0.8, archive mode arrived in 0.0.13. Spack rejects two
+# version constraints on one spec, so these ranges are intersected by hand
+# instead of written as PRE_BLOB + "@0.0.8:". Each one keeps `master`.
+PRE_BLOB_LTTNG = "@0.0.8:0.0.16,master"
+PRE_BLOB_ARCHIVE = "@0.0.13:0.0.16,master"
+
+
+class Thapi(AutotoolsPackage):
+    """A tracing infrastructure for heterogeneous computing applications."""
+
+    homepage = "https://github.com/argonne-lcf/THAPI"
+    git = "https://github.com/argonne-lcf/THAPI.git"
+
+    version("master", branch="master", preferred=True)
+    version("develop", branch="devel")
+    version("0.0.16", tag="v0.0.16")
+    version("0.0.15", tag="v0.0.15")
+    version("0.0.14", tag="v0.0.14")
+    version("0.0.13", tag="v0.0.13")
+    version("0.0.12", tag="v0.0.12")
+    version("0.0.11", tag="v0.0.11")
+    version("0.0.10", tag="v0.0.10")
+    version("0.0.9", tag="v0.0.9")
+    version("0.0.8", tag="v0.0.8")
+    version("0.0.7", tag="v0.0.7")
+
+    variant("strict", default=False, description="Enable -Werror during the build")
+    variant("test-dependencies", default=False, description="Install THAPI test dependencies (bats, clinfo, etc.)")
+    variant("mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@:0.0.12")
+    variant("sync-daemon-mpi", default=False, description="Enable MPI support for the Sync Daemon", when="@0.0.13:")
+    variant("clang-parser", default=True, description="Enable Clang Parser", when="@0.0.13")
+    # Declared twice: opt-in for the released versions that have it, and on by
+    # default from the BLOB port on, where reading archives on the fly is what
+    # the pause/resume back-pressure loop exists for. Disable with ~archive.
+    variant("archive", default=False, description="Enable archive mode of THAPI", when=PRE_BLOB_ARCHIVE)
+    variant("archive", default=True, description="Enable archive mode of THAPI", when=BLOB)
+
+    depends_on("c", type=("build"))
+    depends_on("cxx", type=("build"))
+    depends_on("automake", type=("build"))
+    depends_on("autoconf", type=("build"))
+    depends_on("libtool", type=("build"))
+    depends_on("pkgconfig")
+
+    # 4.3+ for grouped target
+    depends_on("gmake@4.3:", type=("build"))
+    depends_on("protobuf@3.12.4:", type=("build", "link", "run"))
+    # abseil-cpp@20250127.0: has an unguarded `#include <version>` in span.h that
+    # picks up our utils/version data file. 0.0.16 renamed it to thapi_version,
+    # so the cap only applies through 0.0.15. protobuf@30: needs those abseil
+    # versions, so both are capped together.
+    depends_on("protobuf@:29", type=("build", "link", "run"), when="@:0.0.15")
+    depends_on("abseil-cpp@:20240722", type=("build", "link", "run"), when="@:0.0.15")
+
+    depends_on("babeltrace2", type=("build", "link", "run"))
+    depends_on("babeltrace2 +text-as-bytes", type=("build", "link", "run"), when=PRE_BLOB)
+    depends_on("babeltrace2@2.1.0-archive", type=("build", "link", "run"), when=PRE_BLOB_ARCHIVE + " +archive")
+    depends_on("babeltrace2@2.1.2-archive", type=("build", "link", "run"), when=BLOB + " +archive")
+
+    # The bt_field_class_blob_* API is 2.1, so it bounds ~archive builds too --
+    # the -archive versions above already satisfy it.
+    depends_on("babeltrace2@2.1:", type=("build", "link", "run"), when=BLOB)
+
+    depends_on("lttng-ust", type=("build", "link", "run"), when="@0.0.8:")
+    depends_on("lttng-ust@:2.15", type=("build", "link", "run"), when=PRE_BLOB_LTTNG)
+    depends_on("lttng-ust@:2.12.999", type=("build", "link", "run"), when="@:0.0.7")
+    depends_on("lttng-ust@2.16.0:", type=("build", "link", "run"), when=BLOB)
+
+    depends_on("lttng-tools", type=("build", "link", "run"), when="@0.0.8:")
+    depends_on("lttng-tools@:2.15", type=("build", "link", "run"), when=PRE_BLOB_LTTNG)
+    depends_on("lttng-tools@:2.12.999", type=("build", "link", "run"), when="@:0.0.7")
+    depends_on("lttng-tools@2.14.0-archive ~bin-lttng-crash", type=("build", "link", "run"), when=PRE_BLOB_ARCHIVE + " +archive")
+    depends_on("lttng-tools@2.16.0-archive ~bin-lttng-crash", type=("build", "link", "run"), when=BLOB + " +archive")
+
+    # Check compilers and versions. Version checks are mainly for magic_enum:
+    # https://github.com/Neargye/magic_enum?tab=readme-ov-file#compiler-compatibility
+    conflicts("%gcc@:8", msg="GCC version >= 9 required.")
+    conflicts("%llvm@:4", msg="clang >= 5 required.")
+    conflicts("%oneapi@:2023", msg="OneAPI >= 2024.0.0 is required.")
+    conflicts("%msvc", msg="MSVC is not supported.")
+
+    # Restricting to ruby <= 3.1 when spack is less than 0.23
+    if Version(spack.spack_version) < Version("0.23"):
+        depends_on("ruby@2.7.0:3.1", type=("build", "run"))
+    else:
+        depends_on("ruby@2.7.0:", type=("build", "run"))
+
+    depends_on("ruby-babeltrace2", type=("build", "run"))
+    # Reading a blob-era trace needs BLOB field support, which is on the branch
+    # but in no release yet.
+    depends_on("ruby-babeltrace2@main", type=("build", "run"), when=BLOB)
+    depends_on("ruby-opencl", type=("build", "run"))
+    depends_on("ruby-nokogiri", type=("build"))
+    depends_on("ruby-cast-to-yaml", type=("build"))
+    depends_on("ruby-metababel@0.1.0:0.9", type=("build"), when="@:0.0.10")
+    depends_on("ruby-metababel@1.0.0:", type=("build"), when="@0.0.11")
+    depends_on("ruby-metababel@1.1.2:", type=("build"), when="@0.0.12:")
+    depends_on("ruby-metababel@1.1.4:", type=("build"), when="@0.0.13:")
+    # metababel 2.0.0 is a breaking change: a dynamic length is named by a
+    # structured length_field_location rather than a length_field_path, and
+    # each version only knows its own keyword. So the era decides this one in
+    # both directions -- codegen dies either way on the wrong pairing, and the
+    # floors above are open-ended enough to reach 2.0.0 on their own.
+    # configure.ac carries the matching >= 2.0.0 requirement.
+    depends_on("ruby-metababel@:1", type=("build"), when=PRE_BLOB)
+    depends_on("ruby-metababel@2.0.0:", type=("build"), when=BLOB)
+
+    # Demangling: 0.0.16 switched from libiberty to llvm::demangle (a tiny
+    # standalone extraction of LLVM's demangler) for the symbols
+    # __cxa_demangle can't handle. +pic so the static lib links into the
+    # shared babeltrace plugins.
+    depends_on("libiberty+pic", when="@:0.0.15")
+    depends_on("llvm-demangle+pic", when="@0.0.16:")
+    depends_on("libffi")
+    depends_on("mpi", when="+mpi")
+    depends_on("mpi", when="+sync-daemon-mpi")
+    # 0.0.14 dropped --disable-clang-parser: configure now hard-errors without
+    # h2yaml, so from there on it is an unconditional build dep.
+    depends_on("h2yaml@0.4.3:", type=("build"), when="@0.0.13 +clang-parser")
+    depends_on("h2yaml@0.4.3:", type=("build"), when="@0.0.14:")
+
+    # Add dev tools required for THAPI development and testing.
+    depends_on("bats", when="+test-dependencies")
+    depends_on("clinfo", when="+test-dependencies")
+    depends_on("jq", when="+test-dependencies")
+    depends_on("ittapi", when="+test-dependencies")
+    depends_on("py-ittapi", when="+test-dependencies")
+
+    # We add a Python dependency at buildtime, because `lttng-gen-tp` needs it.
+    # We don't add Python as a runtime dependency of lttng to avoid python
+    # propagated as a runtime dependency of thapi
+    depends_on("python", type=("build"))
+
+    patch("0001-Ignore-int-conversions.patch", when="@0.0.8:0.0.11")
+
+    def flag_handler(self, name, flags):
+        # Up to 0.0.15, several sources use std::stringstream without including
+        # <sstream>, relying on older libstdc++ headers pulling it in. GCC 15's
+        # libstdc++ no longer does. Which files varies by release, so include
+        # it everywhere rather than patching each layout.
+        if name == "cxxflags" and self.spec.satisfies("@:0.0.15"):
+            flags.extend(["-include", "sstream"])
+        return (flags, None, None)
+
+    def configure_args(self):
+        args = []
+        if self.spec.version >= Version("0.0.13"):
+            args.extend(self.enable_or_disable("sync-daemon-mpi"))
+        else:
+            args.extend(self.enable_or_disable("mpi"))
+        args.extend(self.enable_or_disable("strict"))
+
+        # `--disable-clang-parser` only ever existed in 0.0.13; the clang
+        # parser is mandatory from 0.0.14 on.
+        if self.spec.satisfies("@0.0.13 ~clang-parser"):
+            args.append("--disable-clang-parser")
+        return args

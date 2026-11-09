@@ -5,15 +5,20 @@ This repository provides a [Spack](https://spack.io) environment for installing 
 
 ## How to Install THAPI
 
-✍️**Note**: This guide assumes `spack` is installed and available in your `PATH`. If it is not,
-see [How to Install Spack](#how-to-install-spack).
+✍️**Note**: This guide assumes Spack 1.0 or newer is installed and available in your `PATH`. If it is
+not, see [How to Install Spack](#how-to-install-spack).
 
 ```bash
-# Clone the THAPI-spack repository and add it as a Spack repo
-git clone https://github.com/argonne-lcf/THAPI-spack
-spack repo add ./THAPI-spack/
+# Add THAPI-spack as a Spack repo (Spack clones it into its cache)
+spack repo add https://github.com/argonne-lcf/THAPI-spack.git
 # Install THAPI
 spack install thapi
+```
+
+To work from a local clone instead (e.g. to try a branch), point Spack at the repo inside it:
+```bash
+git clone https://github.com/argonne-lcf/THAPI-spack
+spack repo add ./THAPI-spack/spack_repo/thapi
 ```
 
 Once installed, you can load THAPI with:
