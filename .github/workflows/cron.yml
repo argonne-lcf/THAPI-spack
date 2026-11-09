@@ -34,6 +34,17 @@ jobs:
       run: |
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT ${{ matrix.version }}
+    - name: Show build logs on failure
+      if: failure()
+      run: |
+        # --show-log-on-error only prints the tail of the failed build. Ruby
+        # gems hide the real error further up and in mkmf.log, so dump both.
+        for f in /tmp/runner/spack-stage/spack-stage-*.log; do
+          [ -f "$f" ] && { echo "::group::$f"; cat "$f"; echo "::endgroup::"; }
+        done
+        find external/spack/opt -name mkmf.log | while read -r f; do
+          echo "::group::$f"; cat "$f"; echo "::endgroup::"
+        done
 
   # Exercise the same fast path the PR CI uses (external find + apt llvm +
   # hand-declared +python external). PR CI only runs when someone opens a PR, so
