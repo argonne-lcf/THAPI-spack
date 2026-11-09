@@ -158,6 +158,15 @@ class Thapi(AutotoolsPackage):
 
     patch("0001-Ignore-int-conversions.patch", when="@0.0.8:0.0.11")
 
+    def flag_handler(self, name, flags):
+        # Up to 0.0.15, several sources use std::stringstream without including
+        # <sstream>, relying on older libstdc++ headers pulling it in. GCC 15's
+        # libstdc++ no longer does. Which files varies by release, so include
+        # it everywhere rather than patching each layout.
+        if name == "cxxflags" and self.spec.satisfies("@:0.0.15"):
+            flags.extend(["-include", "sstream"])
+        return (flags, None, None)
+
     def configure_args(self):
         args = []
         if self.spec.version >= Version("0.0.13"):
