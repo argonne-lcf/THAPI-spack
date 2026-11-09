@@ -48,27 +48,22 @@ class Babeltrace2(AutotoolsPackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-    depends_on("autoconf", type="build")
-    depends_on("automake", type="build")
-    depends_on("libtool", type="build")
-    depends_on("pkg-config")
+    depends_on("pkgconfig", type="build")
+    # Release tarballs ship `configure`; only git checkouts have to generate it.
+    with when("@master,2.1.0-archive,2.1.2-archive"):
+        depends_on("autoconf", type="build")
+        depends_on("automake", type="build")
+        depends_on("libtool", type="build")
 
     depends_on("glib@2.28:", type=("build", "link"))
     depends_on("elfutils@0.154:")
     depends_on("lttng-tools", when="@2.1.0-archive")
     depends_on("lttng-tools", when="@2.1.2-archive")
 
-    with when("+python-bindings"):
-        depends_on("python@3.4:")
-        depends_on("swig@3.0:")
-
-    with when("+python-plugins"):
-        depends_on("python@3.4:")
-        depends_on("swig@3.0:")
-
-    with when("+built-in-python-plugin-support"):
-        depends_on("python@3.4:")
-        depends_on("swig@3.0:")
+    for _python_variant in ("python-bindings", "python-plugins", "built-in-python-plugin-support"):
+        with when(f"+{_python_variant}"):
+            depends_on("python@3.4:")
+            depends_on("swig@3.0:")
 
     with when("+api-doc"):
         depends_on("asciidoc@8.6.8:")
@@ -93,17 +88,17 @@ class Babeltrace2(AutotoolsPackage):
         args.extend(self.enable_or_disable("built-in-plugins"))
         args.extend(self.enable_or_disable("built-in-python-plugin-support"))
         args.extend(self.enable_or_disable("man-pages"))
-        with when("@2.1:"):
+        if self.spec.satisfies("@2.1:"):
             args.extend(self.enable_or_disable("asan"))
             args.extend(self.enable_or_disable("ubsan"))
         args.extend(self.enable_or_disable("Werror"))
-
-        if "+python-bindings" in self.spec or "+python-plugins" in self.spec or "+built-in-python-plugin-support" in self.spec:
-
-            def setup_run_environment(self, env):
-                env.prepend_path("PYTHONPATH", self.prefix)
-
         return args
+
+    def setup_run_environment(self, env):
+        # The bt2 module lands in lib/pythonX.Y/site-packages under the prefix.
+        if self.spec.satisfies("+python-bindings"):
+            pyver = self.spec["python"].version.up_to(2)
+            env.prepend_path("PYTHONPATH", join_path(self.prefix.lib, f"python{pyver}", "site-packages"))
 
     def setup_build_environment(self, env):
         # Without the following line, conftest checking glib version picks up
