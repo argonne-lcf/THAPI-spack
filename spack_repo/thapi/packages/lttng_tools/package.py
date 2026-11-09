@@ -53,10 +53,13 @@ class LttngTools(AutotoolsPackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-    depends_on("autoconf", type="build")
-    depends_on("automake", type="build")
-    depends_on("libtool", type="build")
-    depends_on("pkg-config")
+    depends_on("pkgconfig", type="build")
+    # Release tarballs ship `configure`; git checkouts have to generate it,
+    # and @:2.12 regenerates it after patching configure.ac (see force_autoreconf).
+    with when("@:2.12,master,2.14.0-archive,2.16.0-archive"):
+        depends_on("autoconf", type="build")
+        depends_on("automake", type="build")
+        depends_on("libtool", type="build")
 
     # https://github.com/spack/spack/commit/e53bc780e4afdbec7263ef06c6266529abac4253
     depends_on("uuid")
@@ -78,9 +81,12 @@ class LttngTools(AutotoolsPackage):
     # `--disable-test` is not available on lttng-tools v2.12 and below. Even though we have the
     # variant on our spack package, it doesn't actually turn off the tests without this patch.
     patch("disable_tests.patch", when="@:2.12.999")
+
     # disable_tests.patch changes configure.ac so we need to regenerate the configure file.
-    # Apparently, spack doesn't generate the configure file if there is one already.
-    force_autoreconf = True
+    # Spack only runs autoreconf when configure is missing, so force it there.
+    @property
+    def force_autoreconf(self):
+        return self.spec.satisfies("@:2.12")
 
     def configure_args(self):
         args = []

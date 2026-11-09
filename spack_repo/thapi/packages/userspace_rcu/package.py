@@ -57,5 +57,5 @@ class UserspaceRcu(AutotoolsPackage):
     )
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./bootstrap")

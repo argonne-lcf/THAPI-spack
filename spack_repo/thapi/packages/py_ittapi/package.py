@@ -1,9 +1,10 @@
 from spack_repo.builtin.build_systems.python import PythonPackage
 from spack.package import *
-import sys
 
 
 class PyIttapi(PythonPackage):
+    """Python bindings to the Intel Instrumentation and Tracing Technology (ITT) API."""
+
     homepage = "https://pypi.org/project/ittapi"
     git = "https://github.com/intel/ittapi"
     url = "https://github.com/intel/ittapi/archive/refs/tags/v3.26.4.tar.gz"
