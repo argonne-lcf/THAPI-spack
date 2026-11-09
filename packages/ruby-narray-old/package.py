@@ -25,4 +25,8 @@ class RubyNarrayOld(RubyPackage):
         # `()` means "no arguments" and every call through those tables fails.
         # The gem is built by mkmf, which reads extconf options from
         # CONFIGURE_ARGS; keep Ruby's own cflags and pin the older standard.
-        env.set("CONFIGURE_ARGS", "--with-cflags='$(cflags) -std=gnu17'")
+        #
+        # A Ruby that was itself configured under C23 lacks HAVE_STDBOOL_H (bool
+        # is a keyword there, so autoconf's stdbool.h probe fails), and its
+        # headers then never declare `bool` for pre-C23 code. Supply it.
+        env.set("CONFIGURE_ARGS", "--with-cflags='$(cflags) -std=gnu17 -DHAVE_STDBOOL_H=1'")

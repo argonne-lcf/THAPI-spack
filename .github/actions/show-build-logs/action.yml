@@ -1,0 +1,17 @@
+name: 'Show spack build logs'
+description: 'Dump the full log of every failed spack build, and any mkmf.log'
+runs:
+  using: "composite"
+  steps:
+    - name: Show build logs
+      shell: bash
+      run: |
+        # --show-log-on-error only prints excerpts of the failed build, and the
+        # real error is often in the elided part (or, for Ruby gems, in
+        # mkmf.log). Dump them whole, each in a collapsible group.
+        for f in /tmp/runner/spack-stage/spack-stage-*.log; do
+          [ -f "$f" ] || continue
+          echo "::group::$f"; cat "$f"; echo "::endgroup::"
+        done
+        find external/spack/opt -name mkmf.log -path '*/extensions/*' 2>/dev/null \
+          | while read -r f; do echo "::group::$f"; cat "$f"; echo "::endgroup::"; done
