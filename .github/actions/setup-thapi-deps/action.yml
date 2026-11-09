@@ -65,7 +65,7 @@ runs:
         # them -- no recipe declares `executables` or `libraries` -- so declare
         # them by hand.
         #
-        # This does pin PR CI to Noble's older protobuf and elfutils; the
+        # This does pin PR CI to the runner distro's protobuf and elfutils; the
         # weekly cron `from_scratch` job installs with no externals and covers
         # the current ones.
         . external/spack/share/spack/setup-env.sh
@@ -111,9 +111,12 @@ runs:
           exit 1
         fi
 
-        # Add llvm to apt repository.
+        # Add llvm to apt repository. Use the runner's own codename: packages
+        # built for another release depend on library names (e.g. libxml2 vs
+        # libxml2-16) that may not exist here, and apt cannot resolve them.
+        CODENAME=$( . /etc/os-release && echo "${VERSION_CODENAME}" )
         wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
-        REPO="deb http://apt.llvm.org/noble/ llvm-toolchain-noble-${LLVM_VER} main"
+        REPO="deb http://apt.llvm.org/${CODENAME}/ llvm-toolchain-${CODENAME}-${LLVM_VER} main"
         echo "$REPO" | sudo tee /etc/apt/sources.list.d/llvm.list
         sudo apt-get update
 
