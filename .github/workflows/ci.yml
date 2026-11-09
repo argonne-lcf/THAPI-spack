@@ -57,6 +57,9 @@ jobs:
         include-hidden-files: true
         path: ${{ env.CACHE_DIR_LEGACY }}
         if-no-files-found: error
+    - name: Show build logs on failure
+      if: failure()
+      uses: ./.github/actions/show-build-logs
     - name: Block to allow inspecting failures
       run: sleep 120m
       if: ${{ failure() && inputs.debug_enabled }}
@@ -88,6 +91,9 @@ jobs:
       run: |
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT ${{ matrix.version }}
+    - name: Show build logs on failure
+      if: failure()
+      uses: ./.github/actions/show-build-logs
     - name: Block to allow inspecting failures
       run: sleep 120m
       if: ${{ failure() && inputs.debug_enabled }}
@@ -132,6 +138,9 @@ jobs:
         include-hidden-files: true
         path: ${{ env.CACHE_DIR }}
         if-no-files-found: error
+    - name: Show build logs on failure
+      if: failure()
+      uses: ./.github/actions/show-build-logs
     - name: Block to allow inspecting failures
       run: sleep 120m
       if: ${{ failure() && inputs.debug_enabled }}
@@ -173,6 +182,9 @@ jobs:
         # (Building thapi@develop with unstable lttng@master versions).
         . external/spack/share/spack/setup-env.sh
         spack install $SPACK_OPT ${{ matrix.version }} ^llvm@${LLVM_FULL_VER} || true
+    - name: Show build logs on failure
+      if: failure()
+      uses: ./.github/actions/show-build-logs
     - name: Block to allow inspecting failures
       run: sleep 120m
       if: ${{ failure() && inputs.debug_enabled }}
