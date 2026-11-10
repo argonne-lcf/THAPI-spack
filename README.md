@@ -20,7 +20,7 @@ git clone https://github.com/argonne-lcf/THAPI-spack
 spack repo add ./THAPI-spack/spack_repo/thapi
 ```
 
-Once installed, you can load THAPI as a spack package by doing:
+Once installed, you can load THAPI as a Spack package by doing:
 ```bash
 spack load thapi
 ```
@@ -30,7 +30,7 @@ spack load thapi
 #### `spack external find`
 
 `spack external find` can be used to find existing packages known to Spack on the system. This way
-ou can avoid building them to save time when installing THAPI. Use the following command before
+you can avoid building them to save time when installing THAPI. Use the following command before
 `spack install thapi` to find external packages available on the system. Make sure to `module load`
 the packages (or set other environment variables like `PATH`) before running `spack external find`.
 ```bash
@@ -42,7 +42,7 @@ dependency. Declare `llvm` with the helper instead -- see [Reusing a system LLVM
 
 In addition to LLVM, some packages found using `spack external find` are known to cause build failures.
 If you run into such cases, use `spack external find --exclude <pkg>` so that Spack will build them
-instead. For example, to exclude `bzip2, xz` and `curl` along with `llvm`, you can do:
+instead. For example, to exclude `bzip2`, `xz` and `curl` along with `llvm`, you can do:
 ```bash
 spack external find --all --exclude bzip2 --exclude xz --exclude curl --exclude llvm
 ```
@@ -51,12 +51,13 @@ spack external find --all --exclude bzip2 --exclude xz --exclude curl --exclude 
 
 `thapi@0.0.14:` requires `h2yaml`, which needs `llvm@18:+clang+python`. `+python` means that the LLVM
 install must contain clang's Python bindings (`clang/cindex.py`), not just `libclang.so`. Building
-LLVM from source is by far the most time consuming step of a THAPI install, so it is worth reusing
+LLVM from source is by far the most time-consuming step of a THAPI install, so it is worth reusing
 a system LLVM install whenever one is available.
 
-Point the helper script (`scripts/gen-llvm-external.py`) at any LLVM 18+ on the system (`module avail llvm`,
-`/usr/lib/llvm-*`, `/opt/llvm*`, or your site software tree) and apply what it prints. `$PYVER` find
-the python version Spack spec will run `h2yaml` with, so the overlay is laid out to match.
+Point the helper script (`scripts/gen-llvm-external.py` in a clone of this repo) at any LLVM 18+ on
+the system (`module avail llvm`, `/usr/lib/llvm-*`, `/opt/llvm*`, or your site software tree) and apply
+what it prints. `PYVER` is the Python version Spack will run `h2yaml` with, so the overlay is laid out
+to match.
 ```bash
 PYVER=$(spack spec -j h2yaml | grep -v '^==>' \
   | jq -r '[.spec.nodes[] | select(.name == "python") | .version | split(".")[:2] | join(".")]
@@ -66,7 +67,7 @@ python3 scripts/gen-llvm-external.py /path/to/system/llvm --python-version $PYVE
 spack config add -f llvm-external.yaml
 ```
 
-The script needs only Python 3, no dependencies. If the system LLVM already has python bindings, the
+The script needs only Python 3, no dependencies. If the system LLVM already has Python bindings, the
 script points the external straight at it. Otherwise -- a site LLVM is usually read-only, so they cannot
 just be dropped in next to it -- it builds an *overlay* in `--overlay-dir` (default `~/.spack`): a tree of
 symlinks to the real install, plus the bindings, downloaded from the matching LLVM release if the
@@ -90,8 +91,8 @@ spack spec -I thapi | grep llvm
 
 #### `spack install -j<core> <spec>`
 
-Depending on the number of available hardware cores on your platform, you can specify number of parallel
-build processes to be used during the build of `spec` (THAPI in this case) using `-j` option to `spack`
+Depending on the number of available hardware cores on your platform, you can specify the number of parallel
+build processes to be used during the build of `spec` (THAPI in this case) using the `-j` option to `spack`
 (e.g., `-j16`).
 
 ## Building THAPI Manually
